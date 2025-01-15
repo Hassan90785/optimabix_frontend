@@ -6,7 +6,7 @@ import {AdminRolesComponent} from './components/admin/admin-roles/admin-roles.co
 import {AdminUsersComponent} from './components/admin/admin-users/admin-users.component';
 
 export const routes: Routes = [   // Redirect to the login page initially
-  { path: '', redirectTo: 'client/login', pathMatch: 'full' },
+  { path: '', redirectTo: 'admin/login', pathMatch: 'full' },
 
   // Admin Routes
   {
