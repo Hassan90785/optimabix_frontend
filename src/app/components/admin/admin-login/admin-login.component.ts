@@ -57,7 +57,8 @@ export class AdminLoginComponent implements OnInit {
       next: (res) => {
         localStorage.setItem('token', res.data.token);
         AdminStore.setLoader(false);
-        this.router.navigate(['/admin/companies']);
+        this.router.navigate(['/admin/roles']);
+        // this.router.navigate(['/admin/companies']);
       },
       error: (error) => {
         AdminStore.setLoader(false);

@@ -1,7 +1,9 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {Company} from '../models/Company';
+import {User} from '../models/User';
+import {Role} from '../models/Role';
 
 @Injectable({
   providedIn: 'root',
@@ -65,5 +67,68 @@ export class RestApiService {
 
   restoreCompany(companyId: string): Observable<any> {
     return this.http.patch(`${this.apiUrl}/companies/${companyId}/restore`, {});
+  }
+
+  // Users APIs
+  getAllUsers(queryParams?: any): Observable<any> {
+    let params = new HttpParams();
+    if (queryParams) {
+      Object.keys(queryParams).forEach((key) => {
+        if (queryParams[key]) {
+          params = params.set(key, queryParams[key]);
+        }
+      });
+    }
+    return this.http.get(`${this.apiUrl}/users`, { params });
+  }
+
+  getUserById(id: string): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}/users/${id}`);
+  }
+
+  createUser(payload: User): Observable<User> {
+    return this.http.post<User>(`${this.apiUrl}/users`, payload);
+  }
+
+  updateUser(id: string, payload: Partial<User>): Observable<User> {
+    return this.http.put<User>(`${this.apiUrl}/users/${id}`, payload);
+  }
+
+  deleteUser(id: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/users/${id}`);
+  }
+
+  loginUser(payload: { email: string; password: string }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/users/login`, payload);
+  }
+
+
+  // Roles APIs
+  getAllRoles(queryParams?: any): Observable<any> {
+    let params = new HttpParams();
+    if (queryParams) {
+      Object.keys(queryParams).forEach((key) => {
+        if (queryParams[key]) {
+          params = params.set(key, queryParams[key]);
+        }
+      });
+    }
+    return this.http.get(`${this.apiUrl}/roles`, { params });
+  }
+
+  getRoleById(id: string): Observable<Role> {
+    return this.http.get<Role>(`${this.apiUrl}/roles/${id}`);
+  }
+
+  createRole(payload: Role): Observable<Role> {
+    return this.http.post<Role>(`${this.apiUrl}/roles`, payload);
+  }
+
+  updateRole(id: string, payload: Partial<Role>): Observable<Role> {
+    return this.http.put<Role>(`${this.apiUrl}/roles/${id}`, payload);
+  }
+
+  deleteRole(id: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/roles/${id}`);
   }
 }
