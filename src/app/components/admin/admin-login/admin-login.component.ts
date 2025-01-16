@@ -55,7 +55,7 @@ export class AdminLoginComponent implements OnInit {
     AdminStore.setLoader(true);
     this.subscription.add(this.apiService.loginAdmin(this.loginForm.value).subscribe({
       next: (res) => {
-        localStorage.setItem('token', res.token);
+        localStorage.setItem('token', res.data.token);
         AdminStore.setLoader(false);
         this.router.navigate(['/admin/companies']);
       },
