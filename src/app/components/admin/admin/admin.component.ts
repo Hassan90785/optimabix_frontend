@@ -11,8 +11,6 @@ import {Menu} from 'primeng/menu';
   selector: 'app-admin',
   imports: [
     RouterOutlet,
-    PanelMenu,
-    Menubar,
     Toolbar,
     Button,
     Sidebar,
@@ -29,7 +27,7 @@ export class AdminComponent {
     { label: 'Dashboard', icon: 'pi pi-home', routerLink: ['/admin/dashboard'] },
     { label: 'Users', icon: 'pi pi-users', routerLink: ['/admin/users'] },
     { label: 'Roles', icon: 'pi pi-lock', routerLink: ['/admin/roles'] },
-    { label: 'Settings', icon: 'pi pi-cog', routerLink: ['/admin/settings'] },
+    { label: 'Companies', icon: 'pi pi-cog', routerLink: ['/admin/companies'] },
   ];
 
   toggleSidebar(): void {

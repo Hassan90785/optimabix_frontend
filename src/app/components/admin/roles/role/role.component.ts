@@ -12,7 +12,6 @@ import {CommonModule} from '@angular/common';
 import {Select} from 'primeng/select';
 import {DatePicker} from 'primeng/datepicker';
 import {Card} from 'primeng/card';
-import {Fluid} from 'primeng/fluid';
 import {Role} from '../../../../core/models/Role';
 
 @Component({
@@ -21,11 +20,9 @@ import {Role} from '../../../../core/models/Role';
     CommonModule,
     DropdownModule,
     ReactiveFormsModule,
-    InputText,
     MultiSelect, TextareaModule,
-    ButtonDirective,
     Button, DatePicker,
-    FloatLabel, Select, Card, Fluid
+    FloatLabel, Select, Card,
   ],
   templateUrl: './role.component.html',
   standalone: true,
