@@ -1,0 +1,32 @@
+.admin-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+
+  header {
+    background-color: #007ad9;
+    color: #ffffff;
+    padding: 0.5rem;
+    flex-shrink: 0;
+
+    .header-title {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-left: 1rem;
+    }
+  }
+
+  .main-content {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+  }
+
+  footer {
+    background-color: #007ad9;
+    color: #ffffff;
+    text-align: center;
+    padding: 0.5rem;
+    flex-shrink: 0;
+  }
+}
