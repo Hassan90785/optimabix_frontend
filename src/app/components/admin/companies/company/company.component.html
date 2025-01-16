@@ -1,0 +1,242 @@
+<p-card class="p-mb-4 p-shadow-3">
+  <div class="text-center">
+    <h3>{{ company ? 'Edit Company' : 'Create New Company' }}</h3>
+  </div>
+  <div>
+    <form [formGroup]="companyForm" class="formgrid grid">
+      <!-- Name -->
+      <div class="field col-12 md:col-6">
+        <p-floatLabel variant="on">
+          <input
+            id="name"
+            type="text"
+            pInputText
+            formControlName="name"
+            class="w-full"
+          />
+          <label for="name">Company Name</label>
+        </p-floatLabel>
+      </div>
+
+      <!-- Registration Number -->
+      <div class="field col-12 md:col-6">
+        <p-floatLabel variant="on">
+          <input
+            id="registrationNumber"
+            type="text"
+            pInputText
+            formControlName="registrationNumber"
+            class="w-full"
+          />
+          <label for="registrationNumber">Registration Number</label>
+        </p-floatLabel>
+      </div>
+
+      <!-- Business Type -->
+      <div class="field col-12 md:col-6">
+        <p-dropdown
+          id="businessType"
+          formControlName="businessType"
+          [options]="[
+            { label: 'POS', value: 'POS' },
+            { label: 'B2C', value: 'B2C' },
+            { label: 'B2B', value: 'B2B' },
+            { label: 'Both', value: 'Both' },
+            { label: 'All', value: 'All' }
+          ]"
+          placeholder="Select Business Type"
+          class="w-full"
+        ></p-dropdown>
+      </div>
+      <!-- Contact Details -->
+      <fieldset class="p-mb-4">
+        <legend>Contact Details</legend>
+        <div formGroupName="contactDetails" class="grid">
+          <div class="field col-12 md:col-6">
+            <p-floatLabel variant="on">
+              <input
+                id="email"
+                type="email"
+                pInputText
+                formControlName="email"
+                class="w-full"
+              />
+              <label for="email">Email</label>
+            </p-floatLabel>
+          </div>
+          <div class="field col-12 md:col-6">
+            <p-floatLabel variant="on">
+              <input
+                id="phone"
+                type="text"
+                pInputText
+                formControlName="phone"
+                class="w-full"
+              />
+              <label for="phone">Phone</label>
+            </p-floatLabel>
+          </div>
+          <!-- Address Fields -->
+          <div formGroupName="address" class="grid">
+            <div class="field col-12 md:col-6">
+              <p-floatLabel variant="on">
+                <input
+                  id="street"
+                  type="text"
+                  pInputText
+                  formControlName="street"
+                  class="w-full"
+                />
+                <label for="street">Street</label>
+              </p-floatLabel>
+            </div>
+            <div class="field col-12 md:col-4">
+              <p-floatLabel variant="on">
+                <input
+                  id="city"
+                  type="text"
+                  pInputText
+                  formControlName="city"
+                  class="w-full"
+                />
+                <label for="city">City</label>
+              </p-floatLabel>
+            </div>
+            <div class="field col-12 md:col-4">
+              <p-floatLabel variant="on">
+                <input
+                  id="state"
+                  type="text"
+                  pInputText
+                  formControlName="state"
+                  class="w-full"
+                />
+                <label for="state">State</label>
+              </p-floatLabel>
+            </div>
+            <div class="field col-12 md:col-4">
+              <p-floatLabel variant="on">
+                <input
+                  id="postalCode"
+                  type="text"
+                  pInputText
+                  formControlName="postalCode"
+                  class="w-full"
+                />
+                <label for="postalCode">Postal Code</label>
+              </p-floatLabel>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- Logo -->
+      <div class="field col-12  md:col-6">
+        <p-floatLabel variant="on">
+          <input
+            id="logo"
+            type="text"
+            pInputText
+            formControlName="logo"
+            class="w-full"
+          />
+          <label for="logo">Logo URL</label>
+        </p-floatLabel>
+      </div>
+
+      <!-- Access Status -->
+      <div class="field col-12 md:col-6">
+        <p-dropdown
+          id="accessStatus"
+          formControlName="accessStatus"
+          [options]="[
+            { label: 'Active', value: 'Active' },
+            { label: 'Suspended', value: 'Suspended' },
+            { label: 'Revoked', value: 'Revoked' },
+            { label: 'Trial', value: 'Trial' },
+            { label: 'Expired', value: 'Expired' }
+          ]"
+          placeholder="Select Access Status"
+          class="w-full"
+        ></p-dropdown>
+      </div>
+      <!-- Payment History -->
+      <fieldset class="p-my-4">
+        <legend>Payment History</legend>
+        <div formArrayName="paymentHistory">
+          <div
+            *ngFor="let payment of paymentHistory.controls; let i = index"
+            [formGroupName]="i"
+            class="grid p-mb-3"
+          >
+            <!-- Date -->
+            <div class="field col-12">
+              <p-floatLabel variant="on">
+                <input
+                  type="date"
+                  pInputText
+                  formControlName="date"
+                  class="w-full"
+                />
+                <label>Date</label>
+              </p-floatLabel>
+            </div>
+
+            <!-- Amount -->
+            <div class="field col-12">
+              <p-floatLabel variant="on">
+                <input
+                  type="number"
+                  pInputText
+                  formControlName="amount"
+                  class="w-full"
+                />
+                <label>Amount</label>
+              </p-floatLabel>
+            </div>
+
+            <!-- Payment Method -->
+            <div class="field col-12">
+              <p-floatLabel variant="on">
+                <input
+                  type="text"
+                  pInputText
+                  formControlName="paymentMethod"
+                  class="w-full"
+                />
+                <label>Payment Method</label>
+              </p-floatLabel>
+            </div>
+
+            <!-- Remove Payment Button -->
+            <div class="field col-12 flex justify-content-end">
+              <p-button
+                icon="pi pi-minus"
+                class=" p-button-sm"
+                (click)="removePayment(i)"
+              ></p-button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add Payment Button -->
+        <p-button
+          label="Add Payment"
+          icon="pi pi-plus"
+          class="p-button-sm mt-3"
+          (click)="addPayment()"
+        ></p-button>
+      </fieldset>
+
+
+      <!-- Submit Button -->
+      <div class="col-12 flex justify-content-end">
+        <p-button
+          label="Submit"
+          class="p-button-primary p-button-lg"
+          (click)="onSubmit()"
+        ></p-button>
+      </div>
+    </form>
+  </div>
+</p-card>
