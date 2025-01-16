@@ -4,6 +4,7 @@ import {AdminLoginComponent} from './components/admin/admin-login/admin-login.co
 import {AdminCompaniesComponent} from './components/admin/admin-companies/admin-companies.component';
 import {AdminRolesComponent} from './components/admin/admin-roles/admin-roles.component';
 import {AdminUsersComponent} from './components/admin/admin-users/admin-users.component';
+import {AdminComponent} from './components/admin/admin/admin.component';
 
 export const routes: Routes = [   // Redirect to the login page initially
   { path: '', redirectTo: 'admin/login', pathMatch: 'full' },
@@ -11,6 +12,7 @@ export const routes: Routes = [   // Redirect to the login page initially
   // Admin Routes
   {
     path: 'admin',
+    component: AdminComponent,
     children: [
       { path: 'login', component: AdminLoginComponent },
       { path: 'companies', component: AdminCompaniesComponent },

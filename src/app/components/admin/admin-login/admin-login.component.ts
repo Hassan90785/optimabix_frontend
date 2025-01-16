@@ -9,6 +9,9 @@ import {AdminStore} from '../../../core/stores/admin.store';
 import {CommonModule} from '@angular/common';
 import {FloatLabel} from 'primeng/floatlabel';
 import {InputText} from 'primeng/inputtext';
+import {Subscription} from 'rxjs';
+import {MessageService} from 'primeng/api';
+import {Toast} from 'primeng/toast';
 
 @Component({
   selector: 'app-admin-login',
@@ -19,20 +22,22 @@ import {InputText} from 'primeng/inputtext';
     Password,
     Button,
     FloatLabel,
-    InputText
+    InputText,
+    Toast
   ],
-  providers: [RestApiService],
+  providers: [RestApiService, MessageService],
   templateUrl: './admin-login.component.html',
   standalone: true,
   styleUrl: './admin-login.component.scss'
 })
 export class AdminLoginComponent implements OnInit {
-
+  subscription: Subscription = new Subscription();
   loginForm: FormGroup;
 
   constructor(
     private fb: FormBuilder,
     private apiService: RestApiService,
+    private messageService: MessageService,
     private router: Router
   ) {
     this.loginForm = this.fb.group({
@@ -45,11 +50,10 @@ export class AdminLoginComponent implements OnInit {
   }
 
   loginAdmin() {
-    console.log('this.loginForm.value:', this.loginForm.value);
     if (this.loginForm.invalid) return;
 
     AdminStore.setLoader(true);
-    this.apiService.loginAdmin(this.loginForm.value).subscribe({
+    this.subscription.add(this.apiService.loginAdmin(this.loginForm.value).subscribe({
       next: (res) => {
         localStorage.setItem('token', res.token);
         AdminStore.setLoader(false);
@@ -57,8 +61,9 @@ export class AdminLoginComponent implements OnInit {
       },
       error: (error) => {
         AdminStore.setLoader(false);
+        this.messageService.add({severity: 'error', summary: 'Error', detail: error.message});
         console.error('Login Failed:', error);
       }
-    });
+    }));
   }
 }
