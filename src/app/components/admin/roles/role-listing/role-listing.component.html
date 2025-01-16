@@ -1,6 +1,12 @@
 <div class="p-card">
-  <div class="p-card-header">
+  <div class="p-card-header p-d-flex p-jc-between p-ai-center">
     <h2>Role List</h2>
+    <p-button
+      label="Add Role"
+      icon="pi pi-plus"
+      class="p-button-primary"
+      (click)="onAddRole()"
+    ></p-button>
   </div>
   <div class="p-card-body">
     <p-table

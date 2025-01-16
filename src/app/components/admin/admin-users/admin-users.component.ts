@@ -99,7 +99,7 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
   }
 
   onView(user: any) {
-    
+
   }
 }
 

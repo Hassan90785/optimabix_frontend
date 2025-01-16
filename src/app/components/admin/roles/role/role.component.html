@@ -1,0 +1,128 @@
+<p-card class="p-mb-4 p-shadow-3">
+  <div class="text-center">
+    <h3>Create New Role</h3>
+  </div>
+  <div>
+    <form [formGroup]="roleForm" class="formgrid grid">
+      <!-- Role Name -->
+      <div class="field col-12 md:col-6">
+        <p-floatlabel variant="on">
+        <label for="roleName">Role Name</label>
+        <input
+          id="roleName"
+          type="text"
+          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+          formControlName="roleName"
+        />
+        </p-floatlabel>
+      </div>
+
+      <!-- Description -->
+      <div class="field col-12 md:col-6">
+        <p-floatlabel variant="on">
+        <label for="description">Description</label>
+        <input
+          id="description"
+          type="text"
+          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+          formControlName="description"
+        />
+        </p-floatlabel>
+      </div>
+
+      <!-- Company -->
+      <div class="field col-12 md:col-6">
+        <p-floatlabel variant="on">
+        <label for="companyId">Company</label>
+        <input
+          id="companyId"
+          type="text"
+          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+          formControlName="companyId"
+        />
+        </p-floatlabel>
+      </div>
+
+      <!-- Access Status -->
+      <div class="field col-12 md:col-6">
+        <p-floatlabel  variant="on">
+        <label for="accessStatus">Access Status</label>
+        <p-select
+          id="accessStatus"
+          inputId="accessStatus"
+          [options]="['Active', 'Suspended', 'Revoked', 'Trial', 'Expired']"
+          formControlName="accessStatus"
+          class="w-full text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round outline-none focus:border-primary"
+        />
+        </p-floatlabel>
+      </div>
+
+      <!-- Permissions -->
+      <div class="field col-12">
+        <fieldset class="p-mb-4">
+          <legend>Permissions</legend>
+          <div formArrayName="permissions">
+            <div
+              *ngFor="let permission of permissions?.controls; let i = index"
+              [formGroupName]="i"
+              class="grid align-items-center"
+            >
+              <div class="field col-12 md:col-5">
+                <label for="moduleId-{{ i }}">Module ID</label>
+                <input
+                  id="moduleId-{{ i }}"
+                  type="text"
+                  class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+                  formControlName="moduleId"
+                  placeholder="Enter Module ID"
+                />
+              </div>
+              <div class="field col-12 md:col-5">
+                <label for="operationsAllowed-{{ i }}">Operations Allowed</label>
+                <p-multiSelect
+                  id="operationsAllowed-{{ i }}"
+                  [options]="['list', 'add', 'view', 'update', 'delete']"
+                  formControlName="operationsAllowed"
+                  class="w-full text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round outline-none focus:border-primary"
+                  placeholder="Select Operations"
+                ></p-multiSelect>
+              </div>
+              <div class="field col-12 md:col-2 flex justify-content-center md:justify-content-start">
+                <p-button
+                  icon="pi pi-minus"
+                  class="p-button-text p-button-sm"
+                  (click)="removePermission(i)"
+                ></p-button>
+              </div>
+            </div>
+          </div>
+          <p-button
+            icon="pi pi-plus"
+            label="Add Permission"
+            class="p-button-sm mt-3"
+            (click)="addPermission()"
+          ></p-button>
+        </fieldset>
+      </div>
+
+      <!-- Valid Until -->
+      <div class="field col-12 md:col-6">
+        <p-datepicker
+          id="validUntil"
+          formControlName="validUntil"
+          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+          placeholder="Select Date"
+        ></p-datepicker>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="col-12 flex justify-content-end">
+        <p-button
+          label="Submit"
+          class="p-button-primary p-button-lg"
+          (click)="onSubmit()"
+        ></p-button>
+      </div>
+    </form>
+  </div>
+</p-card>

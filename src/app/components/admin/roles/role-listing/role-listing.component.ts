@@ -1,23 +1,25 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Subscription} from 'rxjs';
+import {Router} from '@angular/router';
+import {MessageService, PrimeTemplate} from 'primeng/api';
+import {Role} from '../../../../core/models/Role';
+import {RestApiService} from '../../../../core/services/rest-api.service';
 import {Button} from 'primeng/button';
 import {TableModule} from 'primeng/table';
-import {Role} from '../../../core/models/Role';
-import {Subscription} from 'rxjs';
-import {RestApiService} from '../../../core/services/rest-api.service';
-import {MessageService} from 'primeng/api';
 
 @Component({
-  selector: 'app-admin-roles',
+  selector: 'app-role-listing',
   imports: [
     Button,
+    PrimeTemplate,
     TableModule
   ],
+  templateUrl: './role-listing.component.html',
   providers: [MessageService],
-  templateUrl: './admin-roles.component.html',
   standalone: true,
-  styleUrl: './admin-roles.component.css'
+  styleUrl: './role-listing.component.scss'
 })
-export class AdminRolesComponent  implements OnInit, OnDestroy {
+export class RoleListingComponent implements OnInit, OnDestroy {
   roles: Role[] = [];
   totalRecords: number = 0;
   loading: boolean = true;
@@ -25,6 +27,7 @@ export class AdminRolesComponent  implements OnInit, OnDestroy {
 
   constructor(
     private apiService: RestApiService,
+    private router: Router,
     private messageService: MessageService
   ) {}
 
@@ -96,5 +99,9 @@ export class AdminRolesComponent  implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
+  }
+
+  onAddRole() {
+    this.router.navigate(['/admin/roles/add']);
   }
 }
