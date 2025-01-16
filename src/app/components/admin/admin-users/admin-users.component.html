@@ -32,17 +32,23 @@
           <td>{{ user.accessStatus }}</td>
           <td>
             <p-button
-              label="Edit"
+              icon="pi pi-eye"
+              class="p-button-text"
+              (click)="onView(user)"
+              [rounded]="true" [text]="true"
+            />
+            <p-button
               icon="pi pi-pencil"
               class="p-button-text"
               (click)="onEdit(user)"
-            ></p-button>
+              [rounded]="true" [text]="true"
+            />
             <p-button
-              label="Delete"
               icon="pi pi-trash"
               class="p-button-text p-button-danger"
               (click)="onDelete(user)"
-            ></p-button>
+              [rounded]="true" [text]="true"
+            />
           </td>
         </tr>
       </ng-template>

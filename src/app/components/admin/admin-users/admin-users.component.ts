@@ -97,5 +97,9 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
+
+  onView(user: any) {
+    
+  }
 }
 
