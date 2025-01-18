@@ -6,13 +6,15 @@ import {User} from '../models/User';
 })
 export class AuthService {
   private _token: string = '';
-  private _user: User | undefined | null = null;
 
   constructor() {
   }
 
-  get user(): User | undefined | null {
-    return this._user;
+  private _user: User | undefined | null = null;
+
+  get user(): any {
+    if (this._user)
+      return this._user;
   }
 
   set user(value: User | undefined | null) {
@@ -20,14 +22,12 @@ export class AuthService {
   }
 
   get info(): any {
-    if(this.user) {
-      console.log('this.user', this.user);
-      return {
-        name: this.user.fullName,
-        id: this.user.id,
-        role: this.user.role,
-        companyId: this.user.companyId
-      }
+    console.log('this.user', this.user);
+    return {
+      name: this.user.fullName,
+      id: this.user.id,
+      role: this.user.role,
+      companyId: this.user.companyId
     }
   }
 }

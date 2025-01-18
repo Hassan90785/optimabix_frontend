@@ -10,6 +10,7 @@ import {Checkbox} from 'primeng/checkbox';
 import {Card} from 'primeng/card';
 import {Product} from '../../../../core/models/Product';
 import {AuthService} from '../../../../core/services/auth.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-product',
@@ -29,6 +30,7 @@ export class ProductComponent implements OnInit, OnDestroy {
   productForm: FormGroup;
   subscriptions: Subscription = new Subscription();
   private auth = inject(AuthService)
+  private router = inject(Router)
 
   constructor(
     private fb: FormBuilder,
@@ -69,7 +71,11 @@ export class ProductComponent implements OnInit, OnDestroy {
     console.log('payload', payload);
     this.subscriptions.add(
       this.apiService.saveProduct(payload).subscribe({
-        next: () => {
+        next: (resp:any) => {
+          console.log('resp: ', resp);
+          if(resp && resp.status) {
+            this.router.navigate(['/app/products']);
+          }
           AdminStore.setLoader(false);
         },
         error: () => {
