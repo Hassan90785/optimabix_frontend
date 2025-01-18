@@ -6,7 +6,7 @@ export interface User {
   password?: string;
   phone?: string;
   role: string; // Role ID
-  companyId: string; // Company ID
+  companyId: any // Company ID
   accessStatus: 'Active' | 'Suspended' | 'Revoked' | 'Trial' | 'Expired';
   accessStatusReason?: string;
   lastLogin?: string;

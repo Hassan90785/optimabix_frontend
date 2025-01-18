@@ -55,6 +55,7 @@ export class LoginComponent  implements OnInit {
     this.subscription.add(this.apiService.login(this.loginForm.value).subscribe({
       next: (res) => {
         localStorage.setItem('token', res.data.token);
+        localStorage.setItem('user', res.data.user);
         AdminStore.setLoader(false);
         this.router.navigate(['/app/dashboard']);
         // this.router.navigate(['/admin/companies']);

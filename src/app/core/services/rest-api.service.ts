@@ -201,8 +201,8 @@ export class RestApiService {
 
   saveProduct(payload: any): Observable<any> {
     return payload._id
-      ? this.http.put(`${this.apiUrl}/${payload._id}`, payload)
-      : this.http.post(`${this.apiUrl}`, payload);
+      ? this.http.put(`${this.apiUrl}/products/${payload._id}`, payload)
+      : this.http.post(`${this.apiUrl}/products`, payload);
   }
 
   deleteProduct(productId: string): Observable<any> {

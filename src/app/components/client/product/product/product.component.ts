@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Subscription} from 'rxjs';
 import {RestApiService} from '../../../../core/services/rest-api.service';
@@ -8,6 +8,8 @@ import {FloatLabel} from 'primeng/floatlabel';
 import {Button} from 'primeng/button';
 import {Checkbox} from 'primeng/checkbox';
 import {Card} from 'primeng/card';
+import {Product} from '../../../../core/models/Product';
+import {AuthService} from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-product',
@@ -26,6 +28,7 @@ import {Card} from 'primeng/card';
 export class ProductComponent implements OnInit, OnDestroy {
   productForm: FormGroup;
   subscriptions: Subscription = new Subscription();
+  private auth = inject(AuthService)
 
   constructor(
     private fb: FormBuilder,
@@ -57,11 +60,13 @@ export class ProductComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(): void {
-    if (this.productForm.invalid) return;
 
     AdminStore.setLoader(true);
-    const payload = this.productForm.value;
-
+    const payload: Product = this.productForm.value;
+    console.log('this.auth.info()', this.auth.info);
+    payload.companyId = this.auth.info?.companyId._id || null;
+    payload.createdBy = this.auth.info?.id || null;
+    console.log('payload', payload);
     this.subscriptions.add(
       this.apiService.saveProduct(payload).subscribe({
         next: () => {
