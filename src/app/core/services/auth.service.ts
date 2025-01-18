@@ -25,7 +25,7 @@ export class AuthService {
     console.log('this.user', this.user);
     return {
       name: this.user.fullName,
-      id: this.user.id,
+      id: this.user._id,
       role: this.user.role,
       companyId: this.user.companyId._id
     }

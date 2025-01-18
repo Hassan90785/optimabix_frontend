@@ -21,9 +21,11 @@ import {ClientProductComponent} from './components/client/product/client-product
 import {ClientInvoicesComponent} from './components/client/client-invoices/client-invoices.component';
 import {ClientSalesComponent} from './components/client/client-sales/client-sales.component';
 import {ClientPosComponent} from './components/client/client-pos/client-pos.component';
-import {ClientEntitiesComponent} from './components/client/client-entities/client-entities.component';
 import {ListProductsComponent} from './components/client/product/list-products/list-products.component';
 import {ProductComponent} from './components/client/product/product/product.component';
+import {ClientEntitiesComponent} from './components/client/entity/client-entities/client-entities.component';
+import {EntitiesListComponent} from './components/client/entity/entities-list/entities-list.component';
+import {EntityComponent} from './components/client/entity/entity/entity.component';
 
 export const routes: Routes = [   // Redirect to the login page initially
   {path: '', redirectTo: 'app/login', pathMatch: 'full'},
@@ -96,7 +98,15 @@ export const routes: Routes = [   // Redirect to the login page initially
       {path: 'invoice', component: ClientInvoicesComponent},
       {path: 'sales', component: ClientSalesComponent},
       {path: 'pos', component: ClientPosComponent},
-      {path: 'entity', component: ClientEntitiesComponent},
+      {path: 'entity', component: ClientEntitiesComponent,
+        children: [
+          {path: '', component: EntitiesListComponent},
+          {path: 'list', component: EntitiesListComponent},
+          {path: 'add', component: EntityComponent},
+          {path: 'update', component: EntityComponent},
+          {path: 'view', component: EntityComponent},
+
+        ]},
 
     ]
   },

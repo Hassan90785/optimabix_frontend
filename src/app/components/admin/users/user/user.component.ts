@@ -58,7 +58,7 @@ export class UserComponent implements OnInit {
       });
 
       // Remove password field if editing an existing user
-      if (this.user.id) {
+      if (this.user._id) {
         this.userForm.removeControl('password');
       }
     }
@@ -69,8 +69,8 @@ export class UserComponent implements OnInit {
 
     const payload = this.userForm.value;
 
-    if (this.user?.id) {
-      this.apiService.updateUser(this.user.id, payload).subscribe({
+    if (this.user?._id) {
+      this.apiService.updateUser(this.user._id, payload).subscribe({
         next: () => {
           this.messageService.add({
             severity: 'success',

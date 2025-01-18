@@ -1,0 +1,103 @@
+<p-card class="p-shadow-3">
+  <div class="text-center">
+    <h3>{{ entityForm.get('entityName')?.value ? 'Edit Entity' : 'Add Entity' }}</h3>
+  </div>
+  <div>
+    <form [formGroup]="entityForm" class="formgrid grid">
+      <!-- Entity Name -->
+      <div class="field col-12 md:col-6">
+        <p-floatLabel variant="on">
+          <input
+            id="entityName"
+            type="text"
+            pInputText
+            formControlName="entityName"
+            class="w-full"
+          />
+          <label for="entityName">Entity Name</label>
+        </p-floatLabel>
+      </div>
+
+      <!-- Entity Type -->
+      <div class="field col-12 md:col-6">
+        <p-dropdown
+          formControlName="entityType"
+          [options]="[
+            { label: 'Customer', value: 'Customer' },
+            { label: 'Vendor', value: 'Vendor' },
+            { label: 'Both', value: 'Both' }
+          ]"
+          placeholder="Select Type"
+          class="w-full"
+        ></p-dropdown>
+      </div>
+
+      <!-- Access Status -->
+      <div class="field col-12 md:col-6">
+        <p-dropdown
+          formControlName="accessStatus"
+          [options]="[
+            { label: 'Active', value: 'Active' },
+            { label: 'Suspended', value: 'Suspended' },
+            { label: 'Revoked', value: 'Revoked' },
+            { label: 'Trial', value: 'Trial' },
+            { label: 'Expired', value: 'Expired' }
+          ]"
+          placeholder="Select Status"
+          class="w-full"
+        ></p-dropdown>
+      </div>
+
+      <!-- Billing Address -->
+      <div class="p-mb-4 col-12">
+        <div formGroupName="billingAddress" class="grid">
+          <div class="field col-12 md:col-6">
+            <p-floatLabel variant="on">
+              <input
+                id="street"
+                type="text"
+                pInputText
+                formControlName="street"
+                class="w-full"
+              />
+              <label for="street">Street</label>
+            </p-floatLabel>
+          </div>
+          <div class="field col-12 md:col-3">
+            <p-floatLabel variant="on">
+              <input
+                id="city"
+                type="text"
+                pInputText
+                formControlName="city"
+                class="w-full"
+              />
+              <label for="city">City</label>
+            </p-floatLabel>
+          </div>
+          <div class="field col-12 md:col-3">
+            <p-floatLabel variant="on">
+              <input
+                id="postalCode"
+                type="text"
+                pInputText
+                formControlName="postalCode"
+                class="w-full"
+              />
+              <label for="postalCode">Postal Code</label>
+            </p-floatLabel>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="col-12 flex justify-content-end">
+        <p-button
+          label="Submit"
+          class="p-button-primary p-button-lg"
+          (click)="onSubmit()"
+        ></p-button>
+      </div>
+    </form>
+  </div>
+</p-card>

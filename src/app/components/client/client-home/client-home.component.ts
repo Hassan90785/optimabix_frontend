@@ -24,7 +24,7 @@ export class ClientHomeComponent {
   menuItems = [
     { label: 'Dashboard', icon: 'pi pi-home', routerLink: ['/app/dashboard'] },
     { label: 'Product', icon: 'pi pi-users', routerLink: ['/app/product'] },
-    { label: 'Roles', icon: 'pi pi-lock', routerLink: ['/admin/roles'] },
+    { label: 'Entity', icon: 'pi pi-lock', routerLink: ['/app/entity'] },
     { label: 'Companies', icon: 'pi pi-cog', routerLink: ['/admin/companies'] },
     { label: 'Modules', icon: 'pi pi-cog', routerLink: ['/admin/modules'] },
   ];

@@ -47,7 +47,7 @@
       </div>
 
       <!-- Password -->
-      <div class="field col-12 md:col-6" *ngIf="!user?.id">
+      <div class="field col-12 md:col-6" *ngIf="!user?._id">
         <p-floatLabel variant="on">
           <input
             id="password"

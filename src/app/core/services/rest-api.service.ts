@@ -215,4 +215,20 @@ export class RestApiService {
     return this.http.delete(`${this.apiUrl}/${productId}`);
   }
 
+
+  getEntities(queryParams?: any): Observable<any> {
+    let query = '';
+    if (queryParams) {
+      query = Object.keys(queryParams)
+        .map((key) => `${key}=${queryParams[key]}`)
+        .join('&');
+    } return this.http.get(`${this.apiUrl}/entities${query ? '?' + query : ''}`);
+  }
+
+  saveEntity(payload: any): Observable<any> {
+    return payload.id
+      ? this.http.put(`${this.apiUrl}/entities/${payload.id}`, payload)
+      : this.http.post(`${this.apiUrl}/entities`, payload);
+  }
+
 }

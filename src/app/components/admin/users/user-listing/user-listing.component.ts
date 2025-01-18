@@ -75,7 +75,7 @@ export class UserListingComponent  implements OnInit, OnDestroy {
     if (confirm(`Are you sure you want to delete ${user.fullName}?`)) {
       this.loading = true;
       this.subscriptions.add(
-        this.apiService.deleteUser(user.id!).subscribe({
+        this.apiService.deleteUser(user._id!).subscribe({
           next: () => {
             this.messageService.add({
               severity: 'success',
