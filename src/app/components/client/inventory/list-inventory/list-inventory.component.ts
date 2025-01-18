@@ -1,0 +1,71 @@
+import {Component, inject, OnDestroy, OnInit} from '@angular/core';
+import {AdminStore} from '../../../../core/stores/admin.store';
+import {Subscription} from 'rxjs';
+import {RestApiService} from '../../../../core/services/rest-api.service';
+import {PrimeTemplate} from 'primeng/api';
+import {TableModule} from 'primeng/table';
+import {Button} from 'primeng/button';
+import {Card} from 'primeng/card';
+import {AuthService} from '../../../../core/services/auth.service';
+import {Router} from '@angular/router';
+import {BarcodeDirective} from '../../../../shared/directives/barcode.directive';
+
+@Component({
+  selector: 'app-list-inventory',
+  imports: [
+    PrimeTemplate,
+    TableModule,
+    Button,
+    Card,
+    BarcodeDirective,
+  ],
+  templateUrl: './list-inventory.component.html',
+  standalone: true,
+  styleUrl: './list-inventory.component.scss'
+})
+export class ListInventoryComponent implements OnInit, OnDestroy {
+  inventories: any[] = [];
+  totalRecords: number = 0;
+  subscriptions: Subscription = new Subscription();
+  auth = inject(AuthService);
+  router = inject(Router);
+
+  constructor(private apiService: RestApiService) {
+  }
+
+  ngOnInit(): void {
+    this.fetchInventories();
+  }
+
+  fetchInventories(page: number = 1, limit: number = 10, sort: string = 'createdBy'): void {
+    AdminStore.setLoader(true);
+    this.subscriptions.add(
+      this.apiService.getInventories({page, limit, sort, companyId: this.auth.info.companyId}).subscribe({
+        next: (response: any) => {
+          this.inventories = response.data.inventoryItems;
+          this.totalRecords = response.data.totalRecords;
+          AdminStore.setLoader(false);
+        },
+        error: () => {
+          AdminStore.setLoader(false);
+        }
+      })
+    );
+  }
+
+  onEdit(inventory: any): void {
+    // Navigate to CRUD form for editing
+  }
+
+  onAdd(): void {
+   this.router.navigate(['/app/inventory/add']);
+  }
+
+  onDelete(inventory: any): void {
+    // Call delete inventory API
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+  }
+}

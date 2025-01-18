@@ -1,0 +1,112 @@
+<p-card class="p-shadow-3">
+  <div class="text-center">
+    <h3>{{ inventoryForm.get('barcode')?.value ? 'Edit Inventory' : 'Add Inventory' }}</h3>
+  </div>
+  <div>
+    <form [formGroup]="inventoryForm" class="formgrid grid">
+
+
+      <!-- Product -->
+      <div class="field col-12 md:col-6">
+        <p-floatLabel variant="on">
+          <p-dropdown
+            class="w-full"
+            formControlName="productId"
+            id="productId"
+            [options]="products"
+            optionLabel="productName"
+            optionValue="_id"
+            placeholder="Select a Product"
+          ></p-dropdown>
+        </p-floatLabel>
+      </div>
+
+      <!-- Vendor -->
+      <div class="field col-12 md:col-6">
+        <p-floatLabel variant="on">
+          <p-dropdown
+            class="w-full"
+            formControlName="vendorId"
+            id="vendorId"
+            [options]="vendors"
+            optionLabel="entityName"
+            optionValue="_id"
+            placeholder="Select a Vendor"
+          ></p-dropdown>
+        </p-floatLabel>
+      </div>
+
+
+
+
+      <!-- Batches (Nested FormGroup) -->
+      <div formGroupName="batches" class="grid col-12 mt-1">
+
+        <!-- Quantity -->
+        <div class="field col-12 md:col-6">
+          <p-floatLabel variant="on">
+            <input
+              formControlName="quantity"
+              id="quantity"
+              pInputText
+              class="w-full"
+              type="number"
+            />
+            <label for="quantity">Quantity</label>
+          </p-floatLabel>
+        </div>
+
+        <!-- Purchase Price -->
+        <div class="field col-12 md:col-6">
+          <p-floatLabel variant="on">
+            <input
+              formControlName="purchasePrice"
+              id="purchasePrice"
+              pInputText
+              type="number"
+              class="w-full"
+            />
+            <label for="purchasePrice">Purchase Price</label>
+          </p-floatLabel>
+        </div>
+
+        <!-- Selling Price -->
+        <div class="field col-12 md:col-6">
+          <p-floatLabel variant="on">
+            <input
+              formControlName="sellingPrice"
+              id="sellingPrice"
+              pInputText
+              type="number"
+              class="w-full"
+            />
+            <label for="sellingPrice">Selling Price</label>
+          </p-floatLabel>
+        </div>
+
+        <!-- Total Amount Due Price -->
+        <div class="field col-12 md:col-6">
+          <p-floatLabel variant="on">
+            <input
+              formControlName="totalCost"
+              id="totalCost"
+              pInputText
+              type="number"
+              class="w-full"
+            />
+            <label for="sellingPrice">Total Cost</label>
+          </p-floatLabel>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="col-12 flex justify-content-end mt-3">
+        <p-button
+          (click)="onSubmit()"
+          class="p-button-primary p-button-lg"
+          label="Submit"
+        ></p-button>
+      </div>
+    </form>
+  </div>
+</p-card>

@@ -1,7 +1,7 @@
 import {Batch} from './Batch';
 
 export interface Product {
-  id?: string; // Optional for creation
+  _id?: string; // Optional for creation
   productName: string;
   sku: string;
   description?: string;

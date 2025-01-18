@@ -16,7 +16,6 @@ import {ModuleListingComponent} from './components/admin/modules/module-listing/
 import {ModuleComponent} from './components/admin/modules/module/module.component';
 import {ClientHomeComponent} from './components/client/client-home/client-home.component';
 import {ClientDashboardComponent} from './components/client/dashboard/client-dashboard/client-dashboard.component';
-import {ClientInventoryComponent} from './components/client/client-inventory/client-inventory.component';
 import {ClientProductComponent} from './components/client/product/client-product/client-product.component';
 import {ClientInvoicesComponent} from './components/client/client-invoices/client-invoices.component';
 import {ClientSalesComponent} from './components/client/client-sales/client-sales.component';
@@ -26,6 +25,9 @@ import {ProductComponent} from './components/client/product/product/product.comp
 import {ClientEntitiesComponent} from './components/client/entity/client-entities/client-entities.component';
 import {EntitiesListComponent} from './components/client/entity/entities-list/entities-list.component';
 import {EntityComponent} from './components/client/entity/entity/entity.component';
+import {ClientInventoryComponent} from './components/client/inventory/client-inventory/client-inventory.component';
+import {ListInventoryComponent} from './components/client/inventory/list-inventory/list-inventory.component';
+import {InventoryComponent} from './components/client/inventory/inventory/inventory.component';
 
 export const routes: Routes = [   // Redirect to the login page initially
   {path: '', redirectTo: 'app/login', pathMatch: 'full'},
@@ -85,7 +87,15 @@ export const routes: Routes = [   // Redirect to the login page initially
     children: [
       {path: 'login', component: LoginComponent},
       {path: 'dashboard', component: ClientDashboardComponent},
-      {path: 'inventory', component: ClientInventoryComponent},
+      {path: 'inventory', component: ClientInventoryComponent,
+        children: [
+          {path: '', component: ListInventoryComponent},
+          {path: 'list', component: ListInventoryComponent},
+          {path: 'add', component: InventoryComponent},
+          {path: 'update', component: InventoryComponent},
+          {path: 'view', component: InventoryComponent},
+
+        ]},
       {path: 'product', component: ClientProductComponent,
         children: [
           {path: '', component: ListProductsComponent},

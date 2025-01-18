@@ -12,7 +12,8 @@ import {Module} from '../models/Module';
 export class RestApiService {
   private apiUrl = 'http://localhost:5000/api/v1';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+  }
 
   // Admin APIs
   registerAdmin(payload: any): Observable<any> {
@@ -80,7 +81,7 @@ export class RestApiService {
         }
       });
     }
-    return this.http.get(`${this.apiUrl}/users`, { params });
+    return this.http.get(`${this.apiUrl}/users`, {params});
   }
 
   getUserById(id: string): Observable<User> {
@@ -114,7 +115,7 @@ export class RestApiService {
         }
       });
     }
-    return this.http.get(`${this.apiUrl}/roles`, { params });
+    return this.http.get(`${this.apiUrl}/roles`, {params});
   }
 
   getRoleById(id: string): Observable<Role> {
@@ -194,7 +195,6 @@ export class RestApiService {
   }
 
 
-
   getProducts(queryParams?: any): Observable<any> {
     let query = '';
     if (queryParams) {
@@ -222,13 +222,30 @@ export class RestApiService {
       query = Object.keys(queryParams)
         .map((key) => `${key}=${queryParams[key]}`)
         .join('&');
-    } return this.http.get(`${this.apiUrl}/entities${query ? '?' + query : ''}`);
+    }
+    return this.http.get(`${this.apiUrl}/entities${query ? '?' + query : ''}`);
   }
 
   saveEntity(payload: any): Observable<any> {
     return payload.id
       ? this.http.put(`${this.apiUrl}/entities/${payload.id}`, payload)
       : this.http.post(`${this.apiUrl}/entities`, payload);
+  }
+
+  getInventories(queryParams?: any): Observable<any> {
+    let query = '';
+    if (queryParams) {
+      query = Object.keys(queryParams)
+        .map((key) => `${key}=${queryParams[key]}`)
+        .join('&');
+    }
+    return this.http.get(`${this.apiUrl}/inventory${query ? '?' + query : ''}`);
+  }
+
+  saveInventory(payload: any): Observable<any> {
+    return payload.id
+      ? this.http.put(`${this.apiUrl}/inventory/${payload.id}`, payload)
+      : this.http.post(`${this.apiUrl}/inventory`, payload);
   }
 
 }
