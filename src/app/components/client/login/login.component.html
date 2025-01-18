@@ -1,1 +1,21 @@
-<p>login works!</p>
+<div class="login-container">
+  <p-card>
+    <form [formGroup]="loginForm">
+      <div class="p-fluid field-stack">
+        <p-toast />
+        <p-floatlabel variant="on">
+          <input pInputText id="email" formControlName="email" autocomplete="off"/>
+          <label for="email">Email</label>
+        </p-floatlabel>
+
+        <p-floatlabel variant="on">
+          <p-password id="password" formControlName="password" autocomplete="off" [toggleMask]="true"/>
+          <label for="password">Password</label>
+        </p-floatlabel>
+        <p-button label="Login" [raised]="true"  severity="danger"
+                  (click)="login()"/>
+
+      </div>
+    </form>
+  </p-card>
+</div>

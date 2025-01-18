@@ -1,0 +1,36 @@
+<div class="admin-layout">
+  <!-- Header -->
+  <header>
+    <p-toolbar>
+      <div class="p-toolbar-group-left">
+        <p-button
+          icon="pi pi-bars"
+          class="p-button-text"
+          (click)="toggleSidebar()"
+        ></p-button>
+        <span class="header-title">Client Panel</span>
+      </div>
+      <div class="p-toolbar-group-right">
+        <p-button  label="Logout" icon="pi pi-sign-out" class="p-button-danger"></p-button>
+      </div>
+    </p-toolbar>
+  </header>
+
+  <!-- Sidebar -->
+  <p-sidebar [(visible)]="visibleSidebar1" [baseZIndex]="10000">
+    <h3>Navigation</h3>
+    <p-menu [model]="menuItems"></p-menu>
+  </p-sidebar>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <section class="content">
+      <router-outlet></router-outlet>
+    </section>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 Admin Panel. All rights reserved.</p>
+  </footer>
+</div>

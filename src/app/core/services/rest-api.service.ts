@@ -187,4 +187,26 @@ export class RestApiService {
   deleteModule(id: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/modules/${id}`);
   }
+
+
+  login(payload: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/users/login`, payload);
+  }
+
+
+
+  getProducts(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/products`);
+  }
+
+  saveProduct(payload: any): Observable<any> {
+    return payload._id
+      ? this.http.put(`${this.apiUrl}/${payload._id}`, payload)
+      : this.http.post(`${this.apiUrl}`, payload);
+  }
+
+  deleteProduct(productId: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${productId}`);
+  }
+
 }

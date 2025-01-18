@@ -1,0 +1,137 @@
+<p-card class="p-mb-4 p-shadow-3">
+  <div class="text-center">
+    <h3>{{ productForm.get('sku')?.value ? 'Edit Product' : 'Create New Product' }}</h3>
+  </div>
+  <div>
+    <form [formGroup]="productForm" class="formgrid grid">
+      <!-- Product Name -->
+      <div class="field col-12 md:col-6">
+        <p-floatLabel variant="on">
+          <input
+            id="productName"
+            type="text"
+            pInputText
+            formControlName="productName"
+            class="w-full"
+          />
+          <label for="productName">Product Name</label>
+        </p-floatLabel>
+      </div>
+
+      <!-- SKU -->
+      <div class="field col-12 md:col-6">
+        <p-floatLabel variant="on">
+          <input
+            id="sku"
+            type="text"
+            pInputText
+            formControlName="sku"
+            class="w-full"
+          />
+          <label for="sku">SKU</label>
+        </p-floatLabel>
+      </div>
+
+      <!-- Category -->
+      <div class="field col-12 md:col-6">
+        <p-floatLabel variant="on">
+          <input
+            id="category"
+            type="text"
+            pInputText
+            formControlName="category"
+            class="w-full"
+          />
+          <label for="category">Category</label>
+        </p-floatLabel>
+      </div>
+
+      <!-- Brand Name -->
+      <div class="field col-12 md:col-6">
+        <p-floatLabel variant="on">
+          <input
+            id="brandName"
+            type="text"
+            pInputText
+            formControlName="brandName"
+            class="w-full"
+          />
+          <label for="brandName">Brand Name</label>
+        </p-floatLabel>
+      </div>
+
+      <!-- Price Details -->
+      <div class="field col-12 p-mb-4 my-3">
+        <div formGroupName="price" class="grid">
+          <div class="field col-12 md:col-6">
+            <p-floatLabel variant="on">
+              <input
+                id="unitPurchasePrice"
+                type="number"
+                pInputText
+                formControlName="unitPurchasePrice"
+                class="w-full"
+              />
+              <label for="unitPurchasePrice">Unit Purchase Price</label>
+            </p-floatLabel>
+          </div>
+          <div class="field col-12 md:col-6">
+            <p-floatLabel variant="on">
+              <input
+                id="retailPrice"
+                type="number"
+                pInputText
+                formControlName="retailPrice"
+                class="w-full"
+              />
+              <label for="retailPrice">Retail Price</label>
+            </p-floatLabel>
+          </div>
+          <div class="field col-12 md:col-4">
+            <p-floatLabel variant="on">
+              <input
+                id="taxPercentage"
+                type="number"
+                pInputText
+                formControlName="taxPercentage"
+                class="w-full"
+              />
+              <label for="taxPercentage">Tax Percentage</label>
+            </p-floatLabel>
+          </div>
+          <div class="field col-12 md:col-4">
+            <p-floatLabel variant="on">
+              <input
+                id="discountPercentage"
+                type="number"
+                pInputText
+                formControlName="discountPercentage"
+                class="w-full"
+              />
+              <label for="discountPercentage">Discount Percentage</label>
+            </p-floatLabel>
+          </div>
+          <div class="field col-12 md:col-4">
+            <div class="flex items-center gap-1">
+              <p-checkbox
+                id="taxInclusive"
+                formControlName="taxInclusive"
+                binary="true"
+              />
+              <label for="taxInclusive" class="ml-2">Tax Inclusive</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="col-12 flex justify-content-end">
+        <p-button
+          label="Submit"
+          class="p-button-primary p-button-lg"
+          (click)="onSubmit()"
+        ></p-button>
+      </div>
+    </form>
+  </div>
+</p-card>
