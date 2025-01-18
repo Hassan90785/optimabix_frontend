@@ -43,7 +43,6 @@ export class InventoryComponent implements OnInit, OnDestroy {
       vendorId: ['', Validators.required],
       barcode: ['', Validators.required],
       batches: this.fb.group({
-        batchId: ['', Validators.required],
         quantity: [0, Validators.required],
         purchasePrice: [0, Validators.required],
         totalCost: [0, Validators.required],

@@ -26,7 +26,7 @@ export class ClientHomeComponent {
     { label: 'Product', icon: 'pi pi-users', routerLink: ['/app/product'] },
     { label: 'Entity', icon: 'pi pi-lock', routerLink: ['/app/entity'] },
     { label: 'Inventory', icon: 'pi pi-cog', routerLink: ['/app/inventory'] },
-    { label: 'Modules', icon: 'pi pi-cog', routerLink: ['/admin/modules'] },
+    { label: 'POS', icon: 'pi pi-cog', routerLink: ['/app/pos'] },
   ];
 
   toggleSidebar(): void {

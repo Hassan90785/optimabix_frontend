@@ -242,6 +242,16 @@ export class RestApiService {
     return this.http.get(`${this.apiUrl}/inventory${query ? '?' + query : ''}`);
   }
 
+  getAvailableInventories(queryParams?: any): Observable<any> {
+    let query = '';
+    if (queryParams) {
+      query = Object.keys(queryParams)
+        .map((key) => `${key}=${queryParams[key]}`)
+        .join('&');
+    }
+    return this.http.get(`${this.apiUrl}/inventory/getAvailable${query ? '?' + query : ''}`);
+  }
+
   saveInventory(payload: any): Observable<any> {
     return payload.id
       ? this.http.put(`${this.apiUrl}/inventory/${payload.id}`, payload)

@@ -1,1 +1,179 @@
-<p>client-pos works!</p>
+<p-card class="p-shadow-3">
+  <div class="p-card-header flex justify-content-between align-items-center">
+    <div class="flex align-items-center">
+      <span><strong>Cashier:</strong> {{ cashierName }}</span>
+    </div>
+    <h2 class="text-center">Point of Sale</h2>
+    <div class="flex align-items-center">
+      <span><strong>Date:</strong> {{ currentDateTime }}</span>
+    </div>
+  </div>
+
+  <div class="p-card-body">
+    <div class="formgrid grid">
+      <!-- Scanner Input -->
+      <div class="field col-12 md:col-6">
+        <p-floatLabel variant="on">
+          <input
+            id="scanner"
+            type="text"
+            pInputText
+            [(ngModel)]="scannedCode"
+            (keyup.enter)="onScan()"
+            placeholder="Scan or Enter Barcode"
+            class="w-full"
+          />
+        </p-floatLabel>
+      </div>
+
+      <!-- Product Dropdown -->
+      <div class="field col-12 md:col-6">
+        <p-floatLabel variant="on">
+          <p-dropdown
+            id="productDropdown"
+            class="w-full"
+            [options]="productOptions"
+            [(ngModel)]="selectedProduct"
+            optionLabel="name"
+            optionValue="id"
+            placeholder="Select Product"
+            (onChange)="onProductSelect()"
+          ></p-dropdown>
+        </p-floatLabel>
+      </div>
+    </div>
+
+    <!-- Item Table -->
+    <p-table [value]="cartItems" class="p-mt-3" >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Item</th>
+          <th>Price</th>
+          <th>Quantity</th>
+          <th>Total</th>
+          <th>Actions</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item>
+        <tr>
+          <td>{{ item.name }}</td>
+          <td>{{ item.price | currency }}</td>
+          <td>
+            <input
+              type="number"
+              pInputText
+              [(ngModel)]="item.quantity"
+              (change)="updateItemTotal(item)"
+              class="w-6rem"
+            />
+          </td>
+          <td>{{ item.total | currency }}</td>
+          <td>
+            <button
+              pButton
+              icon="pi pi-trash"
+              class="p-button-danger p-button-text"
+              (click)="removeItem(item)"
+            ></button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+
+    <!-- Summary Section -->
+    <div class="formgrid grid p-mt-3">
+      <div class="field col-12 md:col-4">
+        <p-floatLabel variant="on">
+          <input
+            id="subtotal"
+            type="text"
+            pInputText
+            [(ngModel)]="subtotal"
+            readonly
+            class="w-full"
+          />
+          <label for="subtotal">Subtotal</label>
+        </p-floatLabel>
+      </div>
+      <div class="field col-12 md:col-4">
+        <p-floatLabel variant="on">
+          <input
+            id="tax"
+            type="text"
+            pInputText
+            [(ngModel)]="tax"
+            readonly
+            class="w-full"
+          />
+          <label for="tax">Tax</label>
+        </p-floatLabel>
+      </div>
+      <div class="field col-12 md:col-4">
+        <p-floatLabel variant="on">
+          <input
+            id="total"
+            type="text"
+            pInputText
+            [(ngModel)]="total"
+            readonly
+            class="w-full"
+          />
+          <label for="total">Total Payable</label>
+        </p-floatLabel>
+      </div>
+    </div>
+
+    <!-- Payment Actions -->
+    <div class="flex justify-content-end p-mt-3">
+      <p-button label="Clear Cart" class="p-button-text p-button-danger" (click)="clearCart()"></p-button>
+      <p-button label="Checkout" class="p-button-primary p-ml-2" (click)="showCheckoutDialog()"></p-button>
+    </div>
+  </div>
+</p-card>
+
+<!-- Checkout Dialog -->
+<p-dialog [(visible)]="checkoutDialogVisible" header="Checkout" [style]="{ width: '50vw' }" [closable]="false">
+  <div class="formgrid grid my-3">
+    <!-- Payment Method -->
+    <div class="field col-6">
+      <p-floatLabel variant="on">
+        <p-dropdown
+          id="paymentMethod"
+          class="w-full"
+          [options]="paymentMethods"
+          [(ngModel)]="selectedPaymentMethod"
+          placeholder="Select Payment Method"
+        ></p-dropdown>
+      </p-floatLabel>
+    </div>   <!-- Total Payable -->
+    <div class="field col-6">
+      <p-floatLabel variant="on">
+        <input id="dialogTotal" type="text"  class="w-full" pInputText [(ngModel)]="total" readonly />
+        <label for="dialogTotal">Total Payable</label>
+      </p-floatLabel>
+    </div>
+
+    <!-- Paid Amount -->
+    <div class="field col-6">
+      <p-floatLabel variant="on">
+        <input id="paidAmount" type="number"  class="w-full" pInputText [(ngModel)]="paidAmount" (input)="updateBalance()" />
+        <label for="paidAmount">Paid Amount</label>
+      </p-floatLabel>
+    </div>
+
+    <!-- Balance Amount -->
+    <div class="field col-6">
+      <p-floatLabel variant="on">
+        <input id="balanceAmount" type="text"  class="w-full" pInputText [(ngModel)]="balanceAmount" readonly />
+        <label for="balanceAmount">Balance Amount</label>
+      </p-floatLabel>
+    </div>
+
+
+  </div>
+
+  <div class="flex justify-content-end p-mt-3">
+    <p-button label="Cancel" class="p-button-text" (click)="checkoutDialogVisible = false"></p-button>
+    <p-button label="Confirm" class="p-button-primary p-ml-2" (click)="confirmCheckout()"></p-button>
+  </div>
+</p-dialog>
