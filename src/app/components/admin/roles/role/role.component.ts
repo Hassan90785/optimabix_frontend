@@ -99,14 +99,6 @@ export class RoleComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.roleForm.invalid) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Validation Error',
-        detail: 'Please fill all required fields correctly.',
-      });
-      return;
-    }
 
     const payload = this.roleForm.value;
 

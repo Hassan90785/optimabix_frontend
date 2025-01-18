@@ -10,6 +10,7 @@ import {InputText} from 'primeng/inputtext';
 import {TextareaModule} from 'primeng/textarea';
 import {Card} from 'primeng/card';
 import {CommonModule} from '@angular/common';
+import {Checkbox} from 'primeng/checkbox';
 
 @Component({
   selector: 'app-module',
@@ -17,9 +18,9 @@ import {CommonModule} from '@angular/common';
     CommonModule,
     DropdownModule,
     ReactiveFormsModule,
-    Button,TextareaModule,
+    Button, TextareaModule,
     FloatLabel,
-    InputText,Card
+    InputText, Card, Checkbox
   ],
   templateUrl: './module.component.html',
   standalone: true,
@@ -40,7 +41,7 @@ export class ModuleComponent implements OnInit {
       description: [''],
       icon: [''],
       operations: this.fb.array([]),
-      accessStatus: ['', Validators.required],
+      accessStatus: ['Active', Validators.required],
     });
   }
 
