@@ -5,6 +5,7 @@ import {AdminStore} from '../../../../core/stores/admin.store';
 import {Button} from 'primeng/button';
 import {TableModule} from 'primeng/table';
 import {Router} from '@angular/router';
+import {AuthService} from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-list-products',
@@ -21,17 +22,17 @@ export class ListProductsComponent implements OnInit, OnDestroy {
   totalRecords: number = 0;
   subscriptions: Subscription = new Subscription();
 
-  constructor(private apiService: RestApiService, private router: Router) {
+  constructor(private apiService: RestApiService, private router: Router, private auth: AuthService) {
   }
 
   ngOnInit(): void {
     this.fetchProducts();
   }
 
-  fetchProducts(): void {
+  fetchProducts(page: number = 1, limit: number = 10, sort: string = 'createdAt'): void {
     AdminStore.setLoader(true);
     this.subscriptions.add(
-      this.apiService.getProducts().subscribe({
+      this.apiService.getProducts({ page, limit, sort, companyId:this.auth.info.companyId }).subscribe({
         next: (response: any) => {
           this.products = response.data.products;
           this.totalRecords = response.data.totalRecords;

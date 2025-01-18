@@ -11,6 +11,7 @@ import {FloatLabel} from 'primeng/floatlabel';
 import {InputText} from 'primeng/inputtext';
 import {Password} from 'primeng/password';
 import {Toast} from 'primeng/toast';
+import {AuthService} from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -37,6 +38,7 @@ export class LoginComponent  implements OnInit {
     private fb: FormBuilder,
     private apiService: RestApiService,
     private messageService: MessageService,
+    private auth: AuthService,
     private router: Router
   ) {
     this.loginForm = this.fb.group({
@@ -57,6 +59,7 @@ export class LoginComponent  implements OnInit {
         localStorage.setItem('token', res.data.token);
         localStorage.setItem('user', JSON.stringify(res.data.user));
         AdminStore.setLoader(false);
+        this.auth.user = res.data.user
         this.router.navigate(['/app/dashboard']);
         // this.router.navigate(['/admin/companies']);
       },

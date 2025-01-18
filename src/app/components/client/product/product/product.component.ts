@@ -74,7 +74,7 @@ export class ProductComponent implements OnInit, OnDestroy {
         next: (resp:any) => {
           console.log('resp: ', resp);
           if(resp && resp.status) {
-            this.router.navigate(['/app/products']);
+            this.router.navigate(['/app/product/list']);
           }
           AdminStore.setLoader(false);
         },

@@ -195,8 +195,14 @@ export class RestApiService {
 
 
 
-  getProducts(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/products`);
+  getProducts(queryParams?: any): Observable<any> {
+    let query = '';
+    if (queryParams) {
+      query = Object.keys(queryParams)
+        .map((key) => `${key}=${queryParams[key]}`)
+        .join('&');
+    }
+    return this.http.get(`${this.apiUrl}/products${query ? '?' + query : ''}`);
   }
 
   saveProduct(payload: any): Observable<any> {
