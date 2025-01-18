@@ -1,6 +1,13 @@
 <div class="p-card">
-  <div class="p-card-header">
+
+  <div class="p-card-header p-d-flex p-jc-between p-ai-center">
     <h2>User List</h2>
+    <p-button
+      label="Add User"
+      icon="pi pi-plus"
+      class="p-button-primary"
+      (click)="onAddUser()"
+    ></p-button>
   </div>
   <div class="p-card-body">
     <p-table

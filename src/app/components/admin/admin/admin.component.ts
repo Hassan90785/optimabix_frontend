@@ -28,6 +28,7 @@ export class AdminComponent {
     { label: 'Users', icon: 'pi pi-users', routerLink: ['/admin/users'] },
     { label: 'Roles', icon: 'pi pi-lock', routerLink: ['/admin/roles'] },
     { label: 'Companies', icon: 'pi pi-cog', routerLink: ['/admin/companies'] },
+    { label: 'Modules', icon: 'pi pi-cog', routerLink: ['/admin/modules'] },
   ];
 
   toggleSidebar(): void {

@@ -4,6 +4,7 @@ import {Observable} from 'rxjs';
 import {Company} from '../models/Company';
 import {User} from '../models/User';
 import {Role} from '../models/Role';
+import {Module} from '../models/Module';
 
 @Injectable({
   providedIn: 'root',
@@ -130,5 +131,60 @@ export class RestApiService {
 
   deleteRole(id: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/roles/${id}`);
+  }
+
+
+  // Module APIs
+
+  /**
+   * @desc Create a new module
+   * @param payload Module payload
+   * @returns Observable<any>
+   */
+  createModule(payload: Module): Observable<any> {
+    return this.http.post(`${this.apiUrl}/modules`, payload);
+  }
+
+  /**
+   * @desc Get all modules with optional query parameters
+   * @param queryParams Optional query parameters: page, limit, status
+   * @returns Observable<any>
+   */
+  getAllModules(queryParams?: any): Observable<any> {
+    let query = '';
+    if (queryParams) {
+      query = Object.keys(queryParams)
+        .map((key) => `${key}=${queryParams[key]}`)
+        .join('&');
+    }
+    return this.http.get(`${this.apiUrl}/modules${query ? '?' + query : ''}`);
+  }
+
+  /**
+   * @desc Get a module by ID
+   * @param id Module ID
+   * @returns Observable<any>
+   */
+  getModuleById(id: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/modules/${id}`);
+  }
+
+  /**
+   * @desc Update a module by ID
+   * @param id Module ID
+   * @param payload Updated module payload
+   * @returns Observable<any>
+   */
+  updateModule(id: string, payload: Partial<Module>): Observable<any> {
+    return this.http.put(`${this.apiUrl}/modules/${id}`, payload);
+  }
+
+  /**
+   * @desc Delete a module by ID
+   * @param id Module ID
+   * @returns Observable<any>
+   */
+  deleteModule(id: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/modules/${id}`);
   }
 }

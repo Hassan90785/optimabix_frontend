@@ -1,0 +1,126 @@
+<p-card class="p-mb-4 p-shadow-3">
+  <div class="text-center">
+    <h3>{{ module ? 'Edit Module' : 'Create New Module' }}</h3>
+  </div>
+  <div>
+    <form [formGroup]="moduleForm" class="formgrid grid">
+      <!-- Module Name -->
+      <div class="field col-12 md:col-6">
+        <p-floatLabel variant="on">
+          <input
+            id="moduleName"
+            type="text"
+            pInputText
+            formControlName="moduleName"
+            class="w-full"
+          />
+          <label for="moduleName">Module Name</label>
+        </p-floatLabel>
+      </div>
+
+      <!-- Description -->
+      <div class="field col-12">
+        <p-floatLabel variant="on">
+          <textarea
+            id="description"
+            formControlName="description"
+            rows="3"
+            class="w-full"
+          ></textarea>
+          <label for="description">Description</label>
+        </p-floatLabel>
+      </div>
+
+      <!-- Icon -->
+      <div class="field col-12">
+        <p-floatLabel variant="on">
+          <input
+            id="icon"
+            type="text"
+            pInputText
+            formControlName="icon"
+            class="w-full"
+          />
+          <label for="icon">Icon</label>
+        </p-floatLabel>
+      </div>
+
+      <!-- Operations -->
+      <fieldset class="p-mb-4">
+        <legend>Operations</legend>
+        <div formArrayName="operations" class="grid">
+          <div
+            *ngFor="let operation of operations.controls; let i = index"
+            [formGroupName]="i"
+            class="grid p-mb-3"
+          >
+            <div class="field col-12 md:col-4">
+              <p-floatLabel variant="on">
+                <input
+                  type="text"
+                  pInputText
+                  formControlName="name"
+                  class="w-full"
+                />
+                <label>Operation Name</label>
+              </p-floatLabel>
+            </div>
+            <div class="field col-12 md:col-4">
+              <p-checkbox
+                binary="true"
+                formControlName="isEnabled"
+                label="Enabled"
+                class="w-full"
+              ></p-checkbox>
+            </div>
+            <div class="field col-12 md:col-4">
+              <p-floatLabel variant="on">
+                <input
+                  type="text"
+                  pInputText
+                  formControlName="routePath"
+                  class="w-full"
+                />
+                <label>Route Path</label>
+              </p-floatLabel>
+            </div>
+            <p-button
+              icon="pi pi-minus"
+              class="p-button-danger p-button-sm"
+              (click)="removeOperation(i)"
+            ></p-button>
+          </div>
+        </div>
+        <p-button
+          label="Add Operation"
+          icon="pi pi-plus"
+          class="p-button-sm mt-3"
+          (click)="addOperation()"
+        ></p-button>
+      </fieldset>
+
+      <!-- Access Status -->
+      <div class="field col-12 md:col-6">
+        <p-dropdown
+          id="accessStatus"
+          formControlName="accessStatus"
+          [options]="[
+            { label: 'Active', value: 'Active' },
+            { label: 'InActive', value: 'InActive' }
+          ]"
+          placeholder="Select Access Status"
+          class="w-full"
+        ></p-dropdown>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="col-12 flex justify-content-end">
+        <p-button
+          label="Submit"
+          class="p-button-primary p-button-lg"
+          (click)="onSubmit()"
+        ></p-button>
+      </div>
+    </form>
+  </div>
+</p-card>

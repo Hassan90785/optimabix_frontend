@@ -1,23 +1,25 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {User} from '../../../core/models/User';
 import {Subscription} from 'rxjs';
-import {RestApiService} from '../../../core/services/rest-api.service';
-import {MessageService} from 'primeng/api';
+import {MessageService, PrimeTemplate} from 'primeng/api';
 import {Button} from 'primeng/button';
 import {TableModule} from 'primeng/table';
+import {User} from '../../../../core/models/User';
+import {RestApiService} from '../../../../core/services/rest-api.service';
+import {Router} from '@angular/router';
 
 @Component({
-  selector: 'app-admin-users',
+  selector: 'app-user-listing',
   imports: [
     Button,
+    PrimeTemplate,
     TableModule
   ],
   providers: [MessageService],
-  templateUrl: './admin-users.component.html',
+  templateUrl: './user-listing.component.html',
   standalone: true,
-  styleUrl: './admin-users.component.css'
+  styleUrl: './user-listing.component.scss'
 })
-export class AdminUsersComponent implements OnInit, OnDestroy {
+export class UserListingComponent  implements OnInit, OnDestroy {
   users: User[] = [];
   totalRecords: number = 0;
   loading: boolean = true;
@@ -25,8 +27,9 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
 
   constructor(
     private apiService: RestApiService,
+    private router: Router,
     private messageService: MessageService
-) {}
+  ) {}
 
   ngOnInit(): void {
     this.fetchUsers();
@@ -70,29 +73,29 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
 
   onDelete(user: User): void {
     if (confirm(`Are you sure you want to delete ${user.fullName}?`)) {
-    this.loading = true;
-    this.subscriptions.add(
-      this.apiService.deleteUser(user.id!).subscribe({
-        next: () => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Deleted',
-            detail: `${user.fullName} has been deleted successfully.`
-          });
-          this.fetchUsers();
-        },
-        error: (error) => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: error.message
-          });
-          this.loading = false;
-        }
-      })
-    );
+      this.loading = true;
+      this.subscriptions.add(
+        this.apiService.deleteUser(user.id!).subscribe({
+          next: () => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Deleted',
+              detail: `${user.fullName} has been deleted successfully.`
+            });
+            this.fetchUsers();
+          },
+          error: (error) => {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: error.message
+            });
+            this.loading = false;
+          }
+        })
+      );
+    }
   }
-}
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
@@ -101,5 +104,8 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
   onView(user: any) {
 
   }
-}
 
+  onAddUser() {
+    this.router.navigate(['admin/users/add']);
+  }
+}

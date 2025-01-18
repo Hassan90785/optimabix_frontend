@@ -1,0 +1,141 @@
+<p-card class="p-mb-4 p-shadow-3">
+  <div class="text-center">
+    <h3>{{ user ? 'Edit User' : 'Create New User' }}</h3>
+  </div>
+  <div>
+    <form [formGroup]="userForm" class="formgrid grid">
+      <!-- Full Name -->
+      <div class="field col-12 md:col-6">
+        <p-floatLabel variant="on">
+          <input
+            id="fullName"
+            type="text"
+            pInputText
+            formControlName="fullName"
+            class="w-full"
+          />
+          <label for="fullName">Full Name</label>
+        </p-floatLabel>
+      </div>
+
+      <!-- Username -->
+      <div class="field col-12 md:col-6">
+        <p-floatLabel variant="on">
+          <input
+            id="username"
+            type="text"
+            pInputText
+            formControlName="username"
+            class="w-full"
+          />
+          <label for="username">Username</label>
+        </p-floatLabel>
+      </div>
+
+      <!-- Email -->
+      <div class="field col-12 md:col-6">
+        <p-floatLabel variant="on">
+          <input
+            id="email"
+            type="email"
+            pInputText
+            formControlName="email"
+            class="w-full"
+          />
+          <label for="email">Email</label>
+        </p-floatLabel>
+      </div>
+
+      <!-- Password -->
+      <div class="field col-12 md:col-6" *ngIf="!user?.id">
+        <p-floatLabel variant="on">
+          <input
+            id="password"
+            type="password"
+            pInputText
+            formControlName="password"
+            class="w-full"
+          />
+          <label for="password">Password</label>
+        </p-floatLabel>
+      </div>
+
+      <!-- Phone -->
+      <div class="field col-12 md:col-6">
+        <p-floatLabel variant="on">
+          <input
+            id="phone"
+            type="text"
+            pInputText
+            formControlName="phone"
+            class="w-full"
+          />
+          <label for="phone">Phone</label>
+        </p-floatLabel>
+      </div>
+
+      <!-- Role -->
+      <div class="field col-12 md:col-6">
+        <p-dropdown
+          id="role"
+          formControlName="role"
+          [options]="roles"
+          optionLabel="name"
+          placeholder="Select Role"
+          class="w-full"
+        ></p-dropdown>
+      </div>
+
+      <!-- Company -->
+      <div class="field col-12 md:col-6">
+        <p-dropdown
+          id="companyId"
+          formControlName="companyId"
+          [options]="companies"
+          optionLabel="name"
+          placeholder="Select Company"
+          class="w-full"
+        ></p-dropdown>
+      </div>
+
+      <!-- Access Status -->
+      <div class="field col-12 md:col-6">
+        <p-dropdown
+          id="accessStatus"
+          formControlName="accessStatus"
+          [options]="[
+            { label: 'Active', value: 'Active' },
+            { label: 'Suspended', value: 'Suspended' },
+            { label: 'Revoked', value: 'Revoked' },
+            { label: 'Trial', value: 'Trial' },
+            { label: 'Expired', value: 'Expired' }
+          ]"
+          placeholder="Select Access Status"
+          class="w-full"
+        ></p-dropdown>
+      </div>
+
+      <!-- Access Status Reason -->
+      <div class="field col-12">
+        <p-floatLabel variant="on">
+          <textarea
+            id="accessStatusReason"
+            formControlName="accessStatusReason"
+            rows="3"
+            class="w-full"
+          ></textarea>
+          <label for="accessStatusReason">Access Status Reason</label>
+        </p-floatLabel>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="col-12 flex justify-content-end">
+        <p-button
+          label="Submit"
+          class="p-button-primary p-button-lg"
+          (click)="onSubmit()"
+        ></p-button>
+      </div>
+    </form>
+  </div>
+</p-card>
