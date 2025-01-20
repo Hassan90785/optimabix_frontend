@@ -30,9 +30,10 @@ import {RestApiService} from '../../../core/services/rest-api.service';
 })
 export class ClientPosComponent implements OnInit {
   scannedCode: string = '';
-  selectedProduct: string = '';
+  selectedProduct: any = null;
   cartItems: any[] = [];
-  productOptions: { id: string; name: string }[] = [];
+  productOptions: any[] = [];
+  itemsource: any[] = [];
   subtotal: number = 0;
   tax: number = 0;
   total: number = 0;
@@ -57,23 +58,28 @@ export class ClientPosComponent implements OnInit {
   }
 
   loadProducts(): void {
-    this.apiService.getAvailableInventories({companyId:this.auth.info.companyId, includeBatches:true}).subscribe((response) => {
-      console.log('response', response);
-    });
-    // Simulated API call
-    this.productOptions = [
-      {id: '001', name: 'Product A'},
-      {id: '002', name: 'Product B'},
-      {id: '003', name: 'Product C'},
-      {id: '004', name: 'Product D'},
-      {id: '005', name: 'Product E'},
-      {id: '006', name: 'Product F'},
-      {id: '007', name: 'Product G'},
-      {id: '008', name: 'Product H'},
-      {id: '009', name: 'Product I'},
-      {id: '010', name: 'Product J'},
-      {id: '011', name: 'Product K'},
-    ];
+    this.apiService
+      .getAvailableInventories({companyId: this.auth.info.companyId, includeBatches: true})
+      .subscribe(
+        (response) => {
+          if (response && response.data) {
+            this.productOptions = response.data.map((inventory: any) => ({
+              id: inventory.productId,
+              price: inventory.firstAvailableBatch.sellingPrice,
+              name: `${inventory.name} (Qty: ${inventory.totalQuantity})`,
+              availableQuantity: inventory.totalQuantity,
+              disabled: inventory.totalQuantity === 0, // Disable out-of-stock items
+            }));
+
+            console.log('Available products loaded:', this.productOptions);
+          } else {
+            console.warn('No available inventory found.');
+          }
+        },
+        (error) => {
+          console.error('Error fetching available inventory:', error);
+        }
+      );
   }
 
   updateDateTime(): void {
@@ -98,41 +104,108 @@ export class ClientPosComponent implements OnInit {
   }
 
   onProductSelect(): void {
-    const product = this.productOptions.find((p) => p.id === this.selectedProduct);
-    if (product) {
-      this.addItemToCart({...product, price: 100}); // Assign a mock price for the dropdown selection
+    console.log('this.selectedProduct', this.selectedProduct)
+    console.log('this.productOptions', this.productOptions)
+    const selectedInventory = this.productOptions.find((p) => p.id === this.selectedProduct);
+    console.log('selectedInventory', selectedInventory)
+    if (selectedInventory) {
+      // Mock example using firstAvailableBatch details from the API response
+      this.addItemToCart({
+        id: selectedInventory.id,
+        name: selectedInventory.name,
+        price: selectedInventory.price,
+        availableQuantity: selectedInventory.availableQuantity -1,
+      });
     }
+
     // Reset the dropdown value
     setTimeout(() => {
       this.selectedProduct = '';
     }, 1);
   }
 
+
   getProductByBarcode(barcode: string): any {
-    const mockProducts = [
-      {id: '001', name: 'Product A', price: 100},
-      {id: '002', name: 'Product B', price: 200},
-    ];
-    return mockProducts.find((p) => p.id === barcode);
+    const product = this.productOptions.find((p) => p.barcode === barcode);
+    if (product) {
+      return {
+        id: product.productId,
+        name: product.name,
+        price: product.firstAvailableBatch.sellingPrice,
+      };
+    }
+    return null;
   }
+
 
   addItemToCart(product: any): void {
     const existingItem = this.cartItems.find((item) => item.id === product.id);
     if (existingItem) {
-      existingItem.quantity += 1;
-      this.updateItemTotal(existingItem);
+      if (existingItem.quantity < product.availableQuantity) {
+        existingItem.quantity += 1;
+        this.updateItemTotal(existingItem);
+      } else {
+        alert('Insufficient stock available for this product.');
+        return;
+      }
     } else {
-      this.cartItems.push({...product, quantity: 1, total: product.price});
+      if (product.availableQuantity > 0) {
+        this.cartItems.push({ ...product, quantity: 1, total: product.price });
+      } else {
+        alert('Insufficient stock available for this product.');
+        return;
+      }
     }
+
+    // Reduce available quantity in productOptions
+    const selectedProduct = this.productOptions.find((p) => p.id === product.id);
+    if (selectedProduct) {
+      selectedProduct.availableQuantity -= 1;
+      selectedProduct.name = `${selectedProduct.name.split('(')[0].trim()} (Qty: ${selectedProduct.availableQuantity})`;
+    }
+
     this.calculateTotals();
   }
 
   removeItem(item: any): void {
     this.cartItems = this.cartItems.filter((i) => i.id !== item.id);
+
+    // Restore available quantity in productOptions
+    const selectedProduct = this.productOptions.find((p) => p.id === item.id);
+    if (selectedProduct) {
+      selectedProduct.availableQuantity += item.quantity;
+      selectedProduct.name = `${selectedProduct.name.split('(')[0].trim()} (Qty: ${selectedProduct.availableQuantity})`;
+    }
+
+    this.calculateTotals();
+  }
+
+  updateCartQuantity(productId: string, newQuantity: number): void {
+    const cartItem = this.cartItems.find((item) => item.id === productId);
+    const productOption = this.productOptions.find((p) => p.id === productId);
+
+    if (!cartItem || !productOption) return;
+
+    // Check stock availability
+    if (newQuantity > productOption.availableQuantity) {
+      alert('Insufficient stock available for this product.');
+      return;
+    }
+
+    // Update quantities
+    const delta = newQuantity - cartItem.quantity; // Difference in quantity
+    cartItem.quantity = newQuantity;
+    cartItem.total = cartItem.quantity * cartItem.price;
+
+    // Adjust availableQuantity in productOptions
+    productOption.availableQuantity -= delta;
+    productOption.name = `${productOption.name.split('(')[0].trim()} (Qty: ${productOption.availableQuantity})`;
+
     this.calculateTotals();
   }
 
   updateItemTotal(item: any): void {
+    console.log('item', item)
     item.total = item.quantity * item.price;
     this.calculateTotals();
   }
@@ -160,6 +233,18 @@ export class ClientPosComponent implements OnInit {
   }
 
   confirmCheckout(): void {
+    let outOfStock = false;
+
+    this.cartItems.forEach((item) => {
+      const product = this.productOptions.find((p) => p.id === item.id);
+      if (!product || product.availableQuantity < item.quantity) {
+        alert(`Insufficient stock for product: ${item.name}`);
+        outOfStock = true;
+      }
+    });
+
+    if (outOfStock) return;
+
     if (this.balanceAmount >= 0 && this.selectedPaymentMethod) {
       alert('Checkout successful!');
       this.checkoutDialogVisible = false;
@@ -168,4 +253,8 @@ export class ClientPosComponent implements OnInit {
       alert('Please ensure payment is complete.');
     }
   }
+
+
+
+
 }

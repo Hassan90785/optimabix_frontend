@@ -37,8 +37,11 @@
             optionLabel="name"
             optionValue="id"
             placeholder="Select Product"
-            (onChange)="onProductSelect()"
+            [optionDisabled]="'option => option.disabled'"
+          (onChange)="onProductSelect()"
           ></p-dropdown>
+
+
         </p-floatLabel>
       </div>
     </div>
@@ -63,18 +66,17 @@
               type="number"
               pInputText
               [(ngModel)]="item.quantity"
-              (change)="updateItemTotal(item)"
+              (change)="updateCartQuantity(item.id, item.quantity)"
               class="w-6rem"
             />
           </td>
           <td>{{ item.total | currency }}</td>
           <td>
-            <button
-              pButton
+            <p-button
               icon="pi pi-trash"
               class="p-button-danger p-button-text"
               (click)="removeItem(item)"
-            ></button>
+            ></p-button>
           </td>
         </tr>
       </ng-template>
