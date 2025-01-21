@@ -27,8 +27,7 @@ import {RestApiService} from '../../../core/services/rest-api.service';
   templateUrl: './client-pos.component.html',
   standalone: true,
   styleUrl: './client-pos.component.scss'
-})
-export class ClientPosComponent implements OnInit {
+})export class ClientPosComponent implements OnInit {
   scannedCode: string = '';
   selectedProduct: any = null;
   cartItems: any[] = [];
@@ -40,13 +39,15 @@ export class ClientPosComponent implements OnInit {
   currentDateTime: string = '';
   cashierName: string = 'N/A';
   checkoutDialogVisible: boolean = false;
-  paymentMethods: { label: string; value: string }[] = [
-    {label: 'Cash', value: 'cash'},
-    {label: 'Credit Card', value: 'credit'},
-    {label: 'Debit Card', value: 'debit'},];
+  paymentMethods = [
+    { label: 'Cash', value: 'cash' },
+    { label: 'Credit Card', value: 'credit' },
+    { label: 'Debit Card', value: 'debit' },
+  ];
   selectedPaymentMethod: string = 'cash';
   paidAmount: number = 0;
   balanceAmount: number = 0;
+
   auth = inject(AuthService);
   apiService = inject(RestApiService);
 
@@ -54,39 +55,43 @@ export class ClientPosComponent implements OnInit {
     this.cashierName = this.auth.info.name;
     this.loadProducts();
     this.updateDateTime();
-    setInterval(() => this.updateDateTime(), 1000); // Update time every second
+    setInterval(() => this.updateDateTime(), 1000);
   }
 
+  // Load products from API
   loadProducts(): void {
     this.apiService
-      .getAvailableInventories({companyId: this.auth.info.companyId, includeBatches: true})
+      .getAvailableInventories({ companyId: this.auth.info.companyId, includeBatches: true })
       .subscribe(
         (response) => {
-          if (response && response.data) {
-            this.productOptions = response.data.map((inventory: any) => ({
-              id: inventory.productId,
-              price: inventory.firstAvailableBatch.sellingPrice,
-              name: `${inventory.name} (Qty: ${inventory.totalQuantity})`,
-              availableQuantity: inventory.totalQuantity,
-              disabled: inventory.totalQuantity === 0, // Disable out-of-stock items
-            }));
-
+          if (response?.data) {
+            this.productOptions = response.data.map(this.mapProductOption);
             console.log('Available products loaded:', this.productOptions);
           } else {
             console.warn('No available inventory found.');
           }
         },
-        (error) => {
-          console.error('Error fetching available inventory:', error);
-        }
+        (error) => console.error('Error fetching available inventory:', error)
       );
   }
 
-  updateDateTime(): void {
-    const now = new Date();
-    this.currentDateTime = now.toLocaleString();
+  // Map product option
+  private mapProductOption(inventory: any): any {
+    return {
+      id: inventory.productId,
+      price: inventory.firstAvailableBatch.sellingPrice,
+      name: `${inventory.name} (Qty: ${inventory.totalQuantity})`,
+      availableQuantity: inventory.totalQuantity,
+      disabled: inventory.totalQuantity === 0,
+    };
   }
 
+  // Update current date and time
+  updateDateTime(): void {
+    this.currentDateTime = new Date().toLocaleString();
+  }
+
+  // Handle barcode scan
   onScan(): void {
     if (this.scannedCode) {
       const product = this.getProductByBarcode(this.scannedCode);
@@ -95,89 +100,107 @@ export class ClientPosComponent implements OnInit {
       } else {
         alert('Product not found!');
       }
-
-      // Reset the dropdown value
-      setTimeout(() => {
-        this.scannedCode = '';
-      }, 1);
+      this.resetScannedCode();
     }
   }
 
+  // Handle product selection
   onProductSelect(): void {
-    console.log('this.selectedProduct', this.selectedProduct)
-    console.log('this.productOptions', this.productOptions)
     const selectedInventory = this.productOptions.find((p) => p.id === this.selectedProduct);
-    console.log('selectedInventory', selectedInventory)
     if (selectedInventory) {
-      // Mock example using firstAvailableBatch details from the API response
       this.addItemToCart({
         id: selectedInventory.id,
         name: selectedInventory.name,
         price: selectedInventory.price,
-        availableQuantity: selectedInventory.availableQuantity -1,
+        availableQuantity: selectedInventory.availableQuantity,
       });
     }
-
-    // Reset the dropdown value
-    setTimeout(() => {
-      this.selectedProduct = '';
-    }, 1);
+    this.resetSelectedProduct();
   }
 
+  // Reset scanned code
+  private resetScannedCode(): void {
+    setTimeout(() => (this.scannedCode = ''), 1);
+  }
 
+  // Reset selected product
+  private resetSelectedProduct(): void {
+    setTimeout(() => (this.selectedProduct = ''), 1);
+  }
+
+  // Get product by barcode
   getProductByBarcode(barcode: string): any {
-    const product = this.productOptions.find((p) => p.barcode === barcode);
-    if (product) {
-      return {
-        id: product.productId,
-        name: product.name,
-        price: product.firstAvailableBatch.sellingPrice,
-      };
-    }
-    return null;
+    return this.productOptions.find((p) => p.barcode === barcode);
   }
 
-
+  // Add item to cart
   addItemToCart(product: any): void {
     const existingItem = this.cartItems.find((item) => item.id === product.id);
+
     if (existingItem) {
-      if (existingItem.quantity < product.availableQuantity) {
-        existingItem.quantity += 1;
-        this.updateItemTotal(existingItem);
-      } else {
-        alert('Insufficient stock available for this product.');
-        return;
-      }
+      this.updateCartItemQuantity(existingItem, 1);
     } else {
-      if (product.availableQuantity > 0) {
-        this.cartItems.push({ ...product, quantity: 1, total: product.price });
-      } else {
-        alert('Insufficient stock available for this product.');
-        return;
-      }
+      this.addNewCartItem(product);
     }
 
-    // Reduce available quantity in productOptions
-    const selectedProduct = this.productOptions.find((p) => p.id === product.id);
-    if (selectedProduct) {
-      selectedProduct.availableQuantity -= 1;
-      selectedProduct.name = `${selectedProduct.name.split('(')[0].trim()} (Qty: ${selectedProduct.availableQuantity})`;
-    }
-
+    this.reduceAvailableQuantity(product.id, 1);
     this.calculateTotals();
   }
 
+  // Update cart item quantity
+  private updateCartItemQuantity(cartItem: any, increment: number): void {
+    if (cartItem.quantity + increment <= this.getAvailableQuantity(cartItem.id)) {
+      cartItem.quantity += increment;
+      cartItem.total = cartItem.quantity * cartItem.price;
+    } else {
+      alert('Insufficient stock available for this product.');
+    }
+  }
+
+  // Add new item to cart
+  private addNewCartItem(product: any): void {
+    if (product.availableQuantity > 0) {
+      this.cartItems.push({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        quantity: 1,
+        total: product.price,
+      });
+    } else {
+      alert('Insufficient stock available for this product.');
+    }
+  }
+
+  // Reduce available quantity
+  private reduceAvailableQuantity(productId: string, quantity: number): void {
+    const selectedProduct = this.productOptions.find((p) => p.id === productId);
+    if (selectedProduct) {
+      selectedProduct.availableQuantity -= quantity;
+      selectedProduct.name = `${selectedProduct.name.split('(')[0].trim()} (Qty: ${selectedProduct.availableQuantity})`;
+    }
+  }
+
+  // Get available quantity for a product
+  private getAvailableQuantity(productId: string): number {
+    const productOption = this.productOptions.find((p) => p.id === productId);
+    return productOption ? productOption.availableQuantity : 0;
+  }
+
+  // Remove item from cart
   removeItem(item: any): void {
     this.cartItems = this.cartItems.filter((i) => i.id !== item.id);
+    this.restoreAvailableQuantity(item);
+    this.calculateTotals();
+  }
 
-    // Restore available quantity in productOptions
+  // Restore available quantity
+  private restoreAvailableQuantity(item: any): void {
     const selectedProduct = this.productOptions.find((p) => p.id === item.id);
     if (selectedProduct) {
       selectedProduct.availableQuantity += item.quantity;
       selectedProduct.name = `${selectedProduct.name.split('(')[0].trim()} (Qty: ${selectedProduct.availableQuantity})`;
     }
-
-    this.calculateTotals();
   }
 
   updateCartQuantity(productId: string, newQuantity: number): void {
@@ -186,36 +209,37 @@ export class ClientPosComponent implements OnInit {
 
     if (!cartItem || !productOption) return;
 
-    // Check stock availability
-    if (newQuantity > productOption.availableQuantity) {
+    const delta = newQuantity - cartItem.quantity;
+
+    // Validate stock availability for the increase
+    if (delta > 0 && newQuantity > productOption.availableQuantity) {
       alert('Insufficient stock available for this product.');
       return;
     }
 
-    // Update quantities
-    const delta = newQuantity - cartItem.quantity; // Difference in quantity
+    // Update the cart item quantity and total
     cartItem.quantity = newQuantity;
     cartItem.total = cartItem.quantity * cartItem.price;
 
-    // Adjust availableQuantity in productOptions
+    // Adjust the available quantity for the product option
     productOption.availableQuantity -= delta;
+
+    // Update the product option name to reflect the new quantity
     productOption.name = `${productOption.name.split('(')[0].trim()} (Qty: ${productOption.availableQuantity})`;
 
+    console.log('Updated productOption:', productOption);
+    console.log('cartItems', this.cartItems)
     this.calculateTotals();
   }
 
-  updateItemTotal(item: any): void {
-    console.log('item', item)
-    item.total = item.quantity * item.price;
-    this.calculateTotals();
-  }
-
+  // Calculate totals
   calculateTotals(): void {
     this.subtotal = this.cartItems.reduce((sum, item) => sum + item.total, 0);
     this.tax = this.subtotal * 0.1;
     this.total = this.subtotal + this.tax;
   }
 
+  // Clear cart
   clearCart(): void {
     this.cartItems = [];
     this.subtotal = 0;
@@ -223,29 +247,25 @@ export class ClientPosComponent implements OnInit {
     this.total = 0;
   }
 
-
+  // Show checkout dialog
   showCheckoutDialog(): void {
     this.checkoutDialogVisible = true;
   }
 
+  // Update balance amount
   updateBalance(): void {
     this.balanceAmount = this.paidAmount - this.total;
   }
 
+  // Confirm checkout
   confirmCheckout(): void {
-    let outOfStock = false;
-
-    this.cartItems.forEach((item) => {
-      const product = this.productOptions.find((p) => p.id === item.id);
-      if (!product || product.availableQuantity < item.quantity) {
-        alert(`Insufficient stock for product: ${item.name}`);
-        outOfStock = true;
-      }
-    });
-
-    if (outOfStock) return;
+    if (this.cartItems.some((item) => !this.hasSufficientStock(item))) {
+      alert('Insufficient stock available for some products.');
+      return;
+    }
 
     if (this.balanceAmount >= 0 && this.selectedPaymentMethod) {
+      console.log('Checked out items:', this.cartItems);
       alert('Checkout successful!');
       this.checkoutDialogVisible = false;
       this.clearCart();
@@ -254,7 +274,9 @@ export class ClientPosComponent implements OnInit {
     }
   }
 
-
-
-
+  // Check stock availability for an item
+  private hasSufficientStock(item: any): boolean {
+    const product = this.productOptions.find((p) => p.id === item.id);
+    return product ? product.availableQuantity >= item.quantity : false;
+  }
 }
