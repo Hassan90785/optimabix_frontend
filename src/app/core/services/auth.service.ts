@@ -21,7 +21,7 @@ export class AuthService {
     this._user = value;
   }
 
-  get info(): any {
+  get info(): { name: string, id: string, role: string, companyId: string } {
     console.log('this.user', this.user);
     return {
       name: this.user.fullName,

@@ -10,6 +10,7 @@ import {DropdownModule} from 'primeng/dropdown';
 import {Dialog} from 'primeng/dialog';
 import {AuthService} from '../../../core/services/auth.service';
 import {RestApiService} from '../../../core/services/rest-api.service';
+import {POSTransaction, ProductDetails} from '../../../core/models/POSTransaction';
 
 @Component({
   selector: 'app-client-pos',
@@ -27,7 +28,8 @@ import {RestApiService} from '../../../core/services/rest-api.service';
   templateUrl: './client-pos.component.html',
   standalone: true,
   styleUrl: './client-pos.component.scss'
-})export class ClientPosComponent implements OnInit {
+})
+export class ClientPosComponent implements OnInit {
   scannedCode: string = '';
   selectedProduct: any = null;
   cartItems: any[] = [];
@@ -40,13 +42,14 @@ import {RestApiService} from '../../../core/services/rest-api.service';
   cashierName: string = 'N/A';
   checkoutDialogVisible: boolean = false;
   paymentMethods = [
-    { label: 'Cash', value: 'cash' },
-    { label: 'Credit Card', value: 'credit' },
-    { label: 'Debit Card', value: 'debit' },
+    {label: 'Cash', value: 'Cash'},
+    {label: 'Credit Card', value: 'Credit Card'},
+    {label: 'Bank Transfer', value: 'Bank Transfer'},
   ];
-  selectedPaymentMethod: string = 'cash';
+  selectedPaymentMethod: string = 'Cash';
   paidAmount: number = 0;
   balanceAmount: number = 0;
+  discountAmount: number = 0;
 
   auth = inject(AuthService);
   apiService = inject(RestApiService);
@@ -61,7 +64,7 @@ import {RestApiService} from '../../../core/services/rest-api.service';
   // Load products from API
   loadProducts(): void {
     this.apiService
-      .getAvailableInventories({ companyId: this.auth.info.companyId, includeBatches: true })
+      .getAvailableInventories({companyId: this.auth.info.companyId, includeBatches: true})
       .subscribe(
         (response) => {
           if (response?.data) {
@@ -73,17 +76,6 @@ import {RestApiService} from '../../../core/services/rest-api.service';
         },
         (error) => console.error('Error fetching available inventory:', error)
       );
-  }
-
-  // Map product option
-  private mapProductOption(inventory: any): any {
-    return {
-      id: inventory.productId,
-      price: inventory.firstAvailableBatch.sellingPrice,
-      name: `${inventory.name} (Qty: ${inventory.totalQuantity})`,
-      availableQuantity: inventory.totalQuantity,
-      disabled: inventory.totalQuantity === 0,
-    };
   }
 
   // Update current date and time
@@ -118,16 +110,6 @@ import {RestApiService} from '../../../core/services/rest-api.service';
     this.resetSelectedProduct();
   }
 
-  // Reset scanned code
-  private resetScannedCode(): void {
-    setTimeout(() => (this.scannedCode = ''), 1);
-  }
-
-  // Reset selected product
-  private resetSelectedProduct(): void {
-    setTimeout(() => (this.selectedProduct = ''), 1);
-  }
-
   // Get product by barcode
   getProductByBarcode(barcode: string): any {
     return this.productOptions.find((p) => p.barcode === barcode);
@@ -145,6 +127,113 @@ import {RestApiService} from '../../../core/services/rest-api.service';
 
     this.reduceAvailableQuantity(product.id, 1);
     this.calculateTotals();
+  }
+
+  // Remove item from cart
+  removeItem(item: any): void {
+    this.cartItems = this.cartItems.filter((i) => i.id !== item.id);
+    this.restoreAvailableQuantity(item);
+    this.calculateTotals();
+  }
+
+  updateCartQuantity(productId: string, newQuantity: number): void {
+    const cartItem = this.cartItems.find((item) => item.id === productId);
+    const productOption = this.productOptions.find((p) => p.id === productId);
+
+    if (!cartItem || !productOption) return;
+
+    const previousQuantity = cartItem.quantity; // Capture the previous quantity
+    const delta = newQuantity - previousQuantity;
+
+    // Validate stock availability for the increase
+    if (delta > 0 && newQuantity > productOption.availableQuantity) {
+      alert('Insufficient stock available for this product.');
+      return;
+    }
+
+    // Update the cart item quantity and total
+    cartItem.quantity = newQuantity;
+    cartItem.total = cartItem.quantity * cartItem.price;
+
+    // Adjust the available quantity for the product option
+    productOption.availableQuantity -= delta;
+
+    // Update the product option name to reflect the new quantity
+    productOption.name = `${productOption.name.split('(')[0].trim()} (Qty: ${productOption.availableQuantity})`;
+
+    // Log previous and updated values for debugging or display
+    console.log(`Previous Quantity: ${previousQuantity}, Updated Quantity: ${newQuantity}`);
+    console.log('Updated productOption:', productOption);
+    console.log('Cart Items:', this.cartItems);
+
+    this.calculateTotals();
+  }
+
+  // Calculate totals
+  calculateTotals(): void {
+    this.subtotal = this.cartItems.reduce((sum, item) => sum + item.total, 0);
+    this.tax = this.subtotal * 0.1;
+    this.total = this.subtotal + this.tax;
+  }
+
+  // Clear cart
+  clearCart(): void {
+    this.cartItems = [];
+    this.subtotal = 0;
+    this.tax = 0;
+    this.total = 0;
+  }
+
+  // Show checkout dialog
+  showCheckoutDialog(): void {
+    this.checkoutDialogVisible = true;
+  }
+
+  // Update balance amount
+  updateBalance(): void {
+    this.balanceAmount = this.paidAmount - this.total;
+  }
+
+  // Confirm checkout
+  confirmCheckout(): void {
+    if (this.cartItems.some((item) => !this.hasSufficientStock(item))) {
+      alert('Insufficient stock available for some products.');
+      return;
+    }
+
+    if (this.balanceAmount >= 0 && this.selectedPaymentMethod) {
+      console.log('Checked out items:', {...this.cartItems});
+      // alert('Checkout successful!');
+      this.checkoutDialogVisible = false;
+      const payload = this.transactionPayload();
+      this.apiService.posTransactions(payload).subscribe(value => {
+        console.log('value: ', value)
+      })
+      this.clearCart();
+    } else {
+      alert('Please ensure payment is complete.');
+    }
+  }
+
+  // Map product option
+  private mapProductOption(inventory: any): any {
+    return {
+      id: inventory.productId,
+      price: inventory.firstAvailableBatch.sellingPrice,
+      name: `${inventory.name} (Qty: ${inventory.totalQuantity})`,
+      availableQuantity: inventory.totalQuantity,
+      disabled: inventory.totalQuantity === 0,
+    };
+  }
+
+  // Reset scanned code
+  private resetScannedCode(): void {
+    setTimeout(() => (this.scannedCode = ''), 1);
+  }
+
+  // Reset selected product
+  private resetSelectedProduct(): void {
+    setTimeout(() => (this.selectedProduct = ''), 1);
   }
 
   // Update cart item quantity
@@ -187,13 +276,6 @@ import {RestApiService} from '../../../core/services/rest-api.service';
     return productOption ? productOption.availableQuantity : 0;
   }
 
-  // Remove item from cart
-  removeItem(item: any): void {
-    this.cartItems = this.cartItems.filter((i) => i.id !== item.id);
-    this.restoreAvailableQuantity(item);
-    this.calculateTotals();
-  }
-
   // Restore available quantity
   private restoreAvailableQuantity(item: any): void {
     const selectedProduct = this.productOptions.find((p) => p.id === item.id);
@@ -203,75 +285,29 @@ import {RestApiService} from '../../../core/services/rest-api.service';
     }
   }
 
-  updateCartQuantity(productId: string, newQuantity: number): void {
-    const cartItem = this.cartItems.find((item) => item.id === productId);
-    const productOption = this.productOptions.find((p) => p.id === productId);
+  private transactionPayload() {
+    const payload = new POSTransaction();
+    payload.companyId = this.auth.info.companyId;
+    payload.createdBy = this.auth.info.id;
+    payload.products = this.cartItems.map(item =>
+      new ProductDetails({
+        productId: item.id,
+        unitPrice: item.price,
+        quantity: item.quantity,
+        totalPrice: item.price * item.quantity, // Calculate the total price accurately
+      })
+    );
 
-    if (!cartItem || !productOption) return;
 
-    const delta = newQuantity - cartItem.quantity;
-
-    // Validate stock availability for the increase
-    if (delta > 0 && newQuantity > productOption.availableQuantity) {
-      alert('Insufficient stock available for this product.');
-      return;
-    }
-
-    // Update the cart item quantity and total
-    cartItem.quantity = newQuantity;
-    cartItem.total = cartItem.quantity * cartItem.price;
-
-    // Adjust the available quantity for the product option
-    productOption.availableQuantity -= delta;
-
-    // Update the product option name to reflect the new quantity
-    productOption.name = `${productOption.name.split('(')[0].trim()} (Qty: ${productOption.availableQuantity})`;
-
-    console.log('Updated productOption:', productOption);
-    console.log('cartItems', this.cartItems)
-    this.calculateTotals();
-  }
-
-  // Calculate totals
-  calculateTotals(): void {
-    this.subtotal = this.cartItems.reduce((sum, item) => sum + item.total, 0);
-    this.tax = this.subtotal * 0.1;
-    this.total = this.subtotal + this.tax;
-  }
-
-  // Clear cart
-  clearCart(): void {
-    this.cartItems = [];
-    this.subtotal = 0;
-    this.tax = 0;
-    this.total = 0;
-  }
-
-  // Show checkout dialog
-  showCheckoutDialog(): void {
-    this.checkoutDialogVisible = true;
-  }
-
-  // Update balance amount
-  updateBalance(): void {
-    this.balanceAmount = this.paidAmount - this.total;
-  }
-
-  // Confirm checkout
-  confirmCheckout(): void {
-    if (this.cartItems.some((item) => !this.hasSufficientStock(item))) {
-      alert('Insufficient stock available for some products.');
-      return;
-    }
-
-    if (this.balanceAmount >= 0 && this.selectedPaymentMethod) {
-      console.log('Checked out items:', this.cartItems);
-      alert('Checkout successful!');
-      this.checkoutDialogVisible = false;
-      this.clearCart();
-    } else {
-      alert('Please ensure payment is complete.');
-    }
+    payload.subTotal = this.subtotal
+    payload.discountAmount = this.discountAmount
+    payload.taxAmount = this.tax
+    payload.totalPayable = this.total
+    payload.paymentMethod = this.selectedPaymentMethod
+    payload.paidAmount = this.paidAmount
+    payload.changeGiven = this.balanceAmount
+    console.log('payload:', payload)
+    return payload
   }
 
   // Check stock availability for an item

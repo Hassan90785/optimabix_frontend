@@ -9,7 +9,7 @@ export class POSTransaction {
   public discountAmount: number = 0;
   public taxAmount: number = 0;
   public totalPayable: number = 0;
-  public paymentMethod: 'Cash' | 'Credit Card' | 'Bank Transfer' = 'Cash';
+  public paymentMethod: string = 'Cash';
   public paymentReference: string | null = null;
   public paidAmount: number = 0;
   public changeGiven: number = 0;

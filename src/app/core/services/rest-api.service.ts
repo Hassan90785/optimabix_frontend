@@ -258,4 +258,11 @@ export class RestApiService {
       : this.http.post(`${this.apiUrl}/inventory`, payload);
   }
 
+  /**
+   * Pos Transactions
+   */
+  posTransactions(payload: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/posTransactions`, payload)
+  }
+
 }
