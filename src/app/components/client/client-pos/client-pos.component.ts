@@ -207,7 +207,12 @@ export class ClientPosComponent implements OnInit {
       this.checkoutDialogVisible = false;
       const payload = this.transactionPayload();
       this.apiService.posTransactions(payload).subscribe(value => {
-        console.log('value: ', value)
+        if (value && value.success && value.data && value.data.receiptPath) {
+          const receiptUrl = 'http://localhost:5000/' + value.data.receiptPath;
+          window.open(receiptUrl, '_blank'); // Open the PDF in a new browser tab
+        } else {
+          console.error('Failed to fetch the receipt path');
+        }
       })
       this.clearCart();
     } else {
