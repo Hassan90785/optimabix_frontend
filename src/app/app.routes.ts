@@ -28,6 +28,7 @@ import {EntityComponent} from './components/client/entity/entity/entity.componen
 import {ClientInventoryComponent} from './components/client/inventory/client-inventory/client-inventory.component';
 import {ListInventoryComponent} from './components/client/inventory/list-inventory/list-inventory.component';
 import {InventoryComponent} from './components/client/inventory/inventory/inventory.component';
+import {ClientLedgerComponent} from './components/client/ledger/client-ledger/client-ledger.component';
 
 export const routes: Routes = [   // Redirect to the login page initially
   {path: '', redirectTo: 'app/login', pathMatch: 'full'},
@@ -87,6 +88,7 @@ export const routes: Routes = [   // Redirect to the login page initially
     children: [
       {path: 'login', component: LoginComponent},
       {path: 'dashboard', component: ClientDashboardComponent},
+      {path: 'ledger', component: ClientLedgerComponent},
       {path: 'inventory', component: ClientInventoryComponent,
         children: [
           {path: '', component: ListInventoryComponent},

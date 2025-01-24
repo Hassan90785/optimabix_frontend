@@ -1,0 +1,60 @@
+<p-card class="p-shadow-3">
+  <div class="p-card-header flex justify-content-between align-items-center">
+    <h2>Ledger</h2>
+    <div class="flex align-items-center">
+      <p-dropdown
+        [options]="transactionTypes"
+        [(ngModel)]="selectedTransactionType"
+        placeholder="Filter by Transaction Type"
+        (onChange)="filterLedger()"
+        class="p-mr-3"
+      ></p-dropdown>
+      <p-calendar
+        [(ngModel)]="selectedDate"
+        placeholder="Filter by Date"
+        (onSelect)="filterLedger()"
+        class="p-mr-3"
+      ></p-calendar>
+      <button pButton label="Reset Filters" class="p-button-text" (click)="resetFilters()"></button>
+    </div>
+  </div>
+
+  <p-table
+    [value]="ledgerEntries"
+    [paginator]="true"
+    [rows]="10"
+    [totalRecords]="totalRecords"
+    [lazy]="true"
+    [loading]="loading"
+    (onLazyLoad)="loadLedger($event)"
+    class="p-mt-3"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="date">Date <p-sortIcon field="date"></p-sortIcon></th>
+        <th pSortableColumn="description">Description <p-sortIcon field="description"></p-sortIcon></th>
+        <th pSortableColumn="debitAmount">Debit <p-sortIcon field="debitAmount"></p-sortIcon></th>
+        <th pSortableColumn="creditAmount">Credit <p-sortIcon field="creditAmount"></p-sortIcon></th>
+        <th pSortableColumn="balance">Balance <p-sortIcon field="balance"></p-sortIcon></th>
+        <th>Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-entry>
+      <tr>
+        <td>{{ entry.date | date: 'shortDate' }}</td>
+        <td>{{ entry.description }}</td>
+        <td>{{ entry.debitAmount | currency }}</td>
+        <td>{{ entry.creditAmount | currency }}</td>
+        <td>{{ entry.balance | currency }}</td>
+        <td>
+          <button
+            pButton
+            icon="pi pi-eye"
+            class="p-button-text"
+            (click)="viewDetails(entry)"
+          ></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-card>

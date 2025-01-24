@@ -265,4 +265,16 @@ export class RestApiService {
     return this.http.post(`${this.apiUrl}/posTransactions`, payload)
   }
 
+  /**
+   * Ledger
+   */
+  getLedger(queryParams?: any): Observable<any> {
+    let query = '';
+    if (queryParams) {
+      query = Object.keys(queryParams)
+        .map((key) => `${key}=${queryParams[key]}`)
+        .join('&');
+    }
+    return this.http.get(`${this.apiUrl}/ledger${query ? '?' + query : ''}`);
+  }
 }
