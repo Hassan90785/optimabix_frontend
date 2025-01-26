@@ -1,6 +1,6 @@
-<div class="admin-layout">
+<div class="app-layout">
   <!-- Header -->
-  <header>
+  <header *ngIf="shouldShowHeader()">
     <p-toolbar>
       <div class="p-toolbar-group-left">
         <p-button
@@ -8,19 +8,15 @@
           class="p-button-text"
           (click)="toggleSidebar()"
         ></p-button>
-        <span class="header-title">Client Panel</span>
+        <span class="header-title">Client Portal</span>
       </div>
       <div class="p-toolbar-group-right">
         <p-button  label="Logout" icon="pi pi-sign-out" class="p-button-danger"></p-button>
       </div>
     </p-toolbar>
   </header>
+  <app-drawer [menuItems]="menuItems" [visible]="visibleSidebar1" (eventEmitter)="closeHandler()"></app-drawer>
 
-  <!-- Sidebar -->
-  <p-sidebar [(visible)]="visibleSidebar1" [baseZIndex]="10000">
-    <h3>Navigation</h3>
-    <p-menu [model]="menuItems"></p-menu>
-  </p-sidebar>
 
   <!-- Main Content -->
   <div class="main-content">

@@ -1,0 +1,21 @@
+/* Hover Effects */
+a:hover {
+  background-color: var(--surface-200);
+  color: var(--text-color-secondary) !important;
+  border-radius: 4px;
+}
+
+/* Selected Effect */
+.active-menu-item a {
+  background-color: var(--primary-color);
+  color: var(--primary-color-text) !important;
+  font-weight: bold;
+  border-radius: 4px;
+}
+
+/* Separator Styling */
+hr {
+  border: 0;
+  border-top: 1px solid var(--surface-300);
+  margin: 0.5rem 0;
+}

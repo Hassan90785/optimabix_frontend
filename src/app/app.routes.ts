@@ -38,6 +38,7 @@ export const routes: Routes = [   // Redirect to the login page initially
     path: 'admin',
     component: AdminComponent,
     children: [
+      { path: '', redirectTo: 'login', pathMatch: 'full' }, // Redirect to login
       {path: 'login', component: AdminLoginComponent},
       {
         path: 'companies', component: AdminCompaniesComponent,
@@ -86,6 +87,7 @@ export const routes: Routes = [   // Redirect to the login page initially
   {
     path: 'app', component: ClientHomeComponent,
     children: [
+      { path: '', redirectTo: 'login', pathMatch: 'full' }, // Redirect to login
       {path: 'login', component: LoginComponent},
       {path: 'dashboard', component: ClientDashboardComponent},
       {path: 'ledger', component: ClientLedgerComponent},

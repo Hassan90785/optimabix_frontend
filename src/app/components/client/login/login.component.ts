@@ -21,16 +21,15 @@ import {AuthService} from '../../../core/services/auth.service';
     FloatLabel,
     FormsModule,
     InputText,
-    Password,
     ReactiveFormsModule,
     Toast
   ],
   providers: [RestApiService, MessageService],
   templateUrl: './login.component.html',
   standalone: true,
-  styleUrl: './login.component.css'
+  styleUrl: './login.component.scss'
 })
-export class LoginComponent  implements OnInit {
+export class LoginComponent implements OnInit {
   subscription: Subscription = new Subscription();
   loginForm: FormGroup;
 

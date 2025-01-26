@@ -1,11 +1,24 @@
-import {Component, Input, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {Drawer} from 'primeng/drawer';
-import {ImportsModule} from '../../module/primeNg';
+import {Button, ButtonDirective} from 'primeng/button';
+import {Ripple} from 'primeng/ripple';
+import {Avatar} from 'primeng/avatar';
+import {CommonModule} from '@angular/common';
+import {RouterLink, RouterLinkActive} from '@angular/router';
+import {Divider} from 'primeng/divider';
 
 @Component({
   selector: 'app-drawer',
   imports: [
-    ImportsModule
+    CommonModule,
+    Drawer,
+    Button,
+    Ripple,
+    Avatar,
+    ButtonDirective,
+    RouterLink,
+    RouterLinkActive,
+    Divider
   ],
   templateUrl: './drawer.component.html',
   standalone: true,
@@ -14,9 +27,11 @@ import {ImportsModule} from '../../module/primeNg';
 export class DrawerComponent {
   @ViewChild('drawerRef') drawerRef!: Drawer;
   @Input() visible: boolean = false;
+  @Input() menuItems: any[] = []
+  @Output() eventEmitter: EventEmitter<boolean> = new EventEmitter()
 
-  closeCallback(e: any): void {
-    this.visible = false;
-    this.drawerRef.close(e);
+  onClose() {
+    console.log('closed')
+    this.eventEmitter.emit(false)
   }
 }
