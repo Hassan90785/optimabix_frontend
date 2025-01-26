@@ -11,7 +11,18 @@
         <span class="header-title">Client Portal</span>
       </div>
       <div class="p-toolbar-group-right">
-        <p-button  label="Logout" icon="pi pi-sign-out" class="p-button-danger"></p-button>
+        <p-button
+          icon="pi pi-sun"
+          class="p-button-text"
+          *ngIf="!themeService.isDarkModeEnabled()"
+          (click)="themeService.toggleTheme()"
+        ></p-button>
+        <p-button
+          icon="pi pi-moon"
+          class="p-button-text"
+          *ngIf="themeService.isDarkModeEnabled()"
+          (click)="themeService.toggleTheme()"
+        ></p-button>
       </div>
     </p-toolbar>
   </header>

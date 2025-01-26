@@ -1,10 +1,11 @@
-import {Component} from '@angular/core';
+import {Component, inject} from '@angular/core';
 import {Router, RouterOutlet} from '@angular/router';
 import {Button} from 'primeng/button';
 import {Toolbar} from 'primeng/toolbar';
 import {CommonModule} from '@angular/common';
 import {DrawerComponent} from '../../../shared/components/drawer/drawer.component';
 import {AuthService} from '../../../core/services/auth.service';
+import {ThemeService} from '../../../core/services/theme.service';
 
 @Component({
   selector: 'app-client-home',
@@ -22,6 +23,7 @@ import {AuthService} from '../../../core/services/auth.service';
 })
 export class ClientHomeComponent {
   visibleSidebar1: boolean = false;
+  themeService = inject(ThemeService);
   menuItems = [
     {label: 'Dashboard', icon: 'pi pi-home', routerLink: ['/app/dashboard']},
     {label: 'Product', icon: 'pi pi-box', routerLink: ['/app/product']}, // Represents products or items
