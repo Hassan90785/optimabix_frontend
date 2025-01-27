@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component, inject, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {Subscription} from 'rxjs';
+import {catchError, of, Subscription} from 'rxjs';
 import {RestApiService} from '../../../../core/services/rest-api.service';
 import {AdminStore} from '../../../../core/stores/admin.store';
 import {InputText} from 'primeng/inputtext';
@@ -12,6 +12,8 @@ import {AuthService} from '../../../../core/services/auth.service';
 import {Product} from '../../../../core/models/Product';
 import {DropdownModule} from 'primeng/dropdown';
 import {Entity} from '../../../../core/models/Entity';
+import {ToastrService} from '../../../../core/services/toastr.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-inventory',
@@ -26,15 +28,18 @@ import {Entity} from '../../../../core/models/Entity';
   ],
   templateUrl: './inventory.component.html',
   standalone: true,
+  providers: [ToastrService],
   styleUrl: './inventory.component.scss'
 })
 export class InventoryComponent implements OnInit, OnDestroy {
   inventoryForm: FormGroup;
   subscriptions: Subscription = new Subscription();
-  auth = inject(AuthService);
   products: Product[] = [];
   vendors: Entity[] = [];
   selectedProduct: Product | undefined = {} as Product;
+  private auth = inject(AuthService)
+  private toastr = inject(ToastrService)
+  private router = inject(Router)
 
   constructor(private fb: FormBuilder, private apiService: RestApiService, private cdr: ChangeDetectorRef) {
     this.inventoryForm = this.fb.group({
@@ -58,26 +63,26 @@ export class InventoryComponent implements OnInit, OnDestroy {
   }
 
   valueChanges() {
-    this.inventoryForm.get('productId')?.valueChanges.subscribe((value) => {
+    this.subscriptions.add(this.inventoryForm.get('productId')?.valueChanges.subscribe((value) => {
       this.selectedProduct = this.products.find(item => item._id === value);
-      if(this.selectedProduct){
-        this.inventoryForm.get('batches.purchasePrice')?.patchValue(this.selectedProduct.price.unitPurchasePrice,{emitEvent: false});
-        this.inventoryForm.get('batches.sellingPrice')?.patchValue(this.selectedProduct.price.retailPrice,{emitEvent: false});
+      if (this.selectedProduct) {
+        this.inventoryForm.get('batches.purchasePrice')?.patchValue(this.selectedProduct.price.unitPurchasePrice, {emitEvent: false});
+        this.inventoryForm.get('batches.sellingPrice')?.patchValue(this.selectedProduct.price.retailPrice, {emitEvent: false});
       }
       console.log(`Product ID changed to:`, value);
       console.log(`Selected Product:`, this.selectedProduct);
-    });
+    }));
 
-    this.inventoryForm.get('batches.purchasePrice')?.valueChanges.subscribe((value) => {
+    this.subscriptions.add(this.inventoryForm.get('batches.purchasePrice')?.valueChanges.subscribe((value) => {
       const quantity = this.inventoryForm.get('batches.quantity')?.value;
       const totalCost = value * quantity;
-      this.inventoryForm.get('batches.totalCost')?.patchValue(totalCost,{emitEvent: false});
-    });
-    this.inventoryForm.get('batches.quantity')?.valueChanges.subscribe((value) => {
+      this.inventoryForm.get('batches.totalCost')?.patchValue(totalCost, {emitEvent: false});
+    }));
+    this.subscriptions.add(this.inventoryForm.get('batches.quantity')?.valueChanges.subscribe((value) => {
       const cost = this.inventoryForm.get('batches.purchasePrice')?.value;
       const totalCost = value * cost;
-      this.inventoryForm.get('batches.totalCost')?.patchValue(totalCost,{emitEvent: false});
-    });
+      this.inventoryForm.get('batches.totalCost')?.patchValue(totalCost, {emitEvent: false});
+    }));
 
   }
 
@@ -89,12 +94,19 @@ export class InventoryComponent implements OnInit, OnDestroy {
     payload.companyId = this.auth.info?.companyId || null;
     payload.createdBy = this.auth.info?.id || null;
     this.subscriptions.add(
-      this.apiService.saveInventory(payload).subscribe({
-        next: () => {
+      this.apiService.saveInventory(payload).pipe(
+        catchError((error) => {
           AdminStore.setLoader(false);
-        },
-        error: () => {
+          this.toastr.showError('Error saving inventory', 'Error');
+          return of(null); // Return an observable, like `null`, to complete the stream gracefully
+        })
+      ).subscribe((value: any) => {
+        if (value && value.success) {
           AdminStore.setLoader(false);
+          this.toastr.showSuccess(value.message, 'Success');
+          this.router.navigate(['/app/inventory/list']);
+        } else {
+          this.toastr.showError(value.message, 'Error');
         }
       })
     );
@@ -103,13 +115,18 @@ export class InventoryComponent implements OnInit, OnDestroy {
   fetchProducts(page: number = 1, limit: number = 1000, sort: string = 'createdAt'): void {
     AdminStore.setLoader(true);
     this.subscriptions.add(
-      this.apiService.getProducts({page, limit, sort, companyId: this.auth.info.companyId}).subscribe({
-        next: (response: any) => {
-          this.products = response.data.products;
+      this.apiService.getProducts({page, limit, sort, companyId: this.auth.info.companyId}).pipe(
+        catchError((error) => {
           AdminStore.setLoader(false);
-        },
-        error: () => {
-          AdminStore.setLoader(false);
+          this.toastr.showError('Error fetching products', 'Error');
+          return of(null); // Return an observable, like `null`, to complete the stream gracefully
+        })
+      ).subscribe((value: any) => {
+        AdminStore.setLoader(false);
+        if (value && value.success) {
+          this.products = value.data.products;
+        } else {
+          this.toastr.showError(value.message, 'Error');
         }
       })
     );
@@ -118,14 +135,19 @@ export class InventoryComponent implements OnInit, OnDestroy {
   fetchVendors(page: number = 1, limit: number = 1000, sort: string = 'createdAt'): void {
     AdminStore.setLoader(true);
     this.subscriptions.add(
-      this.apiService.getEntities({page, limit, sort, companyId: this.auth.info.companyId}).subscribe({
-        next: (response: any) => {
-          this.vendors = response.data.entities.filter((value: Entity) => (value.entityType).toLowerCase() ===
+      this.apiService.getEntities({page, limit, sort, companyId: this.auth.info.companyId}).pipe(
+        catchError((error) => {
+          AdminStore.setLoader(false);
+          this.toastr.showError('Error fetching vendors', 'Error');
+          return of(null); // Return an observable, like `null`, to complete the stream gracefully
+        })
+      ).subscribe((value: any) => {
+        AdminStore.setLoader(false);
+        if (value && value.success) {
+          this.vendors = value.data.entities.filter((value: Entity) => (value.entityType).toLowerCase() ===
             'vendor');
-          AdminStore.setLoader(false);
-        },
-        error: () => {
-          AdminStore.setLoader(false);
+        } else {
+          this.toastr.showError(value.message, 'Error');
         }
       })
     );

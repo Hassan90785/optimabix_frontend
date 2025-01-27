@@ -1,6 +1,6 @@
 import {Component, inject, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {Subscription} from 'rxjs';
+import {catchError, of, Subscription} from 'rxjs';
 import {RestApiService} from '../../../../core/services/rest-api.service';
 import {AdminStore} from '../../../../core/stores/admin.store';
 import {InputText} from 'primeng/inputtext';
@@ -11,6 +11,7 @@ import {Card} from 'primeng/card';
 import {Product} from '../../../../core/models/Product';
 import {AuthService} from '../../../../core/services/auth.service';
 import {Router} from '@angular/router';
+import {ToastrService} from '../../../../core/services/toastr.service';
 
 @Component({
   selector: 'app-product',
@@ -22,6 +23,7 @@ import {Router} from '@angular/router';
     Checkbox,
     Card
   ],
+  providers: [ToastrService],
   templateUrl: './product.component.html',
   standalone: true,
   styleUrl: './product.component.scss'
@@ -30,6 +32,7 @@ export class ProductComponent implements OnInit, OnDestroy {
   productForm: FormGroup;
   subscriptions: Subscription = new Subscription();
   private auth = inject(AuthService)
+  private toastr = inject(ToastrService)
   private router = inject(Router)
 
   constructor(
@@ -70,16 +73,19 @@ export class ProductComponent implements OnInit, OnDestroy {
     payload.createdBy = this.auth.info.id;
     console.log('payload', payload);
     this.subscriptions.add(
-      this.apiService.saveProduct(payload).subscribe({
-        next: (resp:any) => {
-          console.log('resp: ', resp);
-          if(resp && resp.status) {
-            this.router.navigate(['/app/product/list']);
-          }
+      this.apiService.saveProduct(payload).pipe(
+        catchError((error) => {
           AdminStore.setLoader(false);
-        },
-        error: () => {
+          this.toastr.showError('Error saving entity', 'Error');
+          return of(null); // Return an observable, like `null`, to complete the stream gracefully
+        })
+      ).subscribe((value: any) => {
+        if (value && value.success) {
           AdminStore.setLoader(false);
+          this.toastr.showSuccess(value.message, 'Success');
+          this.router.navigate(['/app/product/list']);
+        } else {
+          this.toastr.showError(value.message, 'Error');
         }
       })
     );

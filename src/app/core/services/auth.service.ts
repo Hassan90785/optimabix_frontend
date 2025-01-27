@@ -18,11 +18,12 @@ export class AuthService {
   }
 
   set user(value: User | undefined | null) {
+    console.log('Setting user', value);
     this._user = value;
   }
 
   get info(): { name: string, id: string, role: string, companyId: string } {
-    console.log('this.user', this.user);
+    console.log('Getting user info: ', this.user);
     return {
       name: this.user.fullName,
       id: this.user._id,

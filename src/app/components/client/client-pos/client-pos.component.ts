@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit} from '@angular/core';
 import {Card} from 'primeng/card';
 import {FloatLabel} from 'primeng/floatlabel';
 import {InputText} from 'primeng/inputtext';
@@ -11,6 +11,9 @@ import {Dialog} from 'primeng/dialog';
 import {AuthService} from '../../../core/services/auth.service';
 import {RestApiService} from '../../../core/services/rest-api.service';
 import {POSTransaction, ProductDetails} from '../../../core/models/POSTransaction';
+import {ToastrService} from '../../../core/services/toastr.service';
+import {catchError, of, Subscription} from 'rxjs';
+import {AdminStore} from '../../../core/stores/admin.store';
 
 @Component({
   selector: 'app-client-pos',
@@ -27,14 +30,14 @@ import {POSTransaction, ProductDetails} from '../../../core/models/POSTransactio
   ],
   templateUrl: './client-pos.component.html',
   standalone: true,
+  providers: [ToastrService],
   styleUrl: './client-pos.component.scss'
 })
-export class ClientPosComponent implements OnInit {
+export class ClientPosComponent implements OnInit, OnDestroy {
   scannedCode: string = '';
   selectedProduct: any = null;
   cartItems: any[] = [];
   productOptions: any[] = [];
-  itemsource: any[] = [];
   subtotal: number = 0;
   tax: number = 0;
   total: number = 0;
@@ -50,9 +53,10 @@ export class ClientPosComponent implements OnInit {
   paidAmount: number = 0;
   balanceAmount: number = 0;
   discountAmount: number = 0;
-
+  subscription: Subscription = new Subscription();
   auth = inject(AuthService);
   apiService = inject(RestApiService);
+  private toastr = inject(ToastrService)
 
   ngOnInit(): void {
     this.cashierName = this.auth.info.name;
@@ -61,21 +65,31 @@ export class ClientPosComponent implements OnInit {
     setInterval(() => this.updateDateTime(), 1000);
   }
 
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
+
   // Load products from API
   loadProducts(): void {
-    this.apiService
+    this.subscription.add(this.apiService
       .getAvailableInventories({companyId: this.auth.info.companyId, includeBatches: true})
+      .pipe(catchError((error) => {
+        console.log('error: ', error);
+        AdminStore.setLoader(false);
+        this.toastr.showError('Something went wrong', 'Error');
+        return of(null); // Return an observable, like `null`, to complete the stream gracefully
+      }))
       .subscribe(
         (response) => {
           if (response?.data) {
             this.productOptions = response.data.map(this.mapProductOption);
             console.log('Available products loaded:', this.productOptions);
           } else {
+            this.toastr.showWarn('No available inventory found.', 'Warning');
             console.warn('No available inventory found.');
           }
-        },
-        (error) => console.error('Error fetching available inventory:', error)
-      );
+        }
+      ));
   }
 
   // Update current date and time
@@ -90,7 +104,7 @@ export class ClientPosComponent implements OnInit {
       if (product) {
         this.addItemToCart(product);
       } else {
-        alert('Product not found!');
+        this.toastr.showError('Product not found!', 'Error');
       }
       this.resetScannedCode();
     }
@@ -147,7 +161,7 @@ export class ClientPosComponent implements OnInit {
 
     // Validate stock availability for the increase
     if (delta > 0 && newQuantity > productOption.availableQuantity) {
-      alert('Insufficient stock available for this product.');
+      this.toastr.showError('Insufficient stock available for this product.', 'Error');
       return;
     }
 
@@ -197,26 +211,27 @@ export class ClientPosComponent implements OnInit {
   // Confirm checkout
   confirmCheckout(): void {
     if (this.cartItems.some((item) => !this.hasSufficientStock(item))) {
-      alert('Insufficient stock available for some products.');
+      this.toastr.showError('Insufficient stock available for some products.', 'Error');
       return;
     }
 
     if (this.balanceAmount >= 0 && this.selectedPaymentMethod) {
       console.log('Checked out items:', {...this.cartItems});
-      // alert('Checkout successful!');
       this.checkoutDialogVisible = false;
       const payload = this.transactionPayload();
-      this.apiService.posTransactions(payload).subscribe(value => {
+      this.subscription.add(this.apiService.posTransactions(payload).subscribe(value => {
         if (value && value.success && value.data && value.data.receiptPath) {
+          this.toastr.showSuccess('Transaction completed successfully.', 'Success');
           const receiptUrl = 'http://localhost:5000/' + value.data.receiptPath;
           window.open(receiptUrl, '_blank'); // Open the PDF in a new browser tab
         } else {
-          console.error('Failed to fetch the receipt path');
+          this.toastr.showError('Failed to fetch the receipt path.', 'Error');
+
         }
-      })
+      }));
       this.clearCart();
     } else {
-      alert('Please ensure payment is complete.');
+      this.toastr.showError('Please ensure payment is complete.', 'Error');
     }
   }
 
@@ -247,7 +262,7 @@ export class ClientPosComponent implements OnInit {
       cartItem.quantity += increment;
       cartItem.total = cartItem.quantity * cartItem.price;
     } else {
-      alert('Insufficient stock available for this product.');
+      this.toastr.showError('Insufficient stock available for this product.', 'Error');
     }
   }
 
@@ -262,7 +277,7 @@ export class ClientPosComponent implements OnInit {
         total: product.price,
       });
     } else {
-      alert('Insufficient stock available for this product.');
+      this.toastr.showError('Insufficient stock available for this product!', 'Error');
     }
   }
 

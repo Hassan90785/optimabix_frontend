@@ -1,5 +1,5 @@
 <p-card class="p-shadow-3">
-  <div class="p-card-header p-d-flex p-jc-between">
+  <div class="p-card-header flex justify-content-between align-items-center">
     <h3>Entities</h3>
     <p-button
       label="Add Entity"
@@ -8,6 +8,7 @@
       (click)="onAdd()"
     ></p-button>
   </div>
+
   <p-table
     [value]="entities"
     [paginator]="true"
@@ -19,8 +20,8 @@
       <tr>
         <th>Entity Name</th>
         <th>Type</th>
-        <th>Contact Person</th>
         <th>Status</th>
+        <th>Created At</th>
         <th>Actions</th>
       </tr>
     </ng-template>
@@ -28,15 +29,17 @@
       <tr>
         <td>{{ entity.entityName }}</td>
         <td>{{ entity.entityType }}</td>
-        <td>{{ entity.contactPerson?.fullName }}</td>
         <td>{{ entity.accessStatus }}</td>
+        <td>{{ entity.createdAt | date:'short' }}</td>
         <td>
           <p-button
             icon="pi pi-pencil"
             class="p-button-text"
+            [disabled]="true"
             (click)="onEdit(entity)"
           ></p-button>
           <p-button
+            [disabled]="true"
             icon="pi pi-trash"
             class="p-button-text p-button-danger"
             (click)="onDelete(entity)"

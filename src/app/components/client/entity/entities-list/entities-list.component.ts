@@ -8,6 +8,7 @@ import {TableModule} from 'primeng/table';
 import {Card} from 'primeng/card';
 import {AuthService} from '../../../../core/services/auth.service';
 import {Router} from '@angular/router';
+import {DatePipe} from '@angular/common';
 
 @Component({
   selector: 'app-entities-list',
@@ -15,7 +16,8 @@ import {Router} from '@angular/router';
     PrimeTemplate,
     Button,
     TableModule,
-    Card
+    Card,
+    DatePipe
   ],
   templateUrl: './entities-list.component.html',
   standalone: true,

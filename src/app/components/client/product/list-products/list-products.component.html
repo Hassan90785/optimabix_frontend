@@ -1,9 +1,16 @@
 <div class="p-card">
-  <div class="p-card-header p-d-flex p-jc-between">
-    <h2>Products</h2>
-    <p-button  label="Add Product" icon="pi pi-plus" class="p-button-primary" (click)="onAdd()"></p-button>
+
+  <div class="p-card-header flex justify-content-between align-items-center">
+    <h3>Products</h3>
+    <p-button
+      label="Add Product"
+      icon="pi pi-plus"
+      class="p-button-primary"
+      (click)="onAdd()"
+    ></p-button>
   </div>
-  <p-table [value]="products" [paginator]="true" [rows]="10" [totalRecords]="totalRecords" [responsiveLayout]="'scroll'">
+  <p-table [value]="products" [paginator]="true" [rows]="10" [totalRecords]="totalRecords"
+           [responsiveLayout]="'scroll'">
     <ng-template pTemplate="header">
       <tr>
         <th>Product Name</th>
@@ -20,8 +27,9 @@
         <td>{{ product.category }}</td>
         <td>{{ product.brandName }}</td>
         <td>
-          <p-button  icon="pi pi-pencil" class="p-button-text" (click)="onEdit(product)"></p-button>
-          <p-button  icon="pi pi-trash" class="p-button-text p-button-danger" (click)="onDelete(product)"></p-button>
+          <p-button icon="pi pi-pencil" class="p-button-text" (click)="onEdit(product)" [disabled]="true"></p-button>
+          <p-button icon="pi pi-trash" class="p-button-text p-button-danger" (click)="onDelete(product)"
+                    [disabled]="true"></p-button>
         </td>
       </tr>
     </ng-template>

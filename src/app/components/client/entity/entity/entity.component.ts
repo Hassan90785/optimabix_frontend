@@ -1,6 +1,6 @@
 import {Component, inject, OnDestroy, OnInit} from '@angular/core';
-import {FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {Subscription} from 'rxjs';
+import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {catchError, of, Subscription} from 'rxjs';
 import {RestApiService} from '../../../../core/services/rest-api.service';
 import {AdminStore} from '../../../../core/stores/admin.store';
 import {InputText} from 'primeng/inputtext';
@@ -8,8 +8,9 @@ import {DropdownModule} from 'primeng/dropdown';
 import {FloatLabel} from 'primeng/floatlabel';
 import {Button} from 'primeng/button';
 import {Card} from 'primeng/card';
-import {Product} from '../../../../core/models/Product';
 import {AuthService} from '../../../../core/services/auth.service';
+import {ToastrService} from '../../../../core/services/toastr.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-entity',
@@ -21,14 +22,17 @@ import {AuthService} from '../../../../core/services/auth.service';
     Button,
     Card
   ],
+  providers: [ToastrService],
   templateUrl: './entity.component.html',
   standalone: true,
   styleUrl: './entity.component.scss'
 })
-export class EntityComponent  implements OnInit, OnDestroy {
+export class EntityComponent implements OnInit, OnDestroy {
   entityForm: FormGroup;
   subscriptions: Subscription = new Subscription();
   private auth = inject(AuthService)
+  private toastr = inject(ToastrService)
+  private router = inject(Router)
 
   constructor(private fb: FormBuilder, private apiService: RestApiService) {
     this.entityForm = this.fb.group({
@@ -63,27 +67,11 @@ export class EntityComponent  implements OnInit, OnDestroy {
     });
   }
 
+
   ngOnInit(): void {
     // Load entity data if editing
   }
 
-  get paymentHistory(): FormArray {
-    return this.entityForm.get('paymentHistory') as FormArray;
-  }
-
-  addPayment(): void {
-    this.paymentHistory.push(
-      this.fb.group({
-        invoiceId: [''],
-        amountPaid: [0, Validators.required],
-        paymentDate: ['']
-      })
-    );
-  }
-
-  removePayment(index: number): void {
-    this.paymentHistory.removeAt(index);
-  }
 
   onSubmit(): void {
 
@@ -92,13 +80,21 @@ export class EntityComponent  implements OnInit, OnDestroy {
     console.log('this.auth.info()', this.auth.info);
     payload.companyId = this.auth.info?.companyId || null;
     payload.createdBy = this.auth.info?.id || null;
+
     this.subscriptions.add(
-      this.apiService.saveEntity(payload).subscribe({
-        next: () => {
+      this.apiService.saveEntity(payload).pipe(
+        catchError((error) => {
           AdminStore.setLoader(false);
-        },
-        error: () => {
+          this.toastr.showError('Error saving entity', 'Error');
+          return of(null); // Return an observable, like `null`, to complete the stream gracefully
+        })
+      ).subscribe((value: any) => {
+        if (value && value.success) {
           AdminStore.setLoader(false);
+          this.toastr.showSuccess(value.message, 'Success');
+          this.router.navigate(['/app/entity/list']);
+        } else {
+          this.toastr.showError(value.message, 'Error');
         }
       })
     );
