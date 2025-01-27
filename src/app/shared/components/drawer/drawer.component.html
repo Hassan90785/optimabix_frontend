@@ -38,7 +38,7 @@
   <ng-template #footer>
     <div class="flex flex-col gap-3">
       <p-button  label="Account" icon="pi pi-user" class="w-full" outlined></p-button>
-      <p-button  label="Logout" icon="pi pi-sign-out" class="w-full" severity="danger" text></p-button>
+      <p-button  label="Logout" icon="pi pi-sign-out" class="w-full" text (click)="logoutHandler()"></p-button>
     </div>
   </ng-template>
 </p-drawer>

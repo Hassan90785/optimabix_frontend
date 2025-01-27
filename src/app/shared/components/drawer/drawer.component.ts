@@ -1,11 +1,12 @@
-import {Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, inject, Input, Output, ViewChild} from '@angular/core';
 import {Drawer} from 'primeng/drawer';
 import {Button, ButtonDirective} from 'primeng/button';
 import {Ripple} from 'primeng/ripple';
 import {Avatar} from 'primeng/avatar';
 import {CommonModule} from '@angular/common';
-import {RouterLink, RouterLinkActive} from '@angular/router';
+import {Router, RouterLink, RouterLinkActive} from '@angular/router';
 import {Divider} from 'primeng/divider';
+import {ConfirmationDialogService} from '../../../core/services/confirmation-dialog.service';
 
 @Component({
   selector: 'app-drawer',
@@ -29,9 +30,29 @@ export class DrawerComponent {
   @Input() visible: boolean = false;
   @Input() menuItems: any[] = []
   @Output() eventEmitter: EventEmitter<boolean> = new EventEmitter()
+  confirmDialog = inject(ConfirmationDialogService)
+  router = inject(Router)
 
   onClose() {
     console.log('closed')
     this.eventEmitter.emit(false)
+  }
+
+  logoutHandler() {
+    console.log('logoutHandler')
+    this.confirmDialog.confirm(
+      'Confirmation',
+      'Are you sure you want to logout?',
+      () => {
+        this.eventEmitter.emit(false)
+        console.log('Logging out');
+        this.router.navigate(['/app/login']);
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
+      },
+      () => {
+        console.log('Cancel logout');
+      }
+    );
   }
 }
