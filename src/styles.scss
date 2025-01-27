@@ -5,14 +5,16 @@
   --primary-color: var(--p-primary-color);
   --background-color: var(--p-surface-ground);
   --text-color: var(--p-text-color);
-  --button-color: #007bff; // Default blue for light theme
+  --button-background-color: #007bff; // Default blue for light theme
+  --button-text-color: #ffffff; // White text for buttons in light theme
 }
 
 .app-dark {
   --primary-color: var(--p-primary-color);
   --background-color: var(--p-surface-ground);
   --text-color: var(--p-text-color);
-  --button-color: #ff0000; // Red for dark theme
+  --button-background-color: #ff0000; // Red for dark theme
+  --button-text-color: #ffffff; // Black text for buttons in dark theme
 }
 
 body {
@@ -20,6 +22,8 @@ body {
   color: var(--text-color);
   transition: background-color 0.3s, color 0.3s;
 }
-button{
-  background-color: var(--button-color) !important;
+button {
+  background-color: var(--button-background-color);
+  color: var(--button-text-color);
+  border: none;
 }
