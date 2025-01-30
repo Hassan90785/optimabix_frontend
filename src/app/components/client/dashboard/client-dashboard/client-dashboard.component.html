@@ -1,1 +1,83 @@
-<p>client-dashboard works!</p>
+<div class="ng p-grid p-p-3">
+  <!-- Header Section: KPIs -->
+  <div class="p-col-12">
+    <div class="p-grid p-align-center p-justify-start p-mb-3">
+      <div
+        class="p-col-12 p-md-3"
+        *ngFor="let kpi of kpis | keyvalue"
+      >
+        <p-card class="kpi-card p-d-flex p-ai-center p-jc-between p-p-2">
+          <div>
+            <span class="kpi-label">{{ kpi.key | titlecase }}</span>
+            <h3 class="kpi-value">{{ kpi.value }}</h3>
+          </div>
+          <i class="pi pi-chart-bar kpi-icon"></i>
+        </p-card>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sales and Payments Graphs -->
+  <div class="p-col-12 p-md-6">
+    <p-card header="Sales Overview">
+      <p-chart
+        type="line"
+        [data]="salesChartData"
+        style="height: 250px"
+      ></p-chart>
+    </p-card>
+  </div>
+  <div class="p-col-12 p-md-6">
+    <p-card header="Payment Insights">
+      <p-chart
+        type="pie"
+        [data]="paymentChartData"
+        style="height: 250px"
+      ></p-chart>
+    </p-card>
+  </div>
+
+  <!-- Inventory and Vendor Management -->
+  <div class="p-col-12 p-md-6">
+    <p-card header="Inventory Overview">
+      <p-table [value]="inventoryData" [responsiveLayout]="'scroll'">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Product</th>
+            <th>Qty</th>
+            <th>Value</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData>
+          <tr>
+            <td>{{ rowData.product }}</td>
+            <td>{{ rowData.quantity }}</td>
+            <td>{{ rowData.value | currency }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-card>
+  </div>
+  <div class="p-col-12 p-md-6">
+    <p-card header="Vendor Management">
+      <div class="p-d-flex p-flex-column">
+        <p>Total Vendors: 25</p>
+        <p>Payables: $3,000</p>
+        <p>Recent Activity: Paid $500</p>
+      </div>
+    </p-card>
+  </div>
+
+  <!-- Top Products -->
+  <div class="p-col-12">
+    <p-card header="Top Products">
+      <div class="p-grid p-ai-center p-jc-between">
+        <div class="p-col-12 p-md-4" *ngFor="let product of topProducts">
+          <p-card>
+            <p class="p-text-center">{{ product }}</p>
+          </p-card>
+        </div>
+      </div>
+    </p-card>
+  </div>
+</div>

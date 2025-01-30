@@ -1,0 +1,10 @@
+:host ::ng-deep {
+  .p-card {
+    box-shadow: var(--surface-shadow);
+    border-radius: var(--border-radius);
+  }
+
+  .p-chart canvas {
+    max-height: 300px;
+  }
+}

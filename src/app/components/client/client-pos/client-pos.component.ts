@@ -219,7 +219,13 @@ export class ClientPosComponent implements OnInit, OnDestroy {
       console.log('Checked out items:', {...this.cartItems});
       this.checkoutDialogVisible = false;
       const payload = this.transactionPayload();
-      this.subscription.add(this.apiService.posTransactions(payload).subscribe(value => {
+      this.subscription.add(this.apiService.posTransactions(payload)
+        .pipe(catchError((error) => {
+          console.log('error: ', error);
+          AdminStore.setLoader(false);
+          this.toastr.showError('Something went wrong', 'Error');
+          return of(null); // Return an observable, like `null`, to complete the stream gracefully
+        })).subscribe(value => {
         if (value && value.success && value.data && value.data.receiptPath) {
           this.toastr.showSuccess('Transaction completed successfully.', 'Success');
           const receiptUrl = 'http://localhost:5000/' + value.data.receiptPath;

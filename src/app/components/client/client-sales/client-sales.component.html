@@ -1,1 +1,137 @@
-<p>client-sales works!</p>
+<p-card class="p-shadow-3">
+  <div class="p-card-header flex justify-content-between align-items-center">
+    <h2>Sales Transactions</h2>
+    <div class="p-fluid">
+      <p-dropdown
+        [options]="filterOptions"
+        [(ngModel)]="selectedFilter"
+        placeholder="Filter by Date"
+        (onChange)="applyFilter()"
+      ></p-dropdown>
+    </div>
+  </div>
+
+  <div class="p-card-body">
+    <p-table
+      [value]="transactions"
+      [paginator]="true"
+      [rows]="10"
+      [loading]="loading"
+      class="p-datatable-striped"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Transaction #</th>
+          <th>Date</th>
+          <th>Products</th>
+          <th>Total</th>
+          <th>Payment Method</th>
+          <th>Actions</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-transaction>
+        <tr>
+          <td>{{ transaction.transactionNumber }}</td>
+          <td>{{ transaction.date | date }}</td>
+          <td>{{ getFormattedProducts(transaction.products) }}</td>
+          <td>{{ transaction.totalPayable | currency: 'PKR' }}</td>
+          <td>{{ transaction.paymentMethod }}</td>
+          <td>
+            <p-button
+              type="button"
+              icon="pi pi-eye"
+              class="p-button-text"
+              (click)="viewTransaction(transaction)"
+            ></p-button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</p-card>
+
+<p-dialog [(visible)]="filterDialogVisible" header="Filter Transactions" [modal]="true" [style]="{ width: '30vw' }" [baseZIndex]="10000">
+  <div class="p-fluid">
+    <div class="field">
+      <label for="startDate">Start Date</label>
+      <input type="date" id="startDate" [(ngModel)]="startDate" class="p-inputtext" />
+    </div>
+    <div class="field">
+      <label for="endDate">End Date</label>
+      <input type="date" id="endDate" [(ngModel)]="endDate" class="p-inputtext" />
+    </div>
+    <div class="p-field">
+      <p-button  type="button" label="Apply Filter"  icon="pi pi-check" (click)="fetchTransactions()"></p-button>
+      <p-button  type="button" label="Reset Filter" class="ml-3" icon="pi pi-refresh" (click)="resetFilter()"></p-button>
+    </div>
+  </div>
+</p-dialog>
+
+<!-- Transaction Details Dialog -->
+<p-dialog
+  [(visible)]="transactionDialogVisible"
+  header="Transaction Details"
+  [modal]="true"
+  [style]="{ width: '50vw' }"
+  [baseZIndex]="10000"
+>
+  <div class="p-fluid grid gap-2">
+    <!-- Row 1 -->
+    <div class="col-12 md:col-6 field">
+      <label class="block font-bold mb-1">Transaction Number:</label>
+      <span class="block">{{ selectedTransaction?.transactionNumber }}</span>
+    </div>
+
+    <div class="col-12 md:col-6 field">
+      <label class="block font-bold mb-1">Date:</label>
+      <span class="block">{{ selectedTransaction?.date | date: 'short' }}</span>
+    </div>
+
+    <!-- Row 2 -->
+    <div class="col-12 md:col-6 field">
+      <label class="block font-bold mb-1">Payment Method:</label>
+      <span class="block">{{ selectedTransaction?.paymentMethod }}</span>
+    </div>
+
+    <div class="col-12 field">
+      <label class="block font-bold mb-1">Products:</label>
+      <ul class="list-none pl-2">
+        <li
+          *ngFor="let product of selectedTransaction?.products"
+          class="mb-1"
+        >
+          {{ product.productId.productName }} (Qty: {{ product.quantity }},
+          Unit Price: {{ product.unitPrice | currency: 'PKR' }})
+        </li>
+      </ul>
+    </div>
+
+    <!-- Monetary Values - Two Columns Per Row -->
+    <div class="col-12 md:col-6 field">
+      <label class="block font-bold mb-1">Subtotal:</label>
+      <span class="block">{{ selectedTransaction?.subTotal | currency: 'PKR' }}</span>
+    </div>
+
+    <div class="col-12 md:col-6 field">
+      <label class="block font-bold mb-1">Tax:</label>
+      <span class="block">{{ selectedTransaction?.taxAmount | currency: 'PKR' }}</span>
+    </div>
+
+    <div class="col-12 md:col-6 field">
+      <label class="block font-bold mb-1">Total Payable:</label>
+      <span class="block">{{ selectedTransaction?.totalPayable | currency: 'PKR' }}</span>
+    </div>
+
+    <div class="col-12 md:col-6 field">
+      <label class="block font-bold mb-1">Paid Amount:</label>
+      <span class="block">{{ selectedTransaction?.paidAmount | currency: 'PKR' }}</span>
+    </div>
+
+    <div class="col-12 md:col-6 field">
+      <label class="block font-bold mb-1">Change Given:</label>
+      <span class="block">{{ selectedTransaction?.changeGiven | currency: 'PKR' }}</span>
+    </div>
+  </div>
+
+
+</p-dialog>

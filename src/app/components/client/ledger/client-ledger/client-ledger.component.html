@@ -43,9 +43,9 @@
       <tr>
         <td>{{ entry.date | date: 'shortDate' }}</td>
         <td>{{ entry.description }}</td>
-        <td>{{ entry.debitAmount | currency }}</td>
-        <td>{{ entry.creditAmount | currency }}</td>
-        <td>{{ entry.balance | currency }}</td>
+        <td>{{ entry.debitAmount | currency: 'PKR' }}</td>
+        <td>{{ entry.creditAmount | currency: 'PKR' }}</td>
+        <td>{{ entry.balance | currency: 'PKR' }}</td>
         <td>
           <button
             pButton

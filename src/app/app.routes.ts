@@ -112,6 +112,7 @@ export const routes: Routes = [   // Redirect to the login page initially
       {path: 'invoice', component: ClientInvoicesComponent},
       {path: 'sales', component: ClientSalesComponent},
       {path: 'pos', component: ClientPosComponent},
+      {path: 'sales', component: ClientSalesComponent},
       {path: 'entity', component: ClientEntitiesComponent,
         children: [
           {path: '', component: EntitiesListComponent},

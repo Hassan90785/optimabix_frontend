@@ -31,6 +31,7 @@ export class ClientHomeComponent {
     {label: 'Inventory', icon: 'pi pi-warehouse', routerLink: ['/app/inventory']}, // Represents a warehouse or inventory
     {label: 'POS', icon: 'pi pi-shopping-cart', routerLink: ['/app/pos']}, // Represents a shopping cart for POS
     {label: 'Ledger', icon: 'pi pi-book', routerLink: ['/app/ledger']}, // Represents a ledger or accounting book
+    {label: 'Sales', icon: 'pi pi-book', routerLink: ['/app/sales']}, // Represents a ledger or accounting book
   ];
 
   constructor(private router: Router, public auth: AuthService) {

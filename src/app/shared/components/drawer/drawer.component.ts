@@ -16,7 +16,6 @@ import {ConfirmationDialogService} from '../../../core/services/confirmation-dia
     Button,
     Ripple,
     Avatar,
-    ButtonDirective,
     RouterLink,
     RouterLinkActive,
     Divider
