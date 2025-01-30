@@ -9,6 +9,8 @@ import {Card} from 'primeng/card';
 import {AuthService} from '../../../../core/services/auth.service';
 import {Router} from '@angular/router';
 import {BarcodeDirective} from '../../../../shared/directives/barcode.directive';
+import {Ripple} from 'primeng/ripple';
+import {DatePipe} from '@angular/common';
 
 @Component({
   selector: 'app-list-inventory',
@@ -18,6 +20,8 @@ import {BarcodeDirective} from '../../../../shared/directives/barcode.directive'
     Button,
     Card,
     BarcodeDirective,
+    Ripple,
+    DatePipe,
   ],
   templateUrl: './list-inventory.component.html',
   standalone: true,
@@ -29,7 +33,7 @@ export class ListInventoryComponent implements OnInit, OnDestroy {
   subscriptions: Subscription = new Subscription();
   auth = inject(AuthService);
   router = inject(Router);
-
+  expandedRows = {};
   constructor(private apiService: RestApiService) {
   }
 
@@ -67,5 +71,13 @@ export class ListInventoryComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
+  }
+
+  expandAll() {
+    this.expandedRows = this.inventories.reduce((acc, p) => (acc[p._id] = true) && acc, {});
+  }
+
+  collapseAll() {
+    this.expandedRows = {};
   }
 }

@@ -14,29 +14,32 @@
     [rows]="10"
     [totalRecords]="totalRecords"
     [responsiveLayout]="'scroll'"
+    dataKey="_id"
   >
-    <ng-template pTemplate="header">
+    <ng-template #caption>
+    <div class="flex flex-wrap justify-end gap-2">
+      <p-button label="Expand All" icon="pi pi-plus" text (onClick)="expandAll()" />
+      <p-button label="Collapse All" icon="pi pi-minus" text (onClick)="collapseAll()" />
+    </div>
+  </ng-template>
+    <ng-template pTemplate="header"  #header>
       <tr>
+        <th>Batches</th>
         <th>Product</th>
-        <th>Barcode</th>
         <th>Retail Price</th>
         <th>Total Quantity</th>
         <th>Vendor</th>
         <th>Actions</th>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-inventory>
+    <ng-template pTemplate="body" let-inventory  let-expanded="expanded">
       <tr>
-        <td>{{ inventory.productId.productName }}</td>
         <td>
-          <svg
-            appBarcode
-            [barcodeValue]="inventory.barcode"
-            [barcodeFormat]="'CODE128'"
-            [barcodeOptions]="{ width: 1, height: 80, displayValue: true }"
-          ></svg>
-
+          <p-button type="button" pRipple [pRowToggler]="inventory"
+                    [text]="true" [rounded]="true"
+                    [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'" />
         </td>
+        <td>{{ inventory.productId.productName }}</td>
         <td>{{ inventory.productId.price.retailPrice }}</td>
         <td>{{ inventory.totalQuantity }}</td>
         <td>{{ inventory.vendorId.entityName }}</td>
@@ -53,6 +56,48 @@
             class="p-button-text p-button-danger"
             (click)="onDelete(inventory)"
           ></p-button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template #expandedrow let-inventory>
+      <tr>
+        <td colspan="7">
+          <div class="p-4">
+            <h5>Batches </h5>
+            <p-table [value]="inventory.batches" dataKey="_id">
+              <ng-template #header>
+                <tr>
+                  <th>Barcode</th>
+                  <th>Quantity</th>
+                  <th>Purchase Price</th>
+                  <th>Retail Price</th>
+                  <th>Date</th>
+                </tr>
+              </ng-template>
+              <ng-template #body let-batch>
+                <tr>
+                  <td>
+                    <svg
+                      appBarcode
+                      [barcodeValue]="batch.barcode"
+                      [barcodeFormat]="'CODE128'"
+                      [barcodeOptions]="{ width: 1, height: 80, displayValue: true }"
+                    ></svg>
+                  </td>
+                  <td>{{ batch.quantity }}</td>
+                  <td>{{ batch.purchasePrice }}</td>
+                  <td>{{ batch.sellingPrice }}</td>
+                  <td>{{ batch.dateAdded | date : 'short' }}</td>
+
+                </tr>
+              </ng-template>
+              <ng-template #emptymessage>
+                <tr>
+                  <td colspan="6">There are no batch added yet for inventory.</td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
         </td>
       </tr>
     </ng-template>
