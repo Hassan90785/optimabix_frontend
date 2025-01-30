@@ -2,15 +2,13 @@
   <!-- Header -->
   <header *ngIf="shouldShowHeader()">
     <p-toolbar>
-      <div class="p-toolbar-group-left">
-        <p-button
-          icon="pi pi-bars"
-          class="p-button-text"
-          (click)="toggleSidebar()"
-        ></p-button>
-        <span class="header-title">Client Portal</span>
+      <div class="p-toolbar-group-left flex items-center gap-3">
+        <p-avatar [image]="auth.info.logo" size="xlarge" shape="circle"></p-avatar>
+        <h3 class="header-title mt-4 font-bold">{{auth.info.companyName}}</h3>
       </div>
+
       <div class="p-toolbar-group-right">
+
         <p-button
           icon="pi pi-sun"
           class="p-button-text"
@@ -22,6 +20,11 @@
           class="p-button-text"
           *ngIf="themeService.isDarkModeEnabled()"
           (click)="themeService.toggleTheme()"
+        ></p-button>
+        <p-button
+          icon="pi pi-bars"
+          class="p-button-text ml-2"
+          (click)="toggleSidebar()"
         ></p-button>
       </div>
     </p-toolbar>

@@ -6,6 +6,7 @@ import {CommonModule} from '@angular/common';
 import {DrawerComponent} from '../../../shared/components/drawer/drawer.component';
 import {AuthService} from '../../../core/services/auth.service';
 import {ThemeService} from '../../../core/services/theme.service';
+import {Avatar} from 'primeng/avatar';
 
 @Component({
   selector: 'app-client-home',
@@ -14,7 +15,8 @@ import {ThemeService} from '../../../core/services/theme.service';
     RouterOutlet,
     Button,
     Toolbar,
-    DrawerComponent
+    DrawerComponent,
+    Avatar
   ],
   templateUrl: './client-home.component.html',
   providers: [AuthService],

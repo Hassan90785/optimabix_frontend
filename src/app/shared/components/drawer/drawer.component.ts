@@ -7,6 +7,7 @@ import {CommonModule} from '@angular/common';
 import {Router, RouterLink, RouterLinkActive} from '@angular/router';
 import {Divider} from 'primeng/divider';
 import {ConfirmationDialogService} from '../../../core/services/confirmation-dialog.service';
+import {AuthService} from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-drawer',
@@ -31,7 +32,8 @@ export class DrawerComponent {
   @Output() eventEmitter: EventEmitter<boolean> = new EventEmitter()
   confirmDialog = inject(ConfirmationDialogService)
   router = inject(Router)
-
+  constructor(public auth: AuthService) {
+  }
   onClose() {
     console.log('closed')
     this.eventEmitter.emit(false)

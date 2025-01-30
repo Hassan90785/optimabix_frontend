@@ -22,13 +22,15 @@ export class AuthService {
     this._user = value;
   }
 
-  get info(): { name: string, id: string, role: string, companyId: string } {
+  get info(): { name: string, id: string, role: string, companyId: string , logo: string, companyName:string } {
     console.log('Getting user info: ', this.user);
     return {
       name: this.user.fullName,
       id: this.user._id,
       role: this.user.role,
-      companyId: this.user.companyId._id
+      companyId: this.user.companyId._id,
+      logo: this.user.company.logo,
+      companyName: this.user.company.name
     }
   }
 }

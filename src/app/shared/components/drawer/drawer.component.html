@@ -1,4 +1,4 @@
-<p-drawer [(visible)]="visible" [closable]="true" [modal]="true" (onHide)="onClose()">
+<p-drawer [(visible)]="visible" [closable]="true" position="right" [modal]="true" (onHide)="onClose()">
   <!-- Header -->
   <ng-template #header>
     <div class="flex items-center gap-2">
@@ -6,7 +6,7 @@
         image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png"
         shape="circle"
       ></p-avatar>
-      <span class="font-bold">Amy Elsner</span>
+      <span class="font-bold mt-2">{{auth.info.name}}</span>
     </div>
   </ng-template>
 

@@ -9,7 +9,6 @@ import {Button} from 'primeng/button';
 import {Card} from 'primeng/card';
 import {FloatLabel} from 'primeng/floatlabel';
 import {InputText} from 'primeng/inputtext';
-import {Password} from 'primeng/password';
 import {Toast} from 'primeng/toast';
 import {AuthService} from '../../../core/services/auth.service';
 
@@ -55,12 +54,16 @@ export class LoginComponent implements OnInit {
     AdminStore.setLoader(true);
     this.subscription.add(this.apiService.login(this.loginForm.value).subscribe({
       next: (res) => {
-        localStorage.setItem('token', res.data.token);
-        localStorage.setItem('user', JSON.stringify(res.data.user));
-        AdminStore.setLoader(false);
-        this.auth.user = res.data.user
-        this.router.navigate(['/app/dashboard']);
-        // this.router.navigate(['/admin/companies']);
+        console.log('res', res);
+        if (res && res.success) {
+          localStorage.setItem('token', res.data.token);
+          localStorage.setItem('user', JSON.stringify(res.data.user));
+          AdminStore.setLoader(false);
+          this.auth.user = res.data.user
+          this.router.navigate(['/app/dashboard']);
+        } else {
+          this.messageService.add({severity: 'error', summary: 'Error', detail: res.message});
+        }
       },
       error: (error) => {
         AdminStore.setLoader(false);
