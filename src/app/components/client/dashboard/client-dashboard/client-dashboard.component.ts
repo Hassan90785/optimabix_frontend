@@ -3,6 +3,7 @@ import {Card} from 'primeng/card';
 import {CommonModule} from '@angular/common';
 import {UIChart} from 'primeng/chart';
 import {TableModule} from 'primeng/table';
+import {Tag} from 'primeng/tag';
 
 @Component({
   selector: 'app-client-dashboard',
@@ -10,7 +11,8 @@ import {TableModule} from 'primeng/table';
     CommonModule,
     Card,
     UIChart,
-    TableModule
+    TableModule,
+    Tag
   ],
   templateUrl: './client-dashboard.component.html',
   standalone: true,

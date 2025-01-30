@@ -1,29 +1,70 @@
 @use 'primeflex/primeflex' as primeflex;
 @import "primeicons/primeicons.css";
 
+// 🌟 Theme Variables
 :root {
-  --primary-color: var(--p-primary-color);
-  --background-color: var(--p-surface-ground);
-  --text-color: var(--p-text-color);
-  --button-background-color: #007bff; // Default blue for light theme
-  --button-text-color: #ffffff; // White text for buttons in light theme
+  --primary-color: #007bff; // Primary Blue
+  --secondary-color: #6c757d; // Subtle Grey
+  --background-color: #f8f9fa; // Light Background
+  --card-background: #ffffff; // Light Card
+  --text-color: #212529; // Dark Text
+  --button-background-color: #007bff;
+  --button-text-color: #ffffff;
+  --border-color: rgba(0, 0, 0, 0.1);
+  --shadow-color: rgba(0, 0, 0, 0.15);
+  --transition-speed: 0.3s;
 }
 
+// 🌙 Dark Mode Styling
 .app-dark {
-  --primary-color: var(--p-primary-color);
-  --background-color: var(--p-surface-ground);
-  --text-color: var(--p-text-color);
-  --button-background-color: #ff0000; // Red for dark theme
-  --button-text-color: #ffffff; // Black text for buttons in dark theme
+  --primary-color: #1e88e5; // Slightly lighter blue
+  --background-color: #181818; // Dark Background
+  --card-background: #222; // Dark Card
+  --text-color: #ffffff;
+  --button-background-color: #ff4444;
+  --button-text-color: #ffffff;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --shadow-color: rgba(255, 255, 255, 0.15);
 }
 
+// 🎨 Apply Theme
 body {
   background-color: var(--background-color);
   color: var(--text-color);
-  transition: background-color 0.3s, color 0.3s;
+  transition: background-color var(--transition-speed), color var(--transition-speed);
 }
+
 button {
   background-color: var(--button-background-color);
   color: var(--button-text-color);
   border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: background-color var(--transition-speed);
+}
+
+button:hover {
+  filter: brightness(90%);
+}
+
+.shadow-card {
+  background-color: var(--card-background);
+  box-shadow: 0px 4px 8px var(--shadow-color);
+  padding: 16px;
+  border-radius: 8px;
+  transition: box-shadow var(--transition-speed);
+}
+
+.shadow-card:hover {
+  box-shadow: 0px 6px 12px var(--shadow-color);
+}
+
+.kpi-icon {
+  color: var(--primary-color);
+  font-size: 24px;
+}
+
+.kpi-value {
+  font-size: 28px;
+  font-weight: bold;
 }

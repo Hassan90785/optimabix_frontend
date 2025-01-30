@@ -28,7 +28,7 @@ export class AuthService {
       name: this.user.fullName,
       id: this.user._id,
       role: this.user.role,
-      companyId: this.user.companyId._id,
+      companyId: this.user.companyId,
       logo: this.user.company.logo,
       companyName: this.user.company.name
     }

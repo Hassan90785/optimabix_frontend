@@ -1,16 +1,15 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {Subscription} from 'rxjs';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {RestApiService} from '../../../core/services/rest-api.service';
-import {MessageService} from 'primeng/api';
 import {Router} from '@angular/router';
 import {AdminStore} from '../../../core/stores/admin.store';
 import {Button} from 'primeng/button';
 import {Card} from 'primeng/card';
 import {FloatLabel} from 'primeng/floatlabel';
 import {InputText} from 'primeng/inputtext';
-import {Toast} from 'primeng/toast';
 import {AuthService} from '../../../core/services/auth.service';
+import {ToastrService} from '../../../core/services/toastr.service';
 
 @Component({
   selector: 'app-login',
@@ -21,9 +20,8 @@ import {AuthService} from '../../../core/services/auth.service';
     FormsModule,
     InputText,
     ReactiveFormsModule,
-    Toast
   ],
-  providers: [RestApiService, MessageService],
+  providers: [RestApiService, ToastrService],
   templateUrl: './login.component.html',
   standalone: true,
   styleUrl: './login.component.scss'
@@ -31,11 +29,11 @@ import {AuthService} from '../../../core/services/auth.service';
 export class LoginComponent implements OnInit {
   subscription: Subscription = new Subscription();
   loginForm: FormGroup;
+  private toastr = inject(ToastrService)
 
   constructor(
     private fb: FormBuilder,
     private apiService: RestApiService,
-    private messageService: MessageService,
     private auth: AuthService,
     private router: Router
   ) {
@@ -62,12 +60,12 @@ export class LoginComponent implements OnInit {
           this.auth.user = res.data.user
           this.router.navigate(['/app/dashboard']);
         } else {
-          this.messageService.add({severity: 'error', summary: 'Error', detail: res.message});
+          this.toastr.showError('Login Failed', res.message)
         }
       },
       error: (error) => {
         AdminStore.setLoader(false);
-        this.messageService.add({severity: 'error', summary: 'Error', detail: error.message});
+        this.toastr.showError('Login Failed', error.message)
         console.error('Login Failed:', error);
       }
     }));

@@ -8,6 +8,7 @@ import {Router, RouterLink, RouterLinkActive} from '@angular/router';
 import {Divider} from 'primeng/divider';
 import {ConfirmationDialogService} from '../../../core/services/confirmation-dialog.service';
 import {AuthService} from '../../../core/services/auth.service';
+import {ScrollTopModule} from 'primeng/scrolltop';
 
 @Component({
   selector: 'app-drawer',

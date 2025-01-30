@@ -1,25 +1,86 @@
-<div class="grid">
-  <div class="col-12 md:col-6 lg:col-3">
-    <div class="text-center p-3 border-round-sm bg-primary font-bold">
-      col-12 md:col-6 lg:col-3
+<div class="grid p-4">
+  <!-- KPI Cards -->
+  <div class="col-12">
+    <div class="grid">
+      <div class="col-12 md:col-3" *ngFor="let kpi of kpis | keyvalue">
+        <div class="shadow-card flex flex-column align-items-center justify-content-between text-center p-4">
+          <span class="kpi-label text-md font-semibold block">{{ kpi.key | titlecase }}</span>
+          <h3 class="kpi-value">{{ kpi.value }}</h3>
+          <i class="pi pi-chart-bar kpi-icon"></i>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div class="col-12 md:col-6 lg:col-3">
-    <div class="text-center p-3 border-round-sm bg-primary font-bold">
-      col-12 md:col-6 lg:col-3
+  <!-- Sales and Payments Graphs -->
+  <div class="col-12 md:col-6">
+    <p-card header="Sales Overview">
+      <p-chart type="line" [data]="salesChartData"></p-chart>
+    </p-card>
+  </div>
+  <div class="col-12 md:col-6">
+    <div class="grid">
+      <div class="col-12 md:col-6">
+        <div class="grid">
+          <div class="col-12">
+            <p-card header="Sales Insights">
+              <p-chart type="bar" [data]="paymentChartData" ></p-chart>
+            </p-card>
+          </div>
+          <div class="col-12">
+            <p-card header="Sales by Category">
+              <p-chart type="bar" [data]="paymentChartData"></p-chart>
+            </p-card>
+          </div>
+      </div>
+      </div>
+      <div class="col-12 md:col-6">
+        <p-card header="Payment Insights">
+          <p-chart type="pie" [data]="paymentChartData" ></p-chart>
+        </p-card>
+      </div>
     </div>
   </div>
 
-  <div class="col-12 md:col-6 lg:col-3">
-    <div class="text-center p-3 border-round-sm bg-primary font-bold">
-      col-12 md:col-6 lg:col-3
-    </div>
+  <!-- Inventory and Vendor Management -->
+  <div class="col-12 md:col-6">
+    <p-card header="Inventory Overview">
+      <p-table [value]="inventoryData" [responsiveLayout]="'scroll'">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Product</th>
+            <th>Qty</th>
+            <th>Value</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData>
+          <tr>
+            <td>{{ rowData.product }}</td>
+            <td>{{ rowData.quantity }}</td>
+            <td>{{ rowData.value | currency }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-card>
+  </div>
+  <div class="col-12 md:col-6">
+    <p-card header="Vendor Management">
+      <div class="flex flex-column gap-2">
+        <p>Total Vendors: 25</p>
+        <p>Payables: $3,000</p>
+        <p>Recent Activity: Paid $500</p>
+      </div>
+    </p-card>
   </div>
 
-  <div class="col-12 md:col-6 lg:col-3">
-    <div class="text-center p-3 border-round-sm bg-primary font-bold">
-      col-12 md:col-6 lg:col-3
-    </div>
+  <!-- Top Products -->
+  <div class="col-12">
+    <p-card header="Top Products">
+      <div class="grid gap-3">
+        <div class="col-2" *ngFor="let product of topProducts">
+            <p-tag [value]="product" [rounded]="true" />
+        </div>
+      </div>
+    </p-card>
   </div>
 </div>
