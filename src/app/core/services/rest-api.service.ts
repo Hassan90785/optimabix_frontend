@@ -10,7 +10,7 @@ import {Module} from '../models/Module';
   providedIn: 'root',
 })
 export class RestApiService {
-  private apiUrl = 'http://localhost:5000/api/v1';
+  private apiUrl = 'https://optimabix.com:5000/api/v1';
 
   constructor(private http: HttpClient) {
   }
