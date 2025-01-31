@@ -10,7 +10,7 @@ import {Module} from '../models/Module';
   providedIn: 'root',
 })
 export class RestApiService {
-  private apiUrl = 'https://optimabix.com:5000/api/v1';
+  private apiUrl = 'http://localhost:5000/api/v1';
 
   constructor(private http: HttpClient) {
   }
@@ -258,12 +258,17 @@ export class RestApiService {
       : this.http.post(`${this.apiUrl}/inventory`, payload);
   }
 
+  createInventoryBarcode(payload: any): Observable<any> {
+    return  this.http.post(`${this.apiUrl}/inventory/printbarcode`, payload);
+  }
+
   /**
    * Pos Transactions
    */
   posTransactions(payload: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/posTransactions`, payload)
   }
+
   getPOSTransactions(queryParams?: any): Observable<any> {
     let query = '';
     if (queryParams) {

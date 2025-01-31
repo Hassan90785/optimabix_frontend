@@ -97,6 +97,33 @@
             <label for="sellingPrice">Total Cost</label>
           </p-floatLabel>
         </div>
+      <!-- Manufacturing Date (mgf) -->
+      <div class="field col-12 md:col-6">
+        <p-floatLabel variant="on">
+          <p-datePicker
+            formControlName="mgf_dt"
+            id="mgf"
+            showIcon
+            dateFormat="yy-mm-dd"
+            class="w-full"
+          ></p-datePicker>
+          <label for="mgf">Manufacturing Date</label>
+        </p-floatLabel>
+      </div>
+
+      <!-- Expiry Date (expiry) -->
+      <div class="field col-12 md:col-6">
+        <p-floatLabel variant="on">
+          <p-datePicker
+            formControlName="expiry_dt"
+            id="expiry"
+            showIcon
+            dateFormat="yy-mm-dd"
+            class="w-full"
+          ></p-datePicker>
+          <label for="expiry">Expiry Date</label>
+        </p-floatLabel>
+      </div>
       </div>
 
       <!-- Submit Button -->
