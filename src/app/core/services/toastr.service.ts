@@ -7,11 +7,11 @@ import {MessageService} from 'primeng/api';
 export class ToastrService {
   constructor(private messageService: MessageService) {}
 
-  showSuccess(summary: string, detail: string): void {
+  showSuccess(summary: string, detail: string = 'Success'): void {
     this.messageService.add({ severity: 'success', summary, detail });
   }
 
-  showError(summary: string, detail: string): void {
+  showError(summary: string, detail: string='Error'): void {
     this.messageService.add({ severity: 'error', summary, detail });
   }
 
@@ -19,7 +19,7 @@ export class ToastrService {
     this.messageService.add({ severity: 'info', summary, detail });
   }
 
-  showWarn(summary: string, detail: string): void {
+  showWarn(summary: string, detail: string= 'Warn'): void {
     this.messageService.add({ severity: 'warn', summary, detail });
   }
 }
