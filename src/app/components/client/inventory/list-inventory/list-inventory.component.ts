@@ -89,8 +89,6 @@ export class ListInventoryComponent implements OnInit, OnDestroy {
 
 
   printBarcode(batch: any, productName: string): void {
-    console.log('Printing barcode for batch', batch);
-    console.log('Product Name', productName);
     this.apiService.createInventoryBarcode({...batch, productName}).subscribe(value => {
       if (value && value.success && value.data && value.data.pdfPath) {
         this.toastr.showSuccess('BarCode Generated successfully.', 'Success');

@@ -1,64 +1,41 @@
-<div class="login-container p-d-flex p-ai-center p-jc-center p-min-h-screen p-p-4">
-  <p-card class="login-card p-shadow-5 p-p-4 p-d-flex p-ai-center p-flex-column">
+<div class="login-container flex align-items-center justify-content-center min-h-screen p-4">
+  <div class="login-card shadow-5 p-4 flex flex-column align-items-center">
     <!-- Logo Section -->
-    <div class="logo-container p-mb-4">
-      <img
-        src="https://optimabix.com:8020/logo-company.png"
-        alt="Company Logo"
-        class="logo"
-      />
+    <div class="logo-container mb-4">
+      <img src="https://optimabix.com:8020/logo-company.png" alt="Company Logo" class="logo" />
     </div>
 
     <!-- Header Section -->
-    <div class="login-header p-text-center p-mb-4">
-      <h2 class="p-text-bold p-mb-2">Welcome Back</h2>
-      <p class="p-text-secondary">Please login to your account</p>
+    <div class="login-header text-center mb-4">
+      <h2 class="font-bold mb-2">Welcome Back</h2>
+      <p class="text-secondary">Please login to your account</p>
     </div>
 
     <!-- Login Form -->
-    <form [formGroup]="loginForm" class="p-fluid p-d-flex p-flex-column p-ai-center w-full">
-      <div class="field-stack p-d-flex p-flex-column p-gap-4 w-full">
-
+    <form [formGroup]="loginForm" class="w-full flex flex-column align-items-center gap-3">
+      <div class="w-full flex flex-column gap-3">
         <!-- Email Field -->
-        <div class="p-field p-my-3 w-full">
-          <p-floatLabel>
-            <input
-              pInputText
-              id="username"
-              formControlName="username"
-              autocomplete="off"
-              class="p-inputtext-lg w-full"
-            />
+        <div class="w-full">
+          <p-floatLabel variant="on">
+            <input pInputText id="username" formControlName="username" autocomplete="off" class="w-full" />
             <label for="username">Username</label>
           </p-floatLabel>
         </div>
 
         <!-- Password Field -->
-        <div class="p-field p-my-3 w-full">
-          <p-floatLabel>
-            <input
-              pInputText
-              id="password"
-              type="password"
-              formControlName="password"
-              autocomplete="off"
-              class="p-inputtext-lg w-full"
-            />
+        <div class="w-full">
+          <p-floatLabel variant="on">
+            <input pInputText id="password" type="password" formControlName="password" autocomplete="off" class="w-full" />
             <label for="password">Password</label>
           </p-floatLabel>
         </div>
 
         <!-- Login Button -->
-        <div class="p-my-3 w-full">
-          <p-button
-            label="Login"
-            [raised]="true"
-            severity="primary"
-            class="w-full p-button-rounded"
-            (click)="login()"
-          ></p-button>
+        <div class="w-full login-actions">
+          <p-button label="Login" severity="primary" class="w-full p-button-rounded" (click)="login()"></p-button>
         </div>
+
       </div>
     </form>
-  </p-card>
+  </div>
 </div>

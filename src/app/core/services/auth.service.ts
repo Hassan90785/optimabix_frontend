@@ -18,7 +18,6 @@ export class AuthService {
   }
 
   set user(value: User | undefined | null) {
-    console.log('Setting user', value);
     this._user = value;
   }
 

@@ -36,7 +36,6 @@ export class EntitiesListComponent  implements OnInit, OnDestroy {
   }
 
   fetchEntities(page: number = 1, limit: number = 10, sort: string = 'entityName'): void {
-    console.log('fetchEntities')
     AdminStore.setLoader(true);
     this.subscriptions.add(
       this.apiService.getEntities({ page, limit, sort, companyId:this.auth.info.companyId }).subscribe({

@@ -69,7 +69,6 @@ export class ClientSalesComponent implements OnInit {
       if (value && value.success)
         this.transactions = value.data.transactions;
       this.filterDialogVisible = false;
-      console.log('this.transactions: ', this.transactions);
       this.loading = false;
     });
   }
@@ -86,8 +85,6 @@ export class ClientSalesComponent implements OnInit {
   getFilterDates(): any {
     const today = new Date();
     const filters: any = {};
-    console.log('this.startDate: ', this.startDate);
-    console.log('this.endDate: ', this.endDate);
     if (this.selectedFilter === 'today') {
       filters.startDate = today.toISOString().split('T')[0];
       filters.endDate = today.toISOString().split('T')[0];

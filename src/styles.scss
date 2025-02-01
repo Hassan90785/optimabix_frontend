@@ -68,3 +68,19 @@ button:hover {
   font-size: 28px;
   font-weight: bold;
 }
+
+.login-actions {
+  display: flex;
+  width: 100%;
+}
+
+.login-actions .p-button {
+  display: flex;  /* Ensures it stretches */
+  flex-grow: 1;
+  width: 100%;
+}
+
+.login-actions .p-button button {
+  display: block; /* Ensures width applies */
+  width: 100% !important;
+}

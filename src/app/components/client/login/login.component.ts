@@ -52,7 +52,6 @@ export class LoginComponent implements OnInit {
     AdminStore.setLoader(true);
     this.subscription.add(this.apiService.login(this.loginForm.value).subscribe({
       next: (res) => {
-        console.log('res', res);
         if (res && res.success) {
           localStorage.setItem('token', res.data.token);
           localStorage.setItem('user', JSON.stringify(res.data.user));

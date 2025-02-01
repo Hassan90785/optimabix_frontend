@@ -77,7 +77,6 @@ export class EntityComponent implements OnInit, OnDestroy {
 
     AdminStore.setLoader(true);
     const payload = this.entityForm.value;
-    console.log('this.auth.info()', this.auth.info);
     payload.companyId = this.auth.info?.companyId || null;
     payload.createdBy = this.auth.info?.id || null;
 

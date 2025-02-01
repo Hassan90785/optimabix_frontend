@@ -82,10 +82,8 @@ export class ClientPosComponent implements OnInit, OnDestroy {
       }))
       .subscribe(
         (response) => {
-          console.log('response:', response)
           if (response.data && response.success) {
             this.productOptions = response.data.map(this.mapProductOption);
-            console.log('Available products loaded:', this.productOptions);
           } else {
             this.toastr.showWarn('No available inventory found.', 'Warning');
             console.warn('No available inventory found.');
@@ -179,9 +177,6 @@ export class ClientPosComponent implements OnInit, OnDestroy {
     productOption.name = `${productOption.name.split('(')[0].trim()} (Qty: ${productOption.availableQuantity})`;
 
     // Log previous and updated values for debugging or display
-    console.log(`Previous Quantity: ${previousQuantity}, Updated Quantity: ${newQuantity}`);
-    console.log('Updated productOption:', productOption);
-    console.log('Cart Items:', this.cartItems);
 
     this.calculateTotals();
   }
@@ -218,7 +213,6 @@ export class ClientPosComponent implements OnInit, OnDestroy {
     }
 
     if (this.balanceAmount >= 0 && this.selectedPaymentMethod) {
-      console.log('Checked out items:', {...this.cartItems});
       this.checkoutDialogVisible = false;
       const payload = this.transactionPayload();
       this.subscription.add(this.apiService.posTransactions(payload)
@@ -335,7 +329,6 @@ export class ClientPosComponent implements OnInit, OnDestroy {
     payload.paymentMethod = this.selectedPaymentMethod
     payload.paidAmount = this.paidAmount
     payload.changeGiven = this.balanceAmount
-    console.log('payload:', payload)
     return payload
   }
 

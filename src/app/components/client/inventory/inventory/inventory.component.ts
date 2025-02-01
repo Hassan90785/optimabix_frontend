@@ -73,8 +73,6 @@ export class InventoryComponent implements OnInit, OnDestroy {
         this.inventoryForm.get('batches.purchasePrice')?.patchValue(this.selectedProduct.price.unitPurchasePrice, {emitEvent: false});
         this.inventoryForm.get('batches.sellingPrice')?.patchValue(this.selectedProduct.price.retailPrice, {emitEvent: false});
       }
-      console.log(`Product ID changed to:`, value);
-      console.log(`Selected Product:`, this.selectedProduct);
     }));
 
     this.subscriptions.add(this.inventoryForm.get('batches.purchasePrice')?.valueChanges.subscribe((value) => {
@@ -94,7 +92,6 @@ export class InventoryComponent implements OnInit, OnDestroy {
   onSubmit(): void {
 
     AdminStore.setLoader(true);
-    console.log('Form Submitted:', this.inventoryForm.value);
     const payload = this.inventoryForm.value;
     payload.companyId = this.auth.info?.companyId || null;
     payload.createdBy = this.auth.info?.id || null;
