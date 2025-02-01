@@ -5,7 +5,7 @@ import {Company} from '../models/Company';
 import {User} from '../models/User';
 import {Role} from '../models/Role';
 import {Module} from '../models/Module';
-import {environment} from '../../environments/environment';
+import {environment} from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
