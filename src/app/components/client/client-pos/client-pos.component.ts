@@ -14,7 +14,7 @@ import {POSTransaction, ProductDetails} from '../../../core/models/POSTransactio
 import {ToastrService} from '../../../core/services/toastr.service';
 import {catchError, of, Subscription} from 'rxjs';
 import {AdminStore} from '../../../core/stores/admin.store';
-import {environment} from '../../../environments/environment';
+import {environment} from '../../../../environments/environment';
 
 @Component({
   selector: 'app-client-pos',
