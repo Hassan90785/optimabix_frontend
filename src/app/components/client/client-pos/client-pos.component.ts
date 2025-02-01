@@ -82,7 +82,8 @@ export class ClientPosComponent implements OnInit, OnDestroy {
       }))
       .subscribe(
         (response) => {
-          if (response.data && response.data.success) {
+          console.log('response:', response)
+          if (response.data && response.success) {
             this.productOptions = response.data.map(this.mapProductOption);
             console.log('Available products loaded:', this.productOptions);
           } else {
