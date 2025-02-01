@@ -19,7 +19,7 @@
             type="text"
             pInputText
             [(ngModel)]="scannedCode"
-            (keyup.enter)="onScan()"
+            (change)="onScan()"
             placeholder="Scan or Enter Barcode"
             class="w-full"
           />

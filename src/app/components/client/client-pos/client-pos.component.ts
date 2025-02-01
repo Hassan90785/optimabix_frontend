@@ -101,6 +101,7 @@ export class ClientPosComponent implements OnInit, OnDestroy {
 
   // Handle barcode scan
   onScan(): void {
+    console.log('Scanned code:', this.scannedCode);
     if (this.scannedCode) {
       const product = this.getProductByBarcode(this.scannedCode);
       if (product) {
@@ -188,7 +189,6 @@ export class ClientPosComponent implements OnInit, OnDestroy {
   // Calculate totals
   calculateTotals(): void {
     this.subtotal = this.cartItems.reduce((sum, item) => sum + item.total, 0);
-    this.tax = this.subtotal * 0.1;
     this.total = this.subtotal + this.tax;
   }
 
@@ -248,6 +248,7 @@ export class ClientPosComponent implements OnInit, OnDestroy {
     return {
       id: inventory.productId,
       price: inventory.firstAvailableBatch.sellingPrice,
+      barcode: inventory.firstAvailableBatch.barcode,
       name: `${inventory.name} (Qty: ${inventory.totalQuantity})`,
       availableQuantity: inventory.totalQuantity,
       disabled: inventory.totalQuantity === 0,
