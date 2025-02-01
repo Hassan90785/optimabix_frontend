@@ -12,6 +12,7 @@ import {BarcodeDirective} from '../../../../shared/directives/barcode.directive'
 import {Ripple} from 'primeng/ripple';
 import {DatePipe} from '@angular/common';
 import {ToastrService} from '../../../../core/services/toastr.service';
+import {environment} from '../../../../environments/environment';
 
 @Component({
   selector: 'app-list-inventory',
@@ -92,7 +93,7 @@ export class ListInventoryComponent implements OnInit, OnDestroy {
     this.apiService.createInventoryBarcode({...batch, productName}).subscribe(value => {
       if (value && value.success && value.data && value.data.pdfPath) {
         this.toastr.showSuccess('BarCode Generated successfully.', 'Success');
-        const receiptUrl = 'http://localhost:5000/' + value.data.pdfPath;
+        const receiptUrl =  environment.uploadUrl + value.data.pdfPath;
         window.open(receiptUrl, '_blank'); // Open the PDF in a new browser tab
       } else {
         this.toastr.showError('Failed to generate barcode.', 'Error');
