@@ -1,21 +1,23 @@
-/* Hover Effects */
-a:hover {
-  background-color: var(--surface-200);
-  color: var(--text-color-secondary) !important;
-  border-radius: 4px;
+/* 🌟 Hover Effects */
+a:hover:not(.active-menu-item) {
+  background-color: rgba(75, 78, 83, 0.55) !important;
+  color: var(--button-text-color) !important;
+  border-radius: 6px;
+  transition: background-color var(--transition-speed), color var(--transition-speed);
 }
 
-/* Selected Effect */
-.active-menu-item a {
-  background-color: var(--primary-color);
-  color: var(--primary-color-text) !important;
+
+/* 🌟 Active State */
+.active-menu-item {
+  background-color: #10b981 !important;
+  color: var(--button-text-color) !important;
   font-weight: bold;
-  border-radius: 4px;
+  transition: background-color var(--transition-speed), color var(--transition-speed);
 }
 
-/* Separator Styling */
-hr {
-  border: 0;
-  border-top: 1px solid var(--surface-300);
-  margin: 0.5rem 0;
+/* 🌙 Dark Mode Support */
+.app-dark .active-menu-item {
+  background-color: #10b981 !important;
+  color: var(--button-text-color) !important;
 }
+

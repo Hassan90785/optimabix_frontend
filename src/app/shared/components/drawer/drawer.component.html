@@ -1,4 +1,4 @@
-<p-drawer [(visible)]="visible" [closable]="true" position="right" [modal]="true" (onHide)="onClose()">
+<p-drawer [(visible)]="visible" [closable]="true" position="right" [modal]="true" (onHide)="onClose()" class="drawer">
   <!-- Header -->
   <ng-template #header>
     <div class="flex items-center gap-2">
@@ -21,7 +21,7 @@
       >
         <a
           pRipple
-          class="flex items-center cursor-pointer p-4 rounded-border text-surface-700
+          class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 menu-item
            dark:text-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors"
         >
           <i class="{{ item.icon }} mr-2"></i>
