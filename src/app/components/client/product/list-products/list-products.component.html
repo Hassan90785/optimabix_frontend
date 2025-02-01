@@ -27,9 +27,8 @@
         <td>{{ product.category }}</td>
         <td>{{ product.brandName }}</td>
         <td>
-          <p-button icon="pi pi-pencil" class="p-button-text" (click)="onEdit(product)" [disabled]="true"></p-button>
-          <p-button icon="pi pi-trash" class="p-button-text p-button-danger" (click)="onDelete(product)"
-                    [disabled]="true"></p-button>
+          <p-button icon="pi pi-pencil" [text]="true" class="p-button-text" (click)="onEdit(product)"></p-button>
+          <p-button icon="pi pi-trash" [text]="true" class="p-button-text p-button-danger" (click)="onDelete(product)" ></p-button>
         </td>
       </tr>
     </ng-template>

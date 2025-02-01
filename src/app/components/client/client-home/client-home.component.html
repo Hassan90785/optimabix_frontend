@@ -11,18 +11,21 @@
 
         <p-button
           icon="pi pi-sun"
+          [text]="true"
           class="p-button-text"
           *ngIf="!themeService.isDarkModeEnabled()"
           (click)="themeService.toggleTheme()"
         ></p-button>
         <p-button
           icon="pi pi-moon"
+          [text]="true"
           class="p-button-text"
           *ngIf="themeService.isDarkModeEnabled()"
           (click)="themeService.toggleTheme()"
         ></p-button>
         <p-button
           icon="pi pi-bars"
+          [text]="true"
           class="p-button-text ml-2"
           (click)="toggleSidebar()"
         ></p-button>

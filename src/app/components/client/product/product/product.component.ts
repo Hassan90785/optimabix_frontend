@@ -12,6 +12,7 @@ import {Product} from '../../../../core/models/Product';
 import {AuthService} from '../../../../core/services/auth.service';
 import {Router} from '@angular/router';
 import {ToastrService} from '../../../../core/services/toastr.service';
+import {DataStoreService} from '../../../../core/services/data-store.service';
 
 @Component({
   selector: 'app-product',
@@ -30,10 +31,12 @@ import {ToastrService} from '../../../../core/services/toastr.service';
 })
 export class ProductComponent implements OnInit, OnDestroy {
   productForm: FormGroup;
+  indicator: boolean = false;
   subscriptions: Subscription = new Subscription();
   private auth = inject(AuthService)
   private toastr = inject(ToastrService)
   private router = inject(Router)
+  private dataStore = inject(DataStoreService)
 
   constructor(
     private fb: FormBuilder,
@@ -41,6 +44,7 @@ export class ProductComponent implements OnInit, OnDestroy {
   ) {
     this.productForm = this.fb.group({
       productName: ['', Validators.required],
+      _id: [''],
       sku: [''],
       description: [''],
       category: [''],
@@ -61,10 +65,10 @@ export class ProductComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Load product data if editing
+  this.getProduct();
   }
 
-  onSubmit(): void {
+  onSubmit(indicator = false): void {
 
     AdminStore.setLoader(true);
     const payload: Product = this.productForm.value;
@@ -74,7 +78,7 @@ export class ProductComponent implements OnInit, OnDestroy {
       this.apiService.saveProduct(payload).pipe(
         catchError((error) => {
           AdminStore.setLoader(false);
-          this.toastr.showError('Error saving entity', 'Error');
+          this.toastr.showError('Error saving product', 'Error');
           return of(null); // Return an observable, like `null`, to complete the stream gracefully
         })
       ).subscribe((value: any) => {
@@ -89,8 +93,24 @@ export class ProductComponent implements OnInit, OnDestroy {
     );
   }
 
+  getProduct() {
+    // Get product data for editing
+    this.subscriptions.add(
+      this.dataStore.selectedProduct$.subscribe((product: any) => {
+        console.log('product: ', product);
+        if (product) {
+          this.indicator = true;
+          this.productForm.patchValue(product.data);
+        }
+      }));
+  }
+
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
 
+  onCancel() {
+    this.dataStore.setSelectedProduct(null);
+    this.router.navigate(['/app/product/list']);
+  }
 }

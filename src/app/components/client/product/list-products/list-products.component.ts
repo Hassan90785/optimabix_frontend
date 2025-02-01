@@ -6,6 +6,7 @@ import {Button} from 'primeng/button';
 import {TableModule} from 'primeng/table';
 import {Router} from '@angular/router';
 import {AuthService} from '../../../../core/services/auth.service';
+import {DataStoreService} from '../../../../core/services/data-store.service';
 
 @Component({
   selector: 'app-list-products',
@@ -22,7 +23,9 @@ export class ListProductsComponent implements OnInit, OnDestroy {
   totalRecords: number = 0;
   subscriptions: Subscription = new Subscription();
 
-  constructor(private apiService: RestApiService, private router: Router, private auth: AuthService) {
+  constructor(private apiService: RestApiService, private router: Router,
+              private dataStore: DataStoreService,
+              private auth: AuthService) {
   }
 
   ngOnInit(): void {
@@ -32,7 +35,7 @@ export class ListProductsComponent implements OnInit, OnDestroy {
   fetchProducts(page: number = 1, limit: number = 10, sort: string = 'createdAt'): void {
     AdminStore.setLoader(true);
     this.subscriptions.add(
-      this.apiService.getProducts({ page, limit, sort, companyId:this.auth.info.companyId }).subscribe({
+      this.apiService.getProducts({page, limit, sort, companyId: this.auth.info.companyId}).subscribe({
         next: (response: any) => {
           this.products = response.data.products;
           this.totalRecords = response.data.totalRecords;
@@ -46,7 +49,8 @@ export class ListProductsComponent implements OnInit, OnDestroy {
   }
 
   onEdit(product: any): void {
-    // Navigate to the CRUD form for editing
+    this.dataStore.setSelectedProduct({type: 'E', data: product});
+    this.router.navigate(['/app/product/update']);
   }
 
   onDelete(product: any): void {
@@ -60,4 +64,10 @@ export class ListProductsComponent implements OnInit, OnDestroy {
   onAdd() {
     this.router.navigate(['app/product/add']);
   }
+
+// Suppose "product" is the object you want to send
+  onView(product: any) {
+
+  }
+
 }
