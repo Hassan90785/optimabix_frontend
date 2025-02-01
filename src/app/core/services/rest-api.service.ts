@@ -5,12 +5,13 @@ import {Company} from '../models/Company';
 import {User} from '../models/User';
 import {Role} from '../models/Role';
 import {Module} from '../models/Module';
+import {environment} from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RestApiService {
-  private apiUrl = 'http://localhost:5000/api/v1';
+  private apiUrl =  environment.apiUrl;
 
   constructor(private http: HttpClient) {
   }
