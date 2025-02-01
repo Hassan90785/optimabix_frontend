@@ -14,6 +14,7 @@ import {DropdownModule} from 'primeng/dropdown';
 import {Entity} from '../../../../core/models/Entity';
 import {ToastrService} from '../../../../core/services/toastr.service';
 import {Router} from '@angular/router';
+import {DatePickerModule} from 'primeng/datepicker';
 
 @Component({
   selector: 'app-inventory',
@@ -24,7 +25,8 @@ import {Router} from '@angular/router';
     Card,
     FloatLabel,
     Button,
-    DropdownModule
+    DropdownModule,
+    DatePickerModule
   ],
   templateUrl: './inventory.component.html',
   standalone: true,
@@ -51,6 +53,8 @@ export class InventoryComponent implements OnInit, OnDestroy {
         purchasePrice: [0, Validators.required],
         totalCost: [0, Validators.required],
         barcode: ['', Validators.required],
+        mgf_dt: [''],
+        expiry_dt: [''],
         sellingPrice: [0, Validators.required]
       })
     });
@@ -90,6 +94,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
   onSubmit(): void {
 
     AdminStore.setLoader(true);
+    console.log('Form Submitted:', this.inventoryForm.value);
     const payload = this.inventoryForm.value;
     payload.companyId = this.auth.info?.companyId || null;
     payload.createdBy = this.auth.info?.id || null;

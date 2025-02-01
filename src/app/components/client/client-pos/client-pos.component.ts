@@ -14,6 +14,7 @@ import {POSTransaction, ProductDetails} from '../../../core/models/POSTransactio
 import {ToastrService} from '../../../core/services/toastr.service';
 import {catchError, of, Subscription} from 'rxjs';
 import {AdminStore} from '../../../core/stores/admin.store';
+import {environment} from '../../../environments/environment';
 
 @Component({
   selector: 'app-client-pos',
@@ -81,7 +82,7 @@ export class ClientPosComponent implements OnInit, OnDestroy {
       }))
       .subscribe(
         (response) => {
-          if (response?.data) {
+          if (response.data && response.data.success) {
             this.productOptions = response.data.map(this.mapProductOption);
             console.log('Available products loaded:', this.productOptions);
           } else {
@@ -228,7 +229,7 @@ export class ClientPosComponent implements OnInit, OnDestroy {
         })).subscribe(value => {
         if (value && value.success && value.data && value.data.receiptPath) {
           this.toastr.showSuccess('Transaction completed successfully.', 'Success');
-          const receiptUrl = 'http://localhost:5000/' + value.data.receiptPath;
+          const receiptUrl = environment.uploadUrl + value.data.receiptPath;
           window.open(receiptUrl, '_blank'); // Open the PDF in a new browser tab
         } else {
           this.toastr.showError('Failed to fetch the receipt path.', 'Error');

@@ -11,6 +11,8 @@ import {Router} from '@angular/router';
 import {BarcodeDirective} from '../../../../shared/directives/barcode.directive';
 import {Ripple} from 'primeng/ripple';
 import {DatePipe} from '@angular/common';
+import {ToastrService} from '../../../../core/services/toastr.service';
+import {environment} from '../../../../environments/environment';
 
 @Component({
   selector: 'app-list-inventory',
@@ -23,6 +25,7 @@ import {DatePipe} from '@angular/common';
     Ripple,
     DatePipe,
   ],
+  providers: [ToastrService],
   templateUrl: './list-inventory.component.html',
   standalone: true,
   styleUrl: './list-inventory.component.scss'
@@ -34,6 +37,8 @@ export class ListInventoryComponent implements OnInit, OnDestroy {
   auth = inject(AuthService);
   router = inject(Router);
   expandedRows = {};
+  private toastr = inject(ToastrService)
+
   constructor(private apiService: RestApiService) {
   }
 
@@ -62,7 +67,7 @@ export class ListInventoryComponent implements OnInit, OnDestroy {
   }
 
   onAdd(): void {
-   this.router.navigate(['/app/inventory/add']);
+    this.router.navigate(['/app/inventory/add']);
   }
 
   onDelete(inventory: any): void {
@@ -79,5 +84,20 @@ export class ListInventoryComponent implements OnInit, OnDestroy {
 
   collapseAll() {
     this.expandedRows = {};
+  }
+
+
+  printBarcode(batch: any, productName: string): void {
+    console.log('Printing barcode for batch', batch);
+    console.log('Product Name', productName);
+    this.apiService.createInventoryBarcode({...batch, productName}).subscribe(value => {
+      if (value && value.success && value.data && value.data.pdfPath) {
+        this.toastr.showSuccess('BarCode Generated successfully.', 'Success');
+        const receiptUrl =  environment.uploadUrl + value.data.pdfPath;
+        window.open(receiptUrl, '_blank'); // Open the PDF in a new browser tab
+      } else {
+        this.toastr.showError('Failed to generate barcode.', 'Error');
+      }
+    });
   }
 }

@@ -5,12 +5,13 @@ import {Company} from '../models/Company';
 import {User} from '../models/User';
 import {Role} from '../models/Role';
 import {Module} from '../models/Module';
+import {environment} from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RestApiService {
-  private apiUrl = 'https://optimabix.com:5000/api/v1';
+  private apiUrl =  environment.apiUrl;
 
   constructor(private http: HttpClient) {
   }
@@ -258,12 +259,17 @@ export class RestApiService {
       : this.http.post(`${this.apiUrl}/inventory`, payload);
   }
 
+  createInventoryBarcode(payload: any): Observable<any> {
+    return  this.http.post(`${this.apiUrl}/inventory/printbarcode`, payload);
+  }
+
   /**
    * Pos Transactions
    */
   posTransactions(payload: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/posTransactions`, payload)
   }
+
   getPOSTransactions(queryParams?: any): Observable<any> {
     let query = '';
     if (queryParams) {

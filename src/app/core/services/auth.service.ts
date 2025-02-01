@@ -23,7 +23,6 @@ export class AuthService {
   }
 
   get info(): { name: string, id: string, role: string, companyId: string , logo: string, companyName:string } {
-    console.log('Getting user info: ', this.user);
     return {
       name: this.user.fullName,
       id: this.user._id,

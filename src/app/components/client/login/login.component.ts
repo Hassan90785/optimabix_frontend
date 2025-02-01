@@ -38,7 +38,7 @@ export class LoginComponent implements OnInit {
     private router: Router
   ) {
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
+      username: ['', [Validators.required]],
       password: ['', Validators.required]
     });
   }
@@ -60,6 +60,7 @@ export class LoginComponent implements OnInit {
           this.auth.user = res.data.user
           this.router.navigate(['/app/dashboard']);
         } else {
+          AdminStore.setLoader(false);
           this.toastr.showError('Login Failed', res.message)
         }
       },

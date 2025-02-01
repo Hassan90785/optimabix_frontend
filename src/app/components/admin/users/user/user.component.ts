@@ -41,8 +41,8 @@ export class UserComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       phone: [''],
-      role: ['', Validators.required], // Dropdown for Role
-      companyId: ['', Validators.required], // Dropdown for Company
+      role: [null, Validators.required], // Dropdown for Role
+      companyId: [null, Validators.required], // Dropdown for Company
       accessStatus: ['', Validators.required],
       accessStatusReason: [''],
       lastLogin: [''], // Display only, not editable
