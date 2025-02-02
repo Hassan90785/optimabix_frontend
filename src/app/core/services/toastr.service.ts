@@ -15,7 +15,7 @@ export class ToastrService {
     this.messageService.add({ severity: 'error', summary, detail });
   }
 
-  showInfo(summary: string, detail: string): void {
+  showInfo(summary: string, detail: string='Info'): void {
     this.messageService.add({ severity: 'info', summary, detail });
   }
 

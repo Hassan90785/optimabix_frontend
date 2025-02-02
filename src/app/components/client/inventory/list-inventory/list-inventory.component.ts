@@ -48,7 +48,7 @@ export class ListInventoryComponent implements OnInit, OnDestroy {
     this.fetchInventories();
   }
 
-  fetchInventories(page: number = 1, limit: number = 10, sort: string = 'createdBy'): void {
+  fetchInventories(page: number = 1, limit: number = 100, sort: string = 'createdBy'): void {
     AdminStore.setLoader(true);
     this.subscriptions.add(
       this.apiService.getInventories({page, limit, sort, companyId: this.auth.info.companyId}).subscribe({
