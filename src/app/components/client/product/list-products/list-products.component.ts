@@ -32,7 +32,7 @@ export class ListProductsComponent implements OnInit, OnDestroy {
     this.fetchProducts();
   }
 
-  fetchProducts(page: number = 1, limit: number = 10, sort: string = 'createdAt'): void {
+  fetchProducts(page: number = 1, limit: number = 100, sort: string = 'createdAt'): void {
     AdminStore.setLoader(true);
     this.subscriptions.add(
       this.apiService.getProducts({page, limit, sort, companyId: this.auth.info.companyId}).subscribe({
