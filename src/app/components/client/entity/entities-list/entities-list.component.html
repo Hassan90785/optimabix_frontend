@@ -32,18 +32,9 @@
         <td>{{ entity.accessStatus }}</td>
         <td>{{ entity.createdAt | date:'short' }}</td>
         <td>
-          <p-button
-            icon="pi pi-pencil"
-            class="p-button-text"
-            [disabled]="true"
-            (click)="onEdit(entity)"
-          ></p-button>
-          <p-button
-            [disabled]="true"
-            icon="pi pi-trash"
-            class="p-button-text p-button-danger"
-            (click)="onDelete(entity)"
-          ></p-button>
+          <p-button icon="pi pi-pencil" [text]="true" class="p-button-text" (click)="onEdit(entity)"></p-button>
+          <p-button icon="pi pi-trash" [text]="true" class="p-button-text p-button-danger" (click)="onDelete(entity)" ></p-button>
+
         </td>
       </tr>
     </ng-template>

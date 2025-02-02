@@ -129,9 +129,14 @@
       <!-- Submit Button -->
       <div class="col-12 flex justify-content-end mt-3">
         <p-button
+          label="Cancel"
+          class="p-button-primary p-button-lg"
+          (click)="onCancel()"
+        ></p-button>
+        <p-button
           (click)="onSubmit()"
           class="p-button-primary p-button-lg"
-          label="Submit"
+          [label]="indicator?'Update Inventory' :'Add Inentory'"
         ></p-button>
       </div>
     </form>

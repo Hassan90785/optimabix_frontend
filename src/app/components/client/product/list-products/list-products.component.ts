@@ -48,14 +48,7 @@ export class ListProductsComponent implements OnInit, OnDestroy {
     );
   }
 
-  onEdit(product: any): void {
-    this.dataStore.setSelectedProduct({type: 'E', data: product});
-    this.router.navigate(['/app/product/update']);
-  }
 
-  onDelete(product: any): void {
-    // Call delete product API
-  }
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
@@ -65,9 +58,12 @@ export class ListProductsComponent implements OnInit, OnDestroy {
     this.router.navigate(['app/product/add']);
   }
 
-// Suppose "product" is the object you want to send
-  onView(product: any) {
-
+  onEdit(product: any): void {
+    console.log('setting product: ', product);
+    this.dataStore.setSelectedProduct({type: 'E', data: product});
+    this.router.navigate(['/app/product/update']);
   }
-
+  onDelete(product: any): void {
+    // Call delete product API
+  }
 }

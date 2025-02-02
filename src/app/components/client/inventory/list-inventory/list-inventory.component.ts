@@ -13,6 +13,7 @@ import {Ripple} from 'primeng/ripple';
 import {DatePipe} from '@angular/common';
 import {ToastrService} from '../../../../core/services/toastr.service';
 import {environment} from '../../../../../environments/environment';
+import {DataStoreService} from '../../../../core/services/data-store.service';
 
 
 @Component({
@@ -39,7 +40,7 @@ export class ListInventoryComponent implements OnInit, OnDestroy {
   router = inject(Router);
   expandedRows = {};
   private toastr = inject(ToastrService)
-
+  private dataStore= inject(DataStoreService);
   constructor(private apiService: RestApiService) {
   }
 
@@ -63,18 +64,18 @@ export class ListInventoryComponent implements OnInit, OnDestroy {
     );
   }
 
-  onEdit(inventory: any): void {
-    // Navigate to CRUD form for editing
+  onAdd() {
+    this.router.navigate(['app/inventory/add']);
   }
 
-  onAdd(): void {
-    this.router.navigate(['/app/inventory/add']);
+  onEdit(product: any): void {
+    console.log('inventory: ', product);
+    this.dataStore.setSelectedInventory({type: 'E', data: product});
+    this.router.navigate(['/app/inventory/update']);
   }
-
-  onDelete(inventory: any): void {
-    // Call delete inventory API
+  onDelete(product: any): void {
+    // Call delete product API
   }
-
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }

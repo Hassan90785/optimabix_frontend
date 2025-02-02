@@ -15,6 +15,7 @@ import {Entity} from '../../../../core/models/Entity';
 import {ToastrService} from '../../../../core/services/toastr.service';
 import {Router} from '@angular/router';
 import {DatePickerModule} from 'primeng/datepicker';
+import {DataStoreService} from '../../../../core/services/data-store.service';
 
 @Component({
   selector: 'app-inventory',
@@ -36,15 +37,16 @@ import {DatePickerModule} from 'primeng/datepicker';
 export class InventoryComponent implements OnInit, OnDestroy {
   inventoryForm: FormGroup;
   subscriptions: Subscription = new Subscription();
-  products: Product[] = [];
+  indicator: boolean = false; products: Product[] = [];
   vendors: Entity[] = [];
   selectedProduct: Product | undefined = {} as Product;
   private auth = inject(AuthService)
   private toastr = inject(ToastrService)
   private router = inject(Router)
-
+  private dataStore = inject(DataStoreService)
   constructor(private fb: FormBuilder, private apiService: RestApiService, private cdr: ChangeDetectorRef) {
     this.inventoryForm = this.fb.group({
+      _id: [null],
       companyId: ['', Validators.required],
       productId: ['', Validators.required],
       vendorId: ['', Validators.required],
@@ -64,8 +66,20 @@ export class InventoryComponent implements OnInit, OnDestroy {
     this.fetchProducts()
     this.fetchVendors();
     this.valueChanges();
+    this.getInventory();
   }
 
+  getInventory() {
+    // Get product data for editing
+    this.subscriptions.add(
+      this.dataStore.selectedInventory$.subscribe((product: any) => {
+        console.log('selectedInventory$: ', product);
+        if (product) {
+          this.indicator = true;
+          this.inventoryForm.patchValue(product.data);
+        }
+      }));
+  }
   valueChanges() {
     this.subscriptions.add(this.inventoryForm.get('productId')?.valueChanges.subscribe((value) => {
       this.selectedProduct = this.products.find(item => item._id === value);
@@ -154,7 +168,10 @@ export class InventoryComponent implements OnInit, OnDestroy {
       })
     );
   }
-
+  onCancel() {
+    this.dataStore.setSelectedInventory(null);
+    this.router.navigate(['/app/inventory/list']);
+  }
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }

@@ -228,8 +228,8 @@ export class RestApiService {
   }
 
   saveEntity(payload: any): Observable<any> {
-    return payload.id
-      ? this.http.put(`${this.apiUrl}/entities/${payload.id}`, payload)
+    return payload._id
+      ? this.http.put(`${this.apiUrl}/entities/${payload._id}`, payload)
       : this.http.post(`${this.apiUrl}/entities`, payload);
   }
 
@@ -254,8 +254,8 @@ export class RestApiService {
   }
 
   saveInventory(payload: any): Observable<any> {
-    return payload.id
-      ? this.http.put(`${this.apiUrl}/inventory/${payload.id}`, payload)
+    return payload._id
+      ? this.http.put(`${this.apiUrl}/inventory/${payload._id}`, payload)
       : this.http.post(`${this.apiUrl}/inventory`, payload);
   }
 

@@ -11,6 +11,7 @@ import {Card} from 'primeng/card';
 import {AuthService} from '../../../../core/services/auth.service';
 import {ToastrService} from '../../../../core/services/toastr.service';
 import {Router} from '@angular/router';
+import {DataStoreService} from '../../../../core/services/data-store.service';
 
 @Component({
   selector: 'app-entity',
@@ -30,12 +31,14 @@ import {Router} from '@angular/router';
 export class EntityComponent implements OnInit, OnDestroy {
   entityForm: FormGroup;
   subscriptions: Subscription = new Subscription();
+  indicator: boolean = false;
   private auth = inject(AuthService)
   private toastr = inject(ToastrService)
   private router = inject(Router)
-
+  private dataStore = inject(DataStoreService)
   constructor(private fb: FormBuilder, private apiService: RestApiService) {
     this.entityForm = this.fb.group({
+      _id: [null],
       companyId: ['', Validators.required],
       entityType: ['', Validators.required],
       entityName: ['', Validators.required],
@@ -65,14 +68,24 @@ export class EntityComponent implements OnInit, OnDestroy {
       accessStatus: ['Active', Validators.required],
       paymentHistory: this.fb.array([])
     });
+    this.getEntity()
   }
 
 
   ngOnInit(): void {
-    // Load entity data if editing
   }
 
-
+  getEntity() {
+    // Get product data for editing
+    this.subscriptions.add(
+      this.dataStore.selectedEntity$.subscribe((product: any) => {
+        console.log('selectedEntity$: ', product);
+        if (product) {
+          this.indicator = true;
+          this.entityForm.patchValue(product.data);
+        }
+      }));
+  }
   onSubmit(): void {
 
     AdminStore.setLoader(true);
@@ -98,7 +111,10 @@ export class EntityComponent implements OnInit, OnDestroy {
       })
     );
   }
-
+  onCancel() {
+    this.dataStore.setSelectedEntity(null);
+    this.router.navigate(['/app/entity/list']);
+  }
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }

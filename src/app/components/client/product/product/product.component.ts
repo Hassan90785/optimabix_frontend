@@ -97,7 +97,7 @@ export class ProductComponent implements OnInit, OnDestroy {
     // Get product data for editing
     this.subscriptions.add(
       this.dataStore.selectedProduct$.subscribe((product: any) => {
-        console.log('product: ', product);
+        console.log('selectedProduct$: ', product);
         if (product) {
           this.indicator = true;
           this.productForm.patchValue(product.data);
