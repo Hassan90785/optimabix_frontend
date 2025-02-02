@@ -90,6 +90,7 @@ export class ClientPosComponent implements OnInit, OnDestroy {
 
   onScan(): void {
     const scannedCode = this.posForm.value.scannedCode;
+    console.log('onScan:', scannedCode);
     if (scannedCode) {
       const product = this.productOptions.find(p => p.barcode === scannedCode);
       if (product) {

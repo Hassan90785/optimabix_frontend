@@ -56,7 +56,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
         quantity: [0, Validators.required],
         purchasePrice: [0, Validators.required],
         totalCost: [0, Validators.required],
-        barcode: ['', Validators.required],
+        barcode: [''],
         mgf_dt: [''],
         expiry_dt: [''],
         sellingPrice: [0, Validators.required]
@@ -136,6 +136,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
     const payload = this.inventoryForm.value;
     payload.companyId = this.auth.info?.companyId || null;
     payload.createdBy = this.auth.info?.id || null;
+  
     this.subscriptions.add(
       this.apiService.saveInventory(payload).pipe(
         catchError((error) => {
