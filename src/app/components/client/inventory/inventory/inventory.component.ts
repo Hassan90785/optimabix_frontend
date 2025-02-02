@@ -37,13 +37,15 @@ import {DataStoreService} from '../../../../core/services/data-store.service';
 export class InventoryComponent implements OnInit, OnDestroy {
   inventoryForm: FormGroup;
   subscriptions: Subscription = new Subscription();
-  indicator: boolean = false; products: Product[] = [];
+  indicator: boolean = false;
+  products: Product[] = [];
   vendors: Entity[] = [];
   selectedProduct: Product | undefined = {} as Product;
   private auth = inject(AuthService)
   private toastr = inject(ToastrService)
   private router = inject(Router)
   private dataStore = inject(DataStoreService)
+
   constructor(private fb: FormBuilder, private apiService: RestApiService, private cdr: ChangeDetectorRef) {
     this.inventoryForm = this.fb.group({
       _id: [null],
@@ -70,16 +72,41 @@ export class InventoryComponent implements OnInit, OnDestroy {
   }
 
   getInventory() {
-    // Get product data for editing
     this.subscriptions.add(
       this.dataStore.selectedInventory$.subscribe((product: any) => {
         console.log('selectedInventory$: ', product);
         if (product) {
           this.indicator = true;
-          this.inventoryForm.patchValue(product.data);
+
+          const batch = product.data.batches.length > 0 ? product.data.batches[0] : null;
+
+          const mgf = batch?.mgf_dt ? new Date(batch.mgf_dt) : null;
+          const expiry = batch?.expiry_dt ? new Date(batch.expiry_dt) : null;
+
+          if (mgf) mgf.setUTCHours(0, 0, 0, 0);
+          if (expiry) expiry.setUTCHours(0, 0, 0, 0);
+
+          this.inventoryForm.patchValue({
+            _id: product.data._id,
+            companyId: product.data.companyId,
+            productId: product.data.productId?._id,
+            vendorId: product.data.vendorId?._id,
+            batches: {
+              quantity: batch?.quantity || 0,
+              purchasePrice: batch?.purchasePrice || 0,
+              totalCost: batch ? batch.purchasePrice * batch.quantity : 0,
+              barcode: batch?.barcode || '',
+              mgf_dt: mgf,
+              expiry_dt: expiry,
+              sellingPrice: batch?.sellingPrice || 0
+            }
+          });
         }
-      }));
+      })
+    );
   }
+
+
   valueChanges() {
     this.subscriptions.add(this.inventoryForm.get('productId')?.valueChanges.subscribe((value) => {
       this.selectedProduct = this.products.find(item => item._id === value);
@@ -168,10 +195,12 @@ export class InventoryComponent implements OnInit, OnDestroy {
       })
     );
   }
+
   onCancel() {
     this.dataStore.setSelectedInventory(null);
     this.router.navigate(['/app/inventory/list']);
   }
+
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }

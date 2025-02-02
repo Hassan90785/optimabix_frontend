@@ -26,7 +26,6 @@
       <tr>
         <th>Batches</th>
         <th>Product</th>
-        <th>Retail Price</th>
         <th>Total Quantity</th>
         <th>Vendor</th>
         <th>Actions</th>
@@ -40,7 +39,6 @@
                     [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'" />
         </td>
         <td>{{ inventory.productId.productName }}</td>
-        <td>{{ inventory.productId.price.retailPrice }}</td>
         <td>{{ inventory.totalQuantity }}</td>
         <td>{{ inventory.vendorId.entityName }}</td>
         <td>
