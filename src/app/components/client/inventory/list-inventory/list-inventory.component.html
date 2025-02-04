@@ -9,11 +9,11 @@
     ></p-button>
   </div>
   <p-table
+    #dt1
     [value]="inventories"
-    [paginator]="true"
-    [rows]="10"
-    [totalRecords]="totalRecords"
-    [responsiveLayout]="'scroll'"
+    [globalFilterFields]="['productId.productName', 'sku', 'category', 'brandName']"
+    [paginator]="true" [responsiveLayout]="'scroll'" [rows]="10"
+    [rowsPerPageOptions]="[10, 25, 50]"
     dataKey="_id"
   >
   <!--  <ng-template #caption>
@@ -22,12 +22,31 @@
       <p-button label="Collapse All" icon="pi pi-minus" text (onClick)="collapseAll()" />
     </div>
   </ng-template>-->
+    <ng-template #caption>
+      <div class="flex">
+        <p-button (click)="clear(dt1)" [outlined]="true" icon="pi pi-filter-slash" label="Clear"/>
+        <p-iconfield class="ml-auto" iconPosition="left">
+          <p-inputicon>
+            <i class="pi pi-search"></i>
+          </p-inputicon>
+          <input (input)="dt1.filterGlobal($any($event.target).value, 'contains')" [ngModel]="searchValue" pInputText
+                 placeholder="Search keyword"
+                 type="text"/>
+        </p-iconfield>
+      </div>
+    </ng-template>
     <ng-template pTemplate="header"  #header>
       <tr>
         <th>Batches</th>
-        <th>Product</th>
-        <th>Total Quantity</th>
-        <th>Vendor</th>
+        <th pSortableColumn="productId.productName">
+          Product <p-sortIcon field="productId.productName" />
+        </th>
+        <th pSortableColumn="totalQuantity">
+          Total Quantity <p-sortIcon field="totalQuantity" />
+        </th>
+        <th pSortableColumn="vendorId">
+          Vendor <p-sortIcon field="vendorId.entityName" />
+        </th>
         <th>Actions</th>
       </tr>
     </ng-template>

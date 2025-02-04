@@ -3,7 +3,7 @@ import {AdminStore} from '../../../../core/stores/admin.store';
 import {Subscription} from 'rxjs';
 import {RestApiService} from '../../../../core/services/rest-api.service';
 import {PrimeTemplate} from 'primeng/api';
-import {TableModule} from 'primeng/table';
+import {Table, TableModule} from 'primeng/table';
 import {Button} from 'primeng/button';
 import {Card} from 'primeng/card';
 import {AuthService} from '../../../../core/services/auth.service';
@@ -14,6 +14,10 @@ import {DatePipe} from '@angular/common';
 import {ToastrService} from '../../../../core/services/toastr.service';
 import {environment} from '../../../../../environments/environment';
 import {DataStoreService} from '../../../../core/services/data-store.service';
+import {FormsModule} from "@angular/forms";
+import {IconField} from "primeng/iconfield";
+import {InputIcon} from "primeng/inputicon";
+import {InputText} from "primeng/inputtext";
 
 
 @Component({
@@ -26,6 +30,10 @@ import {DataStoreService} from '../../../../core/services/data-store.service';
     BarcodeDirective,
     Ripple,
     DatePipe,
+    FormsModule,
+    IconField,
+    InputIcon,
+    InputText,
   ],
   providers: [ToastrService],
   templateUrl: './list-inventory.component.html',
@@ -39,8 +47,10 @@ export class ListInventoryComponent implements OnInit, OnDestroy {
   auth = inject(AuthService);
   router = inject(Router);
   expandedRows = {};
+  searchValue: string = '';
   private toastr = inject(ToastrService)
-  private dataStore= inject(DataStoreService);
+  private dataStore = inject(DataStoreService);
+
   constructor(private apiService: RestApiService) {
   }
 
@@ -73,9 +83,11 @@ export class ListInventoryComponent implements OnInit, OnDestroy {
     this.dataStore.setSelectedInventory({type: 'E', data: product});
     this.router.navigate(['/app/inventory/update']);
   }
+
   onDelete(product: any): void {
     // Call delete product API
   }
+
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
@@ -93,11 +105,17 @@ export class ListInventoryComponent implements OnInit, OnDestroy {
     this.apiService.createInventoryBarcode({...batch, productName}).subscribe(value => {
       if (value && value.success && value.data && value.data.pdfPath) {
         this.toastr.showSuccess('BarCode Generated successfully.', 'Success');
-        const receiptUrl =  environment.uploadUrl + value.data.pdfPath;
+        const receiptUrl = environment.uploadUrl + value.data.pdfPath;
         window.open(receiptUrl, '_blank'); // Open the PDF in a new browser tab
       } else {
         this.toastr.showError('Failed to generate barcode.', 'Error');
       }
     });
   }
+
+  clear(table: Table) {
+    table.clear();
+    this.searchValue = ''
+  }
+
 }

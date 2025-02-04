@@ -10,18 +10,40 @@
   </div>
 
   <p-table
+    #dt1
     [value]="entities"
-    [paginator]="true"
-    [rows]="10"
     [totalRecords]="totalRecords"
-    [responsiveLayout]="'scroll'"
+    [globalFilterFields]="['productName', 'sku', 'category', 'brandName']"
+    [paginator]="true" [responsiveLayout]="'scroll'" [rows]="10"
+    [rowsPerPageOptions]="[10, 25, 50]"
   >
+    <ng-template #caption>
+      <div class="flex">
+        <p-button (click)="clear(dt1)" [outlined]="true" icon="pi pi-filter-slash" label="Clear"/>
+        <p-iconfield class="ml-auto" iconPosition="left">
+          <p-inputicon>
+            <i class="pi pi-search"></i>
+          </p-inputicon>
+          <input (input)="dt1.filterGlobal($any($event.target).value, 'contains')" [ngModel]="searchValue" pInputText
+                 placeholder="Search keyword"
+                 type="text"/>
+        </p-iconfield>
+      </div>
+    </ng-template>
     <ng-template pTemplate="header">
       <tr>
-        <th>Entity Name</th>
-        <th>Type</th>
-        <th>Status</th>
-        <th>Created At</th>
+        <th pSortableColumn="entityName">
+          Entity Name <p-sortIcon field="entityName" />
+        </th>
+        <th pSortableColumn="entityType">
+          Type <p-sortIcon field="entityType" />
+        </th>
+        <th pSortableColumn="accessStatus">
+          Status <p-sortIcon field="accessStatus" />
+        </th>
+        <th pSortableColumn="createdAt">
+          Created At <p-sortIcon field="createdAt" />
+        </th>
         <th>Actions</th>
       </tr>
     </ng-template>
