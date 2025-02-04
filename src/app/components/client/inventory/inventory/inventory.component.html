@@ -9,15 +9,18 @@
       <!-- Product -->
       <div class="field col-12 md:col-6">
         <p-floatLabel variant="on">
-          <p-dropdown
-            [options]="products"
+          <p-autoComplete
+            id="productAutocomplete"
             class="w-full"
+            styleClass="w-full"
+            dropdown="true"
             formControlName="productId"
-            id="productId"
-            optionLabel="productName"
-            optionValue="_id"
-            placeholder="Select a Product"
-          ></p-dropdown>
+            [suggestions]="filteredProducts"
+            (completeMethod)="filterProducts($event)"
+            [optionLabel]="'productName'"
+            [optionValue]="'_id'"
+            placeholder="Search a Product"
+          ></p-autoComplete>
         </p-floatLabel>
       </div>
 

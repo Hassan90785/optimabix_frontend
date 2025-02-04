@@ -3,16 +3,24 @@ import {Subscription} from 'rxjs';
 import {RestApiService} from '../../../../core/services/rest-api.service';
 import {AdminStore} from '../../../../core/stores/admin.store';
 import {Button} from 'primeng/button';
-import {TableModule} from 'primeng/table';
+import {Table, TableModule} from 'primeng/table';
 import {Router} from '@angular/router';
 import {AuthService} from '../../../../core/services/auth.service';
 import {DataStoreService} from '../../../../core/services/data-store.service';
+import {IconField} from 'primeng/iconfield';
+import {InputIcon} from 'primeng/inputicon';
+import {InputText} from 'primeng/inputtext';
+import {FormsModule} from '@angular/forms';
 
 @Component({
   selector: 'app-list-products',
   imports: [
     Button,
-    TableModule
+    TableModule,
+    IconField,
+    InputIcon,
+    InputText,
+    FormsModule
   ],
   templateUrl: './list-products.component.html',
   standalone: true,
@@ -22,6 +30,7 @@ export class ListProductsComponent implements OnInit, OnDestroy {
   products: any[] = [];
   totalRecords: number = 0;
   subscriptions: Subscription = new Subscription();
+  searchValue: string = '';
 
   constructor(private apiService: RestApiService, private router: Router,
               private dataStore: DataStoreService,
@@ -39,6 +48,7 @@ export class ListProductsComponent implements OnInit, OnDestroy {
         next: (response: any) => {
           this.products = response.data.products;
           this.totalRecords = response.data.totalRecords;
+          console.log('response: ', response);
           AdminStore.setLoader(false);
         },
         error: () => {
@@ -48,6 +58,10 @@ export class ListProductsComponent implements OnInit, OnDestroy {
     );
   }
 
+  clear(table: Table) {
+    table.clear();
+    this.searchValue = ''
+  }
 
 
   ngOnDestroy(): void {
@@ -63,6 +77,7 @@ export class ListProductsComponent implements OnInit, OnDestroy {
     this.dataStore.setSelectedProduct({type: 'E', data: product});
     this.router.navigate(['/app/product/update']);
   }
+
   onDelete(product: any): void {
     // Call delete product API
   }

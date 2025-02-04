@@ -16,6 +16,7 @@ import {ToastrService} from '../../../../core/services/toastr.service';
 import {Router} from '@angular/router';
 import {DatePickerModule} from 'primeng/datepicker';
 import {DataStoreService} from '../../../../core/services/data-store.service';
+import {AutoComplete} from 'primeng/autocomplete';
 
 @Component({
   selector: 'app-inventory',
@@ -27,7 +28,8 @@ import {DataStoreService} from '../../../../core/services/data-store.service';
     FloatLabel,
     Button,
     DropdownModule,
-    DatePickerModule
+    DatePickerModule,
+    AutoComplete
   ],
   templateUrl: './inventory.component.html',
   standalone: true,
@@ -39,6 +41,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
   subscriptions: Subscription = new Subscription();
   indicator: boolean = false;
   products: Product[] = [];
+  filteredProducts: any[] = [];
   vendors: Entity[] = [];
   selectedProduct: Product | undefined = {} as Product;
   private auth = inject(AuthService)
@@ -89,7 +92,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
           this.inventoryForm.patchValue({
             _id: product.data._id,
             companyId: product.data.companyId,
-            productId: product.data.productId?._id,
+            productId: product.data.productId,
             vendorId: product.data.vendorId?._id,
             batches: {
               quantity: batch?.quantity || 0,
@@ -109,11 +112,15 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
   valueChanges() {
     this.subscriptions.add(this.inventoryForm.get('productId')?.valueChanges.subscribe((value) => {
-      this.selectedProduct = this.products.find(item => item._id === value);
-      if (this.selectedProduct) {
-        this.inventoryForm.get('batches.purchasePrice')?.patchValue(this.selectedProduct.price.unitPurchasePrice, {emitEvent: false});
-        this.inventoryForm.get('batches.sellingPrice')?.patchValue(this.selectedProduct.price.retailPrice, {emitEvent: false});
+
+      if(value){
+        this.selectedProduct = this.products.find(item => item._id === value);
+        if (this.selectedProduct) {
+          this.inventoryForm.get('batches.purchasePrice')?.patchValue(this.selectedProduct.price.unitPurchasePrice, {emitEvent: false});
+          this.inventoryForm.get('batches.sellingPrice')?.patchValue(this.selectedProduct.price.retailPrice, {emitEvent: false});
+        }
       }
+
     }));
 
     this.subscriptions.add(this.inventoryForm.get('batches.purchasePrice')?.valueChanges.subscribe((value) => {
@@ -136,7 +143,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
     const payload = this.inventoryForm.value;
     payload.companyId = this.auth.info?.companyId || null;
     payload.createdBy = this.auth.info?.id || null;
-  
+
     this.subscriptions.add(
       this.apiService.saveInventory(payload).pipe(
         catchError((error) => {
@@ -169,6 +176,13 @@ export class InventoryComponent implements OnInit, OnDestroy {
         AdminStore.setLoader(false);
         if (value && value.success) {
           this.products = value.data.products;
+          this.products.sort((a, b) => {
+            const nameA = a.productName?.toLowerCase() || ''; // Handle null/undefined
+            const nameB = b.productName?.toLowerCase() || '';
+
+            return nameA.localeCompare(nameB);
+          });
+
         } else {
           this.toastr.showError(value.message, 'Error');
         }
@@ -190,10 +204,20 @@ export class InventoryComponent implements OnInit, OnDestroy {
         if (value && value.success) {
           this.vendors = value.data.entities.filter((value: Entity) => (value.entityType).toLowerCase() ===
             'vendor');
+          if(this.vendors && this.vendors.length === 1){
+            this.inventoryForm.get('vendorId')?.patchValue(this.vendors[0]._id);
+          }
         } else {
           this.toastr.showError(value.message, 'Error');
         }
       })
+    );
+  }
+  filterProducts(event: any): void {
+    const query = event.query.toLowerCase();
+    this.filteredProducts = this.products.filter((product:any) => {
+      return   product.productName.toLowerCase().includes(query)
+      }
     );
   }
 

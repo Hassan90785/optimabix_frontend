@@ -3,32 +3,59 @@
   <div class="p-card-header bg-blue-300 mx-3 flex justify-content-between align-items-center">
     <h3>Products</h3>
     <p-button
-      label="Add Product"
-      icon="pi pi-plus"
-      class="p-button-primary"
       (click)="onAdd()"
+      class="p-button-primary"
+      icon="pi pi-plus"
+      label="Add Product"
     ></p-button>
   </div>
-  <p-table [value]="products" [paginator]="true" [rows]="10" [totalRecords]="totalRecords"
-           [responsiveLayout]="'scroll'">
+  <p-table
+    #dt1
+    [globalFilterFields]="['productName', 'sku', 'category', 'brandName']"
+    [paginator]="true" [responsiveLayout]="'scroll'" [rows]="10"
+    [rowsPerPageOptions]="[10, 25, 50]"
+    [totalRecords]="totalRecords"
+    [value]="products">
+    <ng-template #caption>
+      <div class="flex">
+        <p-button (click)="clear(dt1)" [outlined]="true" icon="pi pi-filter-slash" label="Clear"/>
+        <p-iconfield class="ml-auto" iconPosition="left">
+          <p-inputicon>
+            <i class="pi pi-search"></i>
+          </p-inputicon>
+          <input (input)="dt1.filterGlobal($any($event.target).value, 'contains')" [ngModel]="searchValue" pInputText
+                 placeholder="Search keyword"
+                 type="text"/>
+        </p-iconfield>
+      </div>
+    </ng-template>
     <ng-template pTemplate="header">
       <tr>
-        <th>Product Name</th>
-        <th>SKU</th>
-        <th>Category</th>
-        <th>Brand</th>
+        <th pSortableColumn="productName">
+          Product Name <p-sortIcon field="productName" />
+        </th>
+        <th pSortableColumn="sku">
+          SKU <p-sortIcon field="sku" />
+        </th>
+        <th pSortableColumn="category" >
+          Category <p-sortIcon field="category" />
+        </th>
+        <th pSortableColumn="brandName" >
+          Brand <p-sortIcon field="brandName" />
+        </th>
         <th>Actions</th>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-product>
+    <ng-template let-product pTemplate="body">
       <tr>
         <td>{{ product.productName }}</td>
         <td>{{ product.sku }}</td>
         <td>{{ product.category }}</td>
         <td>{{ product.brandName }}</td>
         <td>
-          <p-button icon="pi pi-pencil" [text]="true" class="p-button-text" (click)="onEdit(product)"></p-button>
-          <p-button icon="pi pi-trash" [text]="true" class="p-button-text p-button-danger" (click)="onDelete(product)" ></p-button>
+          <p-button (click)="onEdit(product)" [text]="true" class="p-button-text" icon="pi pi-pencil"></p-button>
+          <p-button (click)="onDelete(product)" [text]="true" class="p-button-text p-button-danger"
+                    icon="pi pi-trash"></p-button>
         </td>
       </tr>
     </ng-template>

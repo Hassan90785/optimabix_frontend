@@ -4,22 +4,30 @@ import {Subscription} from 'rxjs';
 import {RestApiService} from '../../../../core/services/rest-api.service';
 import {PrimeTemplate} from 'primeng/api';
 import {Button} from 'primeng/button';
-import {TableModule} from 'primeng/table';
+import {Table, TableModule} from 'primeng/table';
 import {Card} from 'primeng/card';
 import {AuthService} from '../../../../core/services/auth.service';
 import {Router} from '@angular/router';
 import {DatePipe} from '@angular/common';
 import {DataStoreService} from '../../../../core/services/data-store.service';
+import {FormsModule} from "@angular/forms";
+import {IconField} from "primeng/iconfield";
+import {InputIcon} from "primeng/inputicon";
+import {InputText} from "primeng/inputtext";
 
 @Component({
   selector: 'app-entities-list',
-  imports: [
-    PrimeTemplate,
-    Button,
-    TableModule,
-    Card,
-    DatePipe
-  ],
+    imports: [
+        PrimeTemplate,
+        Button,
+        TableModule,
+        Card,
+        DatePipe,
+        FormsModule,
+        IconField,
+        InputIcon,
+        InputText
+    ],
   templateUrl: './entities-list.component.html',
   standalone: true,
   styleUrl: './entities-list.component.scss'
@@ -31,6 +39,7 @@ export class EntitiesListComponent implements OnInit, OnDestroy {
   auth = inject(AuthService);
   router = inject(Router);
   private dataStore = inject(DataStoreService);
+  searchValue: string = '';
 
   constructor(private apiService: RestApiService) {
   }
@@ -63,6 +72,11 @@ export class EntitiesListComponent implements OnInit, OnDestroy {
     console.log('Setting Entity: ', product);
     this.dataStore.setSelectedEntity({type: 'E', data: product});
     this.router.navigate(['/app/entity/update']);
+  }
+
+  clear(table: Table) {
+    table.clear();
+    this.searchValue = ''
   }
 
   onDelete(product: any): void {
