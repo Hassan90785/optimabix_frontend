@@ -1,5 +1,5 @@
 export interface Entity {
-  id?: string; // Optional for creation
+  _id?: string; // Optional for creation
   companyId: string; // Refers to the Companies collection
   entityType: 'Customer' | 'Vendor' | 'Both';
   entityName: string;
