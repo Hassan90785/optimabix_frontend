@@ -1,6 +1,6 @@
 <p-card class="p-mb-4 p-shadow-3">
   <div class="text-center">
-    <h3>{{ productForm.get('sku')?.value ? 'Edit Product' : 'Create New Product' }}</h3>
+    <h3>{{ indicator ? 'Edit Product' : 'Create New Product' }}</h3>
   </div>
   <div>
     <form [formGroup]="productForm" class="formgrid grid">
@@ -127,9 +127,14 @@
       <!-- Submit Button -->
       <div class="col-12 flex justify-content-end">
         <p-button
-          label="Submit"
+          label="Cancel"
           class="p-button-primary p-button-lg"
-          (click)="onSubmit()"
+          (click)="onCancel()"
+        ></p-button>
+        <p-button
+          [label]="indicator?'Update Product' :'Add Product'"
+          class="p-button-primary p-button-lg"
+          (click)="onSubmit(indicator)"
         ></p-button>
       </div>
     </form>

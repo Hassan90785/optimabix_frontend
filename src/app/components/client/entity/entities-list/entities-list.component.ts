@@ -9,6 +9,7 @@ import {Card} from 'primeng/card';
 import {AuthService} from '../../../../core/services/auth.service';
 import {Router} from '@angular/router';
 import {DatePipe} from '@angular/common';
+import {DataStoreService} from '../../../../core/services/data-store.service';
 
 @Component({
   selector: 'app-entities-list',
@@ -23,23 +24,25 @@ import {DatePipe} from '@angular/common';
   standalone: true,
   styleUrl: './entities-list.component.scss'
 })
-export class EntitiesListComponent  implements OnInit, OnDestroy {
+export class EntitiesListComponent implements OnInit, OnDestroy {
   entities: any[] = [];
   totalRecords: number = 0;
   subscriptions: Subscription = new Subscription();
   auth = inject(AuthService);
   router = inject(Router);
-  constructor(private apiService: RestApiService) {}
+  private dataStore = inject(DataStoreService);
+
+  constructor(private apiService: RestApiService) {
+  }
 
   ngOnInit(): void {
     this.fetchEntities();
   }
 
-  fetchEntities(page: number = 1, limit: number = 10, sort: string = 'entityName'): void {
-    console.log('fetchEntities')
+  fetchEntities(page: number = 1, limit: number = 100, sort: string = 'entityName'): void {
     AdminStore.setLoader(true);
     this.subscriptions.add(
-      this.apiService.getEntities({ page, limit, sort, companyId:this.auth.info.companyId }).subscribe({
+      this.apiService.getEntities({page, limit, sort, companyId: this.auth.info.companyId}).subscribe({
         next: (response: any) => {
           this.entities = response.data.entities;
           this.totalRecords = response.data.totalRecords;
@@ -52,15 +55,18 @@ export class EntitiesListComponent  implements OnInit, OnDestroy {
     );
   }
 
-  onEdit(entity: any): void {
-    // Navigate to CRUD form for editing
+  onAdd() {
+    this.router.navigate(['app/entity/add']);
   }
 
-  onDelete(entity: any): void {
-    // Call delete entity API
+  onEdit(product: any): void {
+    console.log('Setting Entity: ', product);
+    this.dataStore.setSelectedEntity({type: 'E', data: product});
+    this.router.navigate(['/app/entity/update']);
   }
-  onAdd(): void {
-    this.router.navigate(['app/entity/add']);
+
+  onDelete(product: any): void {
+    // Call delete product API
   }
 
   ngOnDestroy(): void {

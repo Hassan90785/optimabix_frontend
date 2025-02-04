@@ -12,7 +12,9 @@ import {BarcodeDirective} from '../../../../shared/directives/barcode.directive'
 import {Ripple} from 'primeng/ripple';
 import {DatePipe} from '@angular/common';
 import {ToastrService} from '../../../../core/services/toastr.service';
-import {environment} from '../../../../environments/environment';
+import {environment} from '../../../../../environments/environment';
+import {DataStoreService} from '../../../../core/services/data-store.service';
+
 
 @Component({
   selector: 'app-list-inventory',
@@ -38,7 +40,7 @@ export class ListInventoryComponent implements OnInit, OnDestroy {
   router = inject(Router);
   expandedRows = {};
   private toastr = inject(ToastrService)
-
+  private dataStore= inject(DataStoreService);
   constructor(private apiService: RestApiService) {
   }
 
@@ -46,7 +48,7 @@ export class ListInventoryComponent implements OnInit, OnDestroy {
     this.fetchInventories();
   }
 
-  fetchInventories(page: number = 1, limit: number = 10, sort: string = 'createdBy'): void {
+  fetchInventories(page: number = 1, limit: number = 100, sort: string = 'createdBy'): void {
     AdminStore.setLoader(true);
     this.subscriptions.add(
       this.apiService.getInventories({page, limit, sort, companyId: this.auth.info.companyId}).subscribe({
@@ -62,18 +64,18 @@ export class ListInventoryComponent implements OnInit, OnDestroy {
     );
   }
 
-  onEdit(inventory: any): void {
-    // Navigate to CRUD form for editing
+  onAdd() {
+    this.router.navigate(['app/inventory/add']);
   }
 
-  onAdd(): void {
-    this.router.navigate(['/app/inventory/add']);
+  onEdit(product: any): void {
+    console.log('inventory: ', product);
+    this.dataStore.setSelectedInventory({type: 'E', data: product});
+    this.router.navigate(['/app/inventory/update']);
   }
-
-  onDelete(inventory: any): void {
-    // Call delete inventory API
+  onDelete(product: any): void {
+    // Call delete product API
   }
-
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
@@ -88,8 +90,6 @@ export class ListInventoryComponent implements OnInit, OnDestroy {
 
 
   printBarcode(batch: any, productName: string): void {
-    console.log('Printing barcode for batch', batch);
-    console.log('Product Name', productName);
     this.apiService.createInventoryBarcode({...batch, productName}).subscribe(value => {
       if (value && value.success && value.data && value.data.pdfPath) {
         this.toastr.showSuccess('BarCode Generated successfully.', 'Success');

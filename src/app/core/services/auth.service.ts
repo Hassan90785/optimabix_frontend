@@ -1,12 +1,13 @@
-import {Injectable} from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {User} from '../models/User';
+import {Router} from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private _token: string = '';
-
+  router=inject(Router);
   constructor() {
   }
 
@@ -18,11 +19,13 @@ export class AuthService {
   }
 
   set user(value: User | undefined | null) {
-    console.log('Setting user', value);
     this._user = value;
   }
 
   get info(): { name: string, id: string, role: string, companyId: string , logo: string, companyName:string } {
+    if(!this.user){
+      this.router.navigate(['/app/login']);
+    }
     return {
       name: this.user.fullName,
       id: this.user._id,

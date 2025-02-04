@@ -36,24 +36,20 @@ export class DrawerComponent {
   constructor(public auth: AuthService) {
   }
   onClose() {
-    console.log('closed')
     this.eventEmitter.emit(false)
   }
 
   logoutHandler() {
-    console.log('logoutHandler')
     this.confirmDialog.confirm(
       'Confirmation',
       'Are you sure you want to logout?',
       () => {
         this.eventEmitter.emit(false)
-        console.log('Logging out');
         this.router.navigate(['/app/login']);
         localStorage.removeItem('token')
         localStorage.removeItem('user')
       },
       () => {
-        console.log('Cancel logout');
       }
     );
   }

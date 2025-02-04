@@ -1,5 +1,5 @@
 <p-card class="p-shadow-3">
-  <div class="p-card-header flex justify-content-between align-items-center">
+  <div class="p-card-header flex  mx-3 justify-content-between align-items-center">
     <h3>Entities</h3>
     <p-button
       label="Add Entity"
@@ -32,18 +32,9 @@
         <td>{{ entity.accessStatus }}</td>
         <td>{{ entity.createdAt | date:'short' }}</td>
         <td>
-          <p-button
-            icon="pi pi-pencil"
-            class="p-button-text"
-            [disabled]="true"
-            (click)="onEdit(entity)"
-          ></p-button>
-          <p-button
-            [disabled]="true"
-            icon="pi pi-trash"
-            class="p-button-text p-button-danger"
-            (click)="onDelete(entity)"
-          ></p-button>
+          <p-button icon="pi pi-pencil" [text]="true" class="p-button-text" (click)="onEdit(entity)"></p-button>
+          <p-button icon="pi pi-trash" [text]="true" class="p-button-text p-button-danger" (click)="onDelete(entity)" ></p-button>
+
         </td>
       </tr>
     </ng-template>

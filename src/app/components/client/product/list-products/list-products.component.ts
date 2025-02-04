@@ -6,6 +6,7 @@ import {Button} from 'primeng/button';
 import {TableModule} from 'primeng/table';
 import {Router} from '@angular/router';
 import {AuthService} from '../../../../core/services/auth.service';
+import {DataStoreService} from '../../../../core/services/data-store.service';
 
 @Component({
   selector: 'app-list-products',
@@ -22,17 +23,19 @@ export class ListProductsComponent implements OnInit, OnDestroy {
   totalRecords: number = 0;
   subscriptions: Subscription = new Subscription();
 
-  constructor(private apiService: RestApiService, private router: Router, private auth: AuthService) {
+  constructor(private apiService: RestApiService, private router: Router,
+              private dataStore: DataStoreService,
+              private auth: AuthService) {
   }
 
   ngOnInit(): void {
     this.fetchProducts();
   }
 
-  fetchProducts(page: number = 1, limit: number = 10, sort: string = 'createdAt'): void {
+  fetchProducts(page: number = 1, limit: number = 100, sort: string = 'createdAt'): void {
     AdminStore.setLoader(true);
     this.subscriptions.add(
-      this.apiService.getProducts({ page, limit, sort, companyId:this.auth.info.companyId }).subscribe({
+      this.apiService.getProducts({page, limit, sort, companyId: this.auth.info.companyId}).subscribe({
         next: (response: any) => {
           this.products = response.data.products;
           this.totalRecords = response.data.totalRecords;
@@ -45,13 +48,7 @@ export class ListProductsComponent implements OnInit, OnDestroy {
     );
   }
 
-  onEdit(product: any): void {
-    // Navigate to the CRUD form for editing
-  }
 
-  onDelete(product: any): void {
-    // Call delete product API
-  }
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
@@ -59,5 +56,14 @@ export class ListProductsComponent implements OnInit, OnDestroy {
 
   onAdd() {
     this.router.navigate(['app/product/add']);
+  }
+
+  onEdit(product: any): void {
+    console.log('setting product: ', product);
+    this.dataStore.setSelectedProduct({type: 'E', data: product});
+    this.router.navigate(['/app/product/update']);
+  }
+  onDelete(product: any): void {
+    // Call delete product API
   }
 }

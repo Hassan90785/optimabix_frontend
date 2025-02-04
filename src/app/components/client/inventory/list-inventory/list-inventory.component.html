@@ -1,5 +1,5 @@
 <p-card class="p-shadow-3">
-  <div class="p-card-header flex justify-content-between align-items-center">
+  <div class="p-card-header flex  mx-3  justify-content-between align-items-center">
     <h3>Inventory</h3>
     <p-button
       label="Add Inventory"
@@ -26,7 +26,6 @@
       <tr>
         <th>Batches</th>
         <th>Product</th>
-        <th>Retail Price</th>
         <th>Total Quantity</th>
         <th>Vendor</th>
         <th>Actions</th>
@@ -40,22 +39,12 @@
                     [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'" />
         </td>
         <td>{{ inventory.productId.productName }}</td>
-        <td>{{ inventory.productId.price.retailPrice }}</td>
         <td>{{ inventory.totalQuantity }}</td>
         <td>{{ inventory.vendorId.entityName }}</td>
         <td>
-          <p-button
-            icon="pi pi-pencil"
-            class="p-button-text"
-            [disabled]="true"
-            (click)="onEdit(inventory)"
-          ></p-button>
-          <p-button
-            icon="pi pi-trash"
-            [disabled]="true"
-            class="p-button-text p-button-danger"
-            (click)="onDelete(inventory)"
-          ></p-button>
+          <p-button icon="pi pi-pencil" [text]="true" class="p-button-text" (click)="onEdit(inventory)"></p-button>
+          <p-button icon="pi pi-trash" [text]="true" class="p-button-text p-button-danger" (click)="onDelete(inventory)" ></p-button>
+
         </td>
       </tr>
     </ng-template>

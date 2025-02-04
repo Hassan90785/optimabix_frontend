@@ -97,7 +97,6 @@ export const routes: Routes = [   // Redirect to the login page initially
           {path: 'list', component: ListInventoryComponent},
           {path: 'add', component: InventoryComponent},
           {path: 'update', component: InventoryComponent},
-          {path: 'view', component: InventoryComponent},
 
         ]},
       {path: 'product', component: ClientProductComponent,
@@ -106,7 +105,6 @@ export const routes: Routes = [   // Redirect to the login page initially
           {path: 'list', component: ListProductsComponent},
           {path: 'add', component: ProductComponent},
           {path: 'update', component: ProductComponent},
-          {path: 'view', component: ProductComponent},
 
         ]},
       {path: 'invoice', component: ClientInvoicesComponent},
@@ -119,7 +117,6 @@ export const routes: Routes = [   // Redirect to the login page initially
           {path: 'list', component: EntitiesListComponent},
           {path: 'add', component: EntityComponent},
           {path: 'update', component: EntityComponent},
-          {path: 'view', component: EntityComponent},
 
         ]},
 

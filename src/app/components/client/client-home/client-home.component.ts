@@ -49,7 +49,6 @@ export class ClientHomeComponent {
   }
 
   closeHandler() {
-    console.log('closeHandler')
     this.visibleSidebar1 = false
   }
 }

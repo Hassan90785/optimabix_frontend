@@ -109,8 +109,6 @@ export class CompanyComponent implements OnInit {
   }
 
   onSubmit(): void {
-    console.log('payload: ', this.companyForm.value)
-    console.log('invalid: ', this.companyForm.invalid)
 
 
     const payload = this.companyForm.value;

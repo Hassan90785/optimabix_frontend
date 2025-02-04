@@ -8,8 +8,10 @@ export class ThemeService {
 
   constructor() {
     // Initialize theme based on user preference or system settings
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    this.isDarkMode = localStorage.getItem('theme') === 'dark' || prefersDark;
+    let selectedTheme = localStorage.getItem('theme');
+    if(!selectedTheme)
+      selectedTheme = 'dark'
+    this.isDarkMode = selectedTheme === 'dark' ;
     this.applyTheme();
   }
 

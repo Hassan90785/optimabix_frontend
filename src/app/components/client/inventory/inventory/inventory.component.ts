@@ -15,6 +15,7 @@ import {Entity} from '../../../../core/models/Entity';
 import {ToastrService} from '../../../../core/services/toastr.service';
 import {Router} from '@angular/router';
 import {DatePickerModule} from 'primeng/datepicker';
+import {DataStoreService} from '../../../../core/services/data-store.service';
 
 @Component({
   selector: 'app-inventory',
@@ -36,15 +37,18 @@ import {DatePickerModule} from 'primeng/datepicker';
 export class InventoryComponent implements OnInit, OnDestroy {
   inventoryForm: FormGroup;
   subscriptions: Subscription = new Subscription();
+  indicator: boolean = false;
   products: Product[] = [];
   vendors: Entity[] = [];
   selectedProduct: Product | undefined = {} as Product;
   private auth = inject(AuthService)
   private toastr = inject(ToastrService)
   private router = inject(Router)
+  private dataStore = inject(DataStoreService)
 
   constructor(private fb: FormBuilder, private apiService: RestApiService, private cdr: ChangeDetectorRef) {
     this.inventoryForm = this.fb.group({
+      _id: [null],
       companyId: ['', Validators.required],
       productId: ['', Validators.required],
       vendorId: ['', Validators.required],
@@ -52,7 +56,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
         quantity: [0, Validators.required],
         purchasePrice: [0, Validators.required],
         totalCost: [0, Validators.required],
-        barcode: ['', Validators.required],
+        barcode: [''],
         mgf_dt: [''],
         expiry_dt: [''],
         sellingPrice: [0, Validators.required]
@@ -64,7 +68,44 @@ export class InventoryComponent implements OnInit, OnDestroy {
     this.fetchProducts()
     this.fetchVendors();
     this.valueChanges();
+    this.getInventory();
   }
+
+  getInventory() {
+    this.subscriptions.add(
+      this.dataStore.selectedInventory$.subscribe((product: any) => {
+        console.log('selectedInventory$: ', product);
+        if (product) {
+          this.indicator = true;
+
+          const batch = product.data.batches.length > 0 ? product.data.batches[0] : null;
+
+          const mgf = batch?.mgf_dt ? new Date(batch.mgf_dt) : null;
+          const expiry = batch?.expiry_dt ? new Date(batch.expiry_dt) : null;
+
+          if (mgf) mgf.setUTCHours(0, 0, 0, 0);
+          if (expiry) expiry.setUTCHours(0, 0, 0, 0);
+
+          this.inventoryForm.patchValue({
+            _id: product.data._id,
+            companyId: product.data.companyId,
+            productId: product.data.productId?._id,
+            vendorId: product.data.vendorId?._id,
+            batches: {
+              quantity: batch?.quantity || 0,
+              purchasePrice: batch?.purchasePrice || 0,
+              totalCost: batch ? batch.purchasePrice * batch.quantity : 0,
+              barcode: batch?.barcode || '',
+              mgf_dt: mgf,
+              expiry_dt: expiry,
+              sellingPrice: batch?.sellingPrice || 0
+            }
+          });
+        }
+      })
+    );
+  }
+
 
   valueChanges() {
     this.subscriptions.add(this.inventoryForm.get('productId')?.valueChanges.subscribe((value) => {
@@ -73,8 +114,6 @@ export class InventoryComponent implements OnInit, OnDestroy {
         this.inventoryForm.get('batches.purchasePrice')?.patchValue(this.selectedProduct.price.unitPurchasePrice, {emitEvent: false});
         this.inventoryForm.get('batches.sellingPrice')?.patchValue(this.selectedProduct.price.retailPrice, {emitEvent: false});
       }
-      console.log(`Product ID changed to:`, value);
-      console.log(`Selected Product:`, this.selectedProduct);
     }));
 
     this.subscriptions.add(this.inventoryForm.get('batches.purchasePrice')?.valueChanges.subscribe((value) => {
@@ -94,10 +133,10 @@ export class InventoryComponent implements OnInit, OnDestroy {
   onSubmit(): void {
 
     AdminStore.setLoader(true);
-    console.log('Form Submitted:', this.inventoryForm.value);
     const payload = this.inventoryForm.value;
     payload.companyId = this.auth.info?.companyId || null;
     payload.createdBy = this.auth.info?.id || null;
+  
     this.subscriptions.add(
       this.apiService.saveInventory(payload).pipe(
         catchError((error) => {
@@ -156,6 +195,11 @@ export class InventoryComponent implements OnInit, OnDestroy {
         }
       })
     );
+  }
+
+  onCancel() {
+    this.dataStore.setSelectedInventory(null);
+    this.router.navigate(['/app/inventory/list']);
   }
 
   ngOnDestroy(): void {
