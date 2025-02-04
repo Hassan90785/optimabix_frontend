@@ -5,7 +5,6 @@ import {RestApiService} from '../../../core/services/rest-api.service';
 import {Router} from '@angular/router';
 import {AdminStore} from '../../../core/stores/admin.store';
 import {Button} from 'primeng/button';
-import {Card} from 'primeng/card';
 import {FloatLabel} from 'primeng/floatlabel';
 import {InputText} from 'primeng/inputtext';
 import {AuthService} from '../../../core/services/auth.service';
@@ -15,7 +14,6 @@ import {ToastrService} from '../../../core/services/toastr.service';
   selector: 'app-login',
   imports: [
     Button,
-    Card,
     FloatLabel,
     FormsModule,
     InputText,
