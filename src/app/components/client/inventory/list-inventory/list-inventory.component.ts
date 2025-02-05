@@ -75,6 +75,7 @@ export class ListInventoryComponent implements OnInit, OnDestroy {
   }
 
   onAdd() {
+    this.dataStore.setSelectedInventory(null);
     this.router.navigate(['app/inventory/add']);
   }
 

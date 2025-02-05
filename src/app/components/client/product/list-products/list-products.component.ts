@@ -69,6 +69,7 @@ export class ListProductsComponent implements OnInit, OnDestroy {
   }
 
   onAdd() {
+    this.dataStore.setSelectedProduct(null);
     this.router.navigate(['app/product/add']);
   }
 
