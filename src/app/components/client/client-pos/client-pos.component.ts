@@ -103,10 +103,11 @@ export class ClientPosComponent implements OnInit, OnDestroy {
   }
 
   onProductSelect(): void {
-    const selectedProductId = this.posForm.value.selectedProduct.id;
-    console.log('onProductSelect:', selectedProductId);
     console.log('this.posForm.value:', this.posForm.value);
-    const product = this.productOptions.find(p => p.id === selectedProductId);
+    const selectedBatchId = this.posForm.value.selectedProduct;
+    console.log('onProductSelect:', selectedBatchId);
+    console.log('this.posForm.value:', this.posForm.value);
+    const product = this.productOptions.find(p => p.batchId === selectedBatchId);
 
     if (product) {
       this.addItemToCart(product);
@@ -118,8 +119,10 @@ export class ClientPosComponent implements OnInit, OnDestroy {
 
 
   addItemToCart(product: any): void {
-    const existingIndex = this.cartItems.findIndex((item) => item.id === product.id);
-
+    const existingIndex = this.cartItems.findIndex((item) => item.batchId === product.batchId);
+    console.log("Existing Index:", existingIndex);
+    console.log("Product:", product);
+    console.log("Current Cart Items:", this.cartItems);
     if (existingIndex !== -1) {
       this.cartItems[existingIndex].quantity += 1;
       this.cartItems[existingIndex].total = this.cartItems[existingIndex].quantity * this.cartItems[existingIndex].price;
@@ -275,7 +278,9 @@ export class ClientPosComponent implements OnInit, OnDestroy {
         }))
         .subscribe(response => {
           if (response.data && response.success) {
-            this.productOptions = response.data.map(this.mapProductOption);
+            this.productOptions = response.data.flatMap(this.mapProductOption)
+              .sort((a:any, b:any) => a.name.localeCompare(b.name));
+            console.log('this.productOptions:', this.productOptions);
           } else {
             this.toastr.showWarn('No available inventory found.', 'Warning');
           }
@@ -283,16 +288,17 @@ export class ClientPosComponent implements OnInit, OnDestroy {
     );
   }
 
-  private mapProductOption(product: any): any {
-    return {
+  private mapProductOption(product: any): any[] {
+    return product.batches.map((batch: any) => ({
       id: product.productId,
-      name: `${product.name} (Qty: ${product.totalQuantity})`,
-      price: product.firstAvailableBatch.sellingPrice,
-      barcode: product.firstAvailableBatch.barcode,
-      availableQuantity: product.totalQuantity,
-      batchId: product.firstAvailableBatch.batchId || null
-    };
+      name: `${product.name} (Qty: ${batch.quantity})`,
+      price: batch.sellingPrice,
+      barcode: batch.barcode,
+      availableQuantity: batch.quantity,
+      batchId: batch.batchId
+    }));
   }
+
 
   private buildTransactionPayload(): POSTransaction {
     return new POSTransaction({

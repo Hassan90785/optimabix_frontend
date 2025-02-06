@@ -27,6 +27,7 @@
     [lazy]="true"
     [loading]="loading"
     (onLazyLoad)="loadLedger($event)"
+    [rowsPerPageOptions]="[10, 25, 50]"
     class="p-mt-3"
   >
     <ng-template pTemplate="header">
