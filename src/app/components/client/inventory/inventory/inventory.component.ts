@@ -83,7 +83,6 @@ export class InventoryComponent implements OnInit, OnDestroy {
   getInventory() {
     this.subscriptions.add(
       this.dataStore.selectedInventory$.subscribe((product: any) => {
-        console.log('selectedInventory$: ', product);
         if (product) {
           this.indicator = true;
           this.inventoryForm.patchValue({
@@ -147,7 +146,6 @@ export class InventoryComponent implements OnInit, OnDestroy {
     const payload = this.inventoryForm.value;
     payload.companyId = this.auth.info?.companyId || null;
     payload.createdBy = this.auth.info?.id || null;
-    console.log('payload: ', payload);
     this.subscriptions.add(
       this.apiService.saveInventory(payload).pipe(
         catchError((error) => {

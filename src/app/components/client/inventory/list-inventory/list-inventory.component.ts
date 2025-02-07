@@ -79,7 +79,6 @@ export class ListInventoryComponent implements OnInit, OnDestroy {
   }
 
   onEdit(product: any): void {
-    console.log('inventory: ', product);
     this.dataStore.setSelectedInventory({type: 'E', data: product});
     this.router.navigate(['/app/inventory/update']);
   }

@@ -79,7 +79,6 @@ export class EntityComponent implements OnInit, OnDestroy {
     // Get product data for editing
     this.subscriptions.add(
       this.dataStore.selectedEntity$.subscribe((product: any) => {
-        console.log('selectedEntity$: ', product);
         if (product) {
           this.indicator = true;
           this.entityForm.patchValue(product.data);

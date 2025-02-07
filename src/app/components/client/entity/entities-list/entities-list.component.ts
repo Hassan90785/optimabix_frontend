@@ -69,7 +69,6 @@ export class EntitiesListComponent implements OnInit, OnDestroy {
   }
 
   onEdit(product: any): void {
-    console.log('Setting Entity: ', product);
     this.dataStore.setSelectedEntity({type: 'E', data: product});
     this.router.navigate(['/app/entity/update']);
   }

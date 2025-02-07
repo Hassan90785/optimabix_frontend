@@ -72,7 +72,6 @@ export class ClientPosComponent implements OnInit, OnDestroy {
       selectedPaymentMethod: ['Cash', Validators.required]
     });
 
-    console.log("Form initialized:", this.posForm.value); // ✅ Debugging Console
   }
 
   ngOnInit(): void {
@@ -80,7 +79,6 @@ export class ClientPosComponent implements OnInit, OnDestroy {
     this.loadProducts();
     setInterval(() => this.currentDateTime = new Date().toLocaleString(), 1000);
 
-    console.log("Form Structure at OnInit:", this.posForm.value); // ✅ Debugging Console
   }
 
 
@@ -90,7 +88,6 @@ export class ClientPosComponent implements OnInit, OnDestroy {
 
   onScan(): void {
     const scannedCode = this.posForm.value.scannedCode;
-    console.log('onScan:', scannedCode);
     if (scannedCode) {
       const product = this.productOptions.find(p => p.barcode === scannedCode);
       if (product) {
@@ -103,10 +100,7 @@ export class ClientPosComponent implements OnInit, OnDestroy {
   }
 
   onProductSelect(): void {
-    console.log('this.posForm.value:', this.posForm.value);
     const selectedBatchId = this.posForm.value.selectedProduct;
-    console.log('onProductSelect:', selectedBatchId);
-    console.log('this.posForm.value:', this.posForm.value);
     const product = this.productOptions.find(p => p.batchId === selectedBatchId);
 
     if (product) {
@@ -120,9 +114,6 @@ export class ClientPosComponent implements OnInit, OnDestroy {
 
   addItemToCart(product: any): void {
     const existingIndex = this.cartItems.findIndex((item) => item.batchId === product.batchId);
-    console.log("Existing Index:", existingIndex);
-    console.log("Product:", product);
-    console.log("Current Cart Items:", this.cartItems);
     if (existingIndex !== -1) {
       this.cartItems[existingIndex].quantity += 1;
       this.cartItems[existingIndex].total = this.cartItems[existingIndex].quantity * this.cartItems[existingIndex].price;
@@ -140,14 +131,11 @@ export class ClientPosComponent implements OnInit, OnDestroy {
       this.cartItems.push(newItem); // ✅ Use regular array push instead of FormArray
     }
 
-    console.log("✅ Updated Cart Items:", this.cartItems);
     this.updateAvailableStock(product.id, -1);
     this.calculateTotals();
   }
 
   removeItem(item: any): void {
-    console.log("Removing item:", item);
-    console.log("Current Cart Items:", this.cartItems);
     const index = this.cartItems.findIndex(i => i.id === item.id);
     // Restore the stock before removing the item
     this.updateAvailableStock(item.id, item.quantity);
@@ -206,13 +194,11 @@ export class ClientPosComponent implements OnInit, OnDestroy {
     const subtotal = this.cartItems.reduce((sum, item) => sum + item.total, 0);
     const tax = subtotal * 0 // Assuming 10% tax
     const total = subtotal + tax;
-    console.log('totals:', subtotal, tax, total);
     this.posForm.patchValue({subtotal, tax, total});
   }
 
   showCheckoutDialog(): void {
     const total = this.posForm.value.total;
-    console.log('showCheckoutDialog:', total);
     if (total > 0) {
       this.checkoutDialogVisible = true;
     } else {
@@ -227,8 +213,6 @@ export class ClientPosComponent implements OnInit, OnDestroy {
   }
 
   confirmCheckout(): void {
-    console.log('confirmCheckout:', this.posForm.value);
-    // ✅ Fix: Replace FormArray logic with plain array check
     if (this.cartItems.some(item => item.quantity > item.availableQuantity)) {
       this.toastr.showError('Insufficient stock available.', 'Error');
       return;
@@ -280,7 +264,6 @@ export class ClientPosComponent implements OnInit, OnDestroy {
           if (response.data && response.success) {
             this.productOptions = response.data.flatMap(this.mapProductOption)
               .sort((a:any, b:any) => a.name.localeCompare(b.name));
-            console.log('this.productOptions:', this.productOptions);
           } else {
             this.toastr.showWarn('No available inventory found.', 'Warning');
           }

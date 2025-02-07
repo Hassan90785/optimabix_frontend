@@ -88,7 +88,6 @@ export class ClientLedgerComponent  implements OnInit {
   }
 
   viewDetails(entry: any): void {
-    console.log('Viewing details for:', entry);
     // Implement view details logic here
   }
 }
