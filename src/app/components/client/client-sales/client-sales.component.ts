@@ -61,7 +61,6 @@ export class ClientSalesComponent implements OnInit {
     const filters: any = this.getFilterDates();
     filters.companyId = this.auth.info.companyId
     this.apiService.getPOSTransactions(filters).pipe(catchError((error) => {
-      console.log('error: ', error);
       AdminStore.setLoader(false);
       this.toastr.showError('Something went wrong', 'Error');
       return of(null); // Return an observable, like `null`, to complete the stream gracefully

@@ -205,6 +205,15 @@ export class RestApiService {
     }
     return this.http.get(`${this.apiUrl}/products${query ? '?' + query : ''}`);
   }
+  getCompanyMetaData(queryParams?: any): Observable<any> {
+    let query = '';
+    if (queryParams) {
+      query = Object.keys(queryParams)
+        .map((key) => `${key}=${queryParams[key]}`)
+        .join('&');
+    }
+    return this.http.get(`${this.apiUrl}/products/meta${query ? '?' + query : ''}`);
+  }
 
   saveProduct(payload: any): Observable<any> {
     return payload._id

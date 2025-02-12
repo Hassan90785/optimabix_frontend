@@ -31,31 +31,34 @@
           <label for="sku">SKU</label>
         </p-floatLabel>
       </div>
-
-      <!-- Category -->
+      <!-- Category Autocomplete -->
       <div class="field col-12 md:col-6">
         <p-floatLabel variant="on">
-          <input
+          <p-autoComplete
             id="category"
-            type="text"
-            pInputText
             formControlName="category"
-            class="w-full"
-          />
+            dropdown="true"
+            [suggestions]="filteredCategories"
+            (completeMethod)="filterCategories($event)"
+            [forceSelection]="false"
+            styleClass="w-full"
+          ></p-autoComplete>
           <label for="category">Category</label>
         </p-floatLabel>
       </div>
 
-      <!-- Brand Name -->
+      <!-- Brand Name Autocomplete -->
       <div class="field col-12 md:col-6">
         <p-floatLabel variant="on">
-          <input
+          <p-autoComplete
             id="brandName"
-            type="text"
-            pInputText
             formControlName="brandName"
-            class="w-full"
-          />
+            dropdown="true"
+            [suggestions]="filteredBrands"
+            (completeMethod)="filterBrands($event)"
+            [forceSelection]="false"
+            styleClass="w-full"
+          ></p-autoComplete>
           <label for="brandName">Brand Name</label>
         </p-floatLabel>
       </div>

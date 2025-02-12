@@ -4,8 +4,6 @@
   </div>
   <div>
     <form [formGroup]="inventoryForm" class="formgrid grid">
-
-
       <!-- Product -->
       <div class="field col-12 md:col-6">
         <p-floatLabel variant="on">
@@ -39,119 +37,94 @@
         </p-floatLabel>
       </div>
 
+      <!-- Batch Details -->
+      <div formArrayName="batches" class="col-12 mt-3">
+        <h4 class="mt-2">Batch Details</h4>
 
-      <!-- Batches (Nested FormGroup) -->
-      <div class="grid col-12 mt-1" formGroupName="batches">
+        <div *ngFor="let batch of batchesFormArray.controls; let i = index" [formGroupName]="i" class="grid my-3">
+          <!-- Quantity -->
+          <div class="field col-12 md:col-6">
+            <p-floatLabel variant="on">
+              <input class="w-full" formControlName="quantity" pInputText type="number" />
+              <label>Quantity</label>
+            </p-floatLabel>
+          </div>
 
-        <!-- Quantity -->
-        <div class="field col-12 md:col-6">
-          <p-floatLabel variant="on">
-            <input
-              class="w-full"
-              formControlName="quantity"
-              id="quantity"
-              pInputText
-              type="number"
-            />
-            <label for="quantity">Quantity</label>
-          </p-floatLabel>
+          <!-- Purchase Price -->
+          <div class="field col-12 md:col-6">
+            <p-floatLabel variant="on">
+              <input class="w-full" formControlName="purchasePrice" pInputText type="number" />
+              <label>Purchase Price</label>
+            </p-floatLabel>
+          </div>
+
+          <!-- Selling Price -->
+          <div class="field col-12 md:col-6">
+            <p-floatLabel variant="on">
+              <input class="w-full" formControlName="sellingPrice" pInputText type="number" />
+              <label>Selling Price</label>
+            </p-floatLabel>
+          </div>
+
+          <!-- Total Cost -->
+          <div class="field col-12 md:col-6">
+            <p-floatLabel variant="on">
+              <input class="w-full" formControlName="totalCost" pInputText type="number" />
+              <label>Total Cost</label>
+            </p-floatLabel>
+          </div>
+
+          <!-- Manufacturing Date -->
+          <div class="field col-12 md:col-3">
+            <p-floatLabel variant="on">
+              <p-datePicker class="w-full" dateFormat="yy-mm-dd" formControlName="mgf_dt" showIcon></p-datePicker>
+              <label>Manufacturing Date</label>
+            </p-floatLabel>
+          </div>
+
+          <!-- Expiry Date -->
+          <div class="field col-12 md:col-3">
+            <p-floatLabel variant="on">
+              <p-datePicker class="w-full" dateFormat="yy-mm-dd" formControlName="expiry_dt" showIcon></p-datePicker>
+              <label>Expiry Date</label>
+            </p-floatLabel>
+          </div>
+
+          <!-- Barcode -->
+          <div class="field col-12 md:col-6">
+            <p-floatLabel variant="on">
+              <input class="w-full" formControlName="barcode" pInputText type="text" />
+              <label>Barcode</label>
+            </p-floatLabel>
+          </div>
+
+          <!-- Remove Batch Button -->
+          <div class="col-12 flex justify-content-end">
+            <p-button
+              *ngIf="batchesFormArray.length > 1"
+              icon="pi pi-trash"
+              (click)="removeBatch(i)">
+            </p-button>
+          </div>
+
+          <hr class="col-12 my-3">
         </div>
 
-        <!-- Purchase Price -->
-        <div class="field col-12 md:col-6">
-          <p-floatLabel variant="on">
-            <input
-              class="w-full"
-              formControlName="purchasePrice"
-              id="purchasePrice"
-              pInputText
-              type="number"
-            />
-            <label for="purchasePrice">Purchase Price</label>
-          </p-floatLabel>
-        </div>
-
-        <!-- Selling Price -->
-        <div class="field col-12 md:col-6">
-          <p-floatLabel variant="on">
-            <input
-              class="w-full"
-              formControlName="sellingPrice"
-              id="sellingPrice"
-              pInputText
-              type="number"
-            />
-            <label for="sellingPrice">Selling Price</label>
-          </p-floatLabel>
-        </div>
-
-        <!-- Total Amount Due Price -->
-        <div class="field col-12 md:col-6">
-          <p-floatLabel variant="on">
-            <input
-              class="w-full"
-              formControlName="totalCost"
-              id="totalCost"
-              pInputText
-              type="number"
-            />
-            <label for="sellingPrice">Total Cost</label>
-          </p-floatLabel>
-        </div>
-        <!-- Manufacturing Date (mgf) -->
-        <div class="field col-12 md:col-3">
-          <p-floatLabel variant="on">
-            <p-datePicker
-              class="w-full"
-              dateFormat="yy-mm-dd"
-              formControlName="mgf_dt"
-              id="mgf"
-              showIcon
-            ></p-datePicker>
-            <label for="mgf">Manufacturing Date</label>
-          </p-floatLabel>
-        </div>
-
-        <!-- Expiry Date (expiry) -->
-        <div class="field col-12 md:col-3">
-          <p-floatLabel variant="on">
-            <p-datePicker
-              class="w-full"
-              dateFormat="yy-mm-dd"
-              formControlName="expiry_dt"
-              id="expiry"
-              showIcon
-            ></p-datePicker>
-            <label for="expiry">Expiry Date</label>
-          </p-floatLabel>
-        </div>
-        <!-- barcode -->
-        <div class="field col-12 md:col-6">
-          <p-floatLabel variant="on">
-            <input
-              class="w-full"
-              formControlName="barcode"
-              id="barcode"
-              pInputText
-              type="text"
-            />
-            <label for="barcode">Barcode</label>
-          </p-floatLabel>
+        <!-- Add New Batch Button -->
+        <div class="col-12 flex justify-content-end mt-3">
+          <p-button
+            icon="pi pi-plus"
+            class="p-button-primary p-button-lg"
+            (click)="addBatch()"
+            label="Add Batch">
+          </p-button>
         </div>
       </div>
 
       <!-- Submit Button -->
       <div class="col-12 flex justify-content-end mt-3">
-        <p-button
-          (click)="onCancel()"
-          class="p-button-primary p-button-lg"
-          label="Cancel"
-        ></p-button>
-        <p-button
-          (click)="onSubmit()"
-          [label]="indicator?'Update Inventory' :'Add Inentory'"
-          class="p-button-primary p-button-lg"
-        ></p-button>
+        <p-button (click)="onCancel()" class="p-button-primary p-button-lg" label="Cancel"></p-button>
+        <p-button (click)="onSubmit()" [label]="indicator ? 'Update Inventory' : 'Add Inventory'" class="p-button-primary p-button-lg"></p-button>
       </div>
     </form>
   </div>

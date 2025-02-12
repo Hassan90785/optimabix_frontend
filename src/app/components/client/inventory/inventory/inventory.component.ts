@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, inject, OnDestroy, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {FormArray, FormBuilder, FormGroup, ReactiveFormsModule, UntypedFormArray, Validators} from '@angular/forms';
 import {catchError, of, Subscription} from 'rxjs';
 import {RestApiService} from '../../../../core/services/rest-api.service';
 import {AdminStore} from '../../../../core/stores/admin.store';
@@ -55,86 +55,89 @@ export class InventoryComponent implements OnInit, OnDestroy {
       companyId: ['', Validators.required],
       productId: ['', Validators.required],
       vendorId: ['', Validators.required],
-      batches: this.fb.group({
-        quantity: [0, Validators.required],
-        purchasePrice: [0, Validators.required],
-        totalCost: [0, Validators.required],
-        barcode: [''],
-        mgf_dt: [''],
-        expiry_dt: [''],
-        sellingPrice: [0, Validators.required]
-      })
+      batches: this.fb.array([]) // Change to FormArray instead of FormGroup
     });
   }
 
+  get batchesFormArray() {
+    return this.inventoryForm.get('batches') as UntypedFormArray;
+  }
   ngOnInit(): void {
     this.fetchProducts()
     this.fetchVendors();
     this.valueChanges();
     this.getInventory();
   }
+  private createBatchFormGroup(batch: any = {}): FormGroup {
+    return this.fb.group({
+      quantity: [batch.quantity || 0, Validators.required],
+      purchasePrice: [batch.purchasePrice || 0, Validators.required],
+      totalCost: [batch.quantity && batch.purchasePrice ? batch.quantity * batch.purchasePrice : 0, Validators.required],
+      barcode: [batch.barcode || ''],
+      mgf_dt: [batch.mgf_dt ? new Date(batch.mgf_dt) : null],
+      expiry_dt: [batch.expiry_dt ? new Date(batch.expiry_dt) : null],
+      sellingPrice: [batch.sellingPrice || 0, Validators.required]
+    });
+  }
 
   getInventory() {
     this.subscriptions.add(
       this.dataStore.selectedInventory$.subscribe((product: any) => {
-        console.log('selectedInventory$: ', product);
         if (product) {
           this.indicator = true;
-
-          const batch = product.data.batches.length > 0 ? product.data.batches[0] : null;
-
-          const mgf = batch?.mgf_dt ? new Date(batch.mgf_dt) : null;
-          const expiry = batch?.expiry_dt ? new Date(batch.expiry_dt) : null;
-
-          if (mgf) mgf.setUTCHours(0, 0, 0, 0);
-          if (expiry) expiry.setUTCHours(0, 0, 0, 0);
-
           this.inventoryForm.patchValue({
             _id: product.data._id,
             companyId: product.data.companyId,
             productId: product.data.productId,
-            vendorId: product.data.vendorId?._id,
-            batches: {
-              quantity: batch?.quantity || 0,
-              purchasePrice: batch?.purchasePrice || 0,
-              totalCost: batch ? batch.purchasePrice * batch.quantity : 0,
-              barcode: batch?.barcode || '',
-              mgf_dt: mgf,
-              expiry_dt: expiry,
-              sellingPrice: batch?.sellingPrice || 0
-            }
+            vendorId: product.data.vendorId?._id
           });
+
+          // Clear the existing FormArray before adding new batches
+          this.batchesFormArray.clear();
+
+          // Add each batch dynamically
+          if (product.data.batches?.length > 0) {
+            product.data.batches.forEach((batch: any) => {
+              this.batchesFormArray.push(this.createBatchFormGroup(batch));
+            });
+          }
         }
       })
     );
   }
 
 
+
   valueChanges() {
-    this.subscriptions.add(this.inventoryForm.get('productId')?.valueChanges.subscribe((value) => {
-
-      if(value){
-        this.selectedProduct = this.products.find(item => item._id === value);
-        if (this.selectedProduct) {
-          this.inventoryForm.get('batches.purchasePrice')?.patchValue(this.selectedProduct.price.unitPurchasePrice, {emitEvent: false});
-          this.inventoryForm.get('batches.sellingPrice')?.patchValue(this.selectedProduct.price.retailPrice, {emitEvent: false});
+    // Update purchase and selling prices when a product is selected
+    this.subscriptions.add(
+      this.inventoryForm.get('productId')?.valueChanges.subscribe((value) => {
+        if (value) {
+          this.selectedProduct = this.products.find((item) => item._id === value);
+          if (this.selectedProduct) {
+            // Update all batch purchase & selling prices
+            this.batchesFormArray.controls.forEach((batchGroup) => {
+              batchGroup.get('purchasePrice')?.patchValue(this.selectedProduct?.price?.unitPurchasePrice || 0, { emitEvent: false });
+              batchGroup.get('sellingPrice')?.patchValue(this.selectedProduct?.price?.retailPrice || 0, { emitEvent: false });
+            });
+          }
         }
-      }
+      })
+    );
 
-    }));
-
-    this.subscriptions.add(this.inventoryForm.get('batches.purchasePrice')?.valueChanges.subscribe((value) => {
-      const quantity = this.inventoryForm.get('batches.quantity')?.value;
-      const totalCost = value * quantity;
-      this.inventoryForm.get('batches.totalCost')?.patchValue(totalCost, {emitEvent: false});
-    }));
-    this.subscriptions.add(this.inventoryForm.get('batches.quantity')?.valueChanges.subscribe((value) => {
-      const cost = this.inventoryForm.get('batches.purchasePrice')?.value;
-      const totalCost = value * cost;
-      this.inventoryForm.get('batches.totalCost')?.patchValue(totalCost, {emitEvent: false});
-    }));
-
+    // Subscribe to changes in batches (purchase price, quantity)
+    this.subscriptions.add(
+      this.batchesFormArray.valueChanges.subscribe(() => {
+        this.batchesFormArray.controls.forEach((batchGroup) => {
+          const quantity = batchGroup.get('quantity')?.value || 0;
+          const purchasePrice = batchGroup.get('purchasePrice')?.value || 0;
+          const totalCost = quantity * purchasePrice;
+          batchGroup.get('totalCost')?.patchValue(totalCost, { emitEvent: false });
+        });
+      })
+    );
   }
+
 
 
   onSubmit(): void {
@@ -143,7 +146,6 @@ export class InventoryComponent implements OnInit, OnDestroy {
     const payload = this.inventoryForm.value;
     payload.companyId = this.auth.info?.companyId || null;
     payload.createdBy = this.auth.info?.id || null;
-
     this.subscriptions.add(
       this.apiService.saveInventory(payload).pipe(
         catchError((error) => {
@@ -229,4 +231,12 @@ export class InventoryComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
+  addBatch() {
+    this.batchesFormArray.push(this.createBatchFormGroup());
+  }
+
+  removeBatch(index: number) {
+    this.batchesFormArray.removeAt(index);
+  }
+
 }

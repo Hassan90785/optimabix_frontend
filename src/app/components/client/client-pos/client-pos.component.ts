@@ -15,6 +15,7 @@ import {ToastrService} from '../../../core/services/toastr.service';
 import {catchError, of, Subscription} from 'rxjs';
 import {environment} from '../../../../environments/environment';
 import {AutoComplete} from 'primeng/autocomplete';
+import {Select} from 'primeng/select';
 
 @Component({
   selector: 'app-client-pos',
@@ -30,7 +31,8 @@ import {AutoComplete} from 'primeng/autocomplete';
     DropdownModule,
     Dialog,
     ReactiveFormsModule,
-    AutoComplete
+    AutoComplete,
+    Select
   ],
   templateUrl: './client-pos.component.html',
   standalone: true,
@@ -67,20 +69,19 @@ export class ClientPosComponent implements OnInit, OnDestroy {
       subtotal: [0],
       tax: [0],
       total: [0],
+      discount: [0,{updateOn: 'blur'}],
       paidAmount: [0, [Validators.min(0)]],
       balanceAmount: [0],
       selectedPaymentMethod: ['Cash', Validators.required]
     });
 
-    console.log("Form initialized:", this.posForm.value); // ✅ Debugging Console
   }
 
   ngOnInit(): void {
     this.cashierName = this.auth.info.name;
     this.loadProducts();
     setInterval(() => this.currentDateTime = new Date().toLocaleString(), 1000);
-
-    console.log("Form Structure at OnInit:", this.posForm.value); // ✅ Debugging Console
+    this.valueChanges();
   }
 
 
@@ -90,7 +91,6 @@ export class ClientPosComponent implements OnInit, OnDestroy {
 
   onScan(): void {
     const scannedCode = this.posForm.value.scannedCode;
-    console.log('onScan:', scannedCode);
     if (scannedCode) {
       const product = this.productOptions.find(p => p.barcode === scannedCode);
       if (product) {
@@ -103,10 +103,8 @@ export class ClientPosComponent implements OnInit, OnDestroy {
   }
 
   onProductSelect(): void {
-    const selectedProductId = this.posForm.value.selectedProduct.id;
-    console.log('onProductSelect:', selectedProductId);
-    console.log('this.posForm.value:', this.posForm.value);
-    const product = this.productOptions.find(p => p.id === selectedProductId);
+    const selectedBatchId = this.posForm.value.selectedProduct;
+    const product = this.productOptions.find(p => p.batchId === selectedBatchId);
 
     if (product) {
       this.addItemToCart(product);
@@ -118,8 +116,7 @@ export class ClientPosComponent implements OnInit, OnDestroy {
 
 
   addItemToCart(product: any): void {
-    const existingIndex = this.cartItems.findIndex((item) => item.id === product.id);
-
+    const existingIndex = this.cartItems.findIndex((item) => item.batchId === product.batchId);
     if (existingIndex !== -1) {
       this.cartItems[existingIndex].quantity += 1;
       this.cartItems[existingIndex].total = this.cartItems[existingIndex].quantity * this.cartItems[existingIndex].price;
@@ -137,14 +134,11 @@ export class ClientPosComponent implements OnInit, OnDestroy {
       this.cartItems.push(newItem); // ✅ Use regular array push instead of FormArray
     }
 
-    console.log("✅ Updated Cart Items:", this.cartItems);
     this.updateAvailableStock(product.id, -1);
     this.calculateTotals();
   }
 
   removeItem(item: any): void {
-    console.log("Removing item:", item);
-    console.log("Current Cart Items:", this.cartItems);
     const index = this.cartItems.findIndex(i => i.id === item.id);
     // Restore the stock before removing the item
     this.updateAvailableStock(item.id, item.quantity);
@@ -198,18 +192,21 @@ export class ClientPosComponent implements OnInit, OnDestroy {
       product.name = `${product.name.split('(')[0].trim()} (Qty: ${product.availableQuantity})`;
     }
   }
+  valueChanges(){
+    this.subscription.add(this.posForm.get('discount')?.valueChanges.subscribe((value) => {
+      this.calculateTotals()}));
+  }
 
   calculateTotals(): void {
     const subtotal = this.cartItems.reduce((sum, item) => sum + item.total, 0);
-    const tax = subtotal * 0 // Assuming 10% tax
-    const total = subtotal + tax;
-    console.log('totals:', subtotal, tax, total);
+    const tax = subtotal * 0
+    const discount = this.posForm.get('discount')?.value;
+    const total = (subtotal + tax) - discount;
     this.posForm.patchValue({subtotal, tax, total});
   }
 
   showCheckoutDialog(): void {
     const total = this.posForm.value.total;
-    console.log('showCheckoutDialog:', total);
     if (total > 0) {
       this.checkoutDialogVisible = true;
     } else {
@@ -224,8 +221,6 @@ export class ClientPosComponent implements OnInit, OnDestroy {
   }
 
   confirmCheckout(): void {
-    console.log('confirmCheckout:', this.posForm.value);
-    // ✅ Fix: Replace FormArray logic with plain array check
     if (this.cartItems.some(item => item.quantity > item.availableQuantity)) {
       this.toastr.showError('Insufficient stock available.', 'Error');
       return;
@@ -275,7 +270,8 @@ export class ClientPosComponent implements OnInit, OnDestroy {
         }))
         .subscribe(response => {
           if (response.data && response.success) {
-            this.productOptions = response.data.map(this.mapProductOption);
+            this.productOptions = response.data.flatMap(this.mapProductOption)
+              .sort((a: any, b: any) => a.name.localeCompare(b.name));
           } else {
             this.toastr.showWarn('No available inventory found.', 'Warning');
           }
@@ -283,16 +279,17 @@ export class ClientPosComponent implements OnInit, OnDestroy {
     );
   }
 
-  private mapProductOption(product: any): any {
-    return {
+  private mapProductOption(product: any): any[] {
+    return product.batches.map((batch: any) => ({
       id: product.productId,
-      name: `${product.name} (Qty: ${product.totalQuantity})`,
-      price: product.firstAvailableBatch.sellingPrice,
-      barcode: product.firstAvailableBatch.barcode,
-      availableQuantity: product.totalQuantity,
-      batchId: product.firstAvailableBatch.batchId || null
-    };
+      name: `${product.name} (Qty: ${batch.quantity})`,
+      price: batch.sellingPrice,
+      barcode: batch.barcode,
+      availableQuantity: batch.quantity,
+      batchId: batch.batchId
+    }));
   }
+
 
   private buildTransactionPayload(): POSTransaction {
     return new POSTransaction({
@@ -307,6 +304,7 @@ export class ClientPosComponent implements OnInit, OnDestroy {
       })),
       subTotal: this.posForm.value.subtotal,
       taxAmount: this.posForm.value.tax,
+      discountAmount: this.posForm.value.discount,
       totalPayable: this.posForm.value.total,
       paidAmount: this.posForm.value.paidAmount,
       changeGiven: this.posForm.value.balanceAmount,

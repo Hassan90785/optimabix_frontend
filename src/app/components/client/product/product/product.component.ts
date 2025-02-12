@@ -13,6 +13,7 @@ import {AuthService} from '../../../../core/services/auth.service';
 import {Router} from '@angular/router';
 import {ToastrService} from '../../../../core/services/toastr.service';
 import {DataStoreService} from '../../../../core/services/data-store.service';
+import {AutoComplete} from 'primeng/autocomplete';
 
 @Component({
   selector: 'app-product',
@@ -22,7 +23,8 @@ import {DataStoreService} from '../../../../core/services/data-store.service';
     FloatLabel,
     Button,
     Checkbox,
-    Card
+    Card,
+    AutoComplete
   ],
   providers: [ToastrService],
   templateUrl: './product.component.html',
@@ -33,6 +35,10 @@ export class ProductComponent implements OnInit, OnDestroy {
   productForm: FormGroup;
   indicator: boolean = false;
   subscriptions: Subscription = new Subscription();
+  categories: string[] = [];
+  brands: string[] = [];
+  filteredCategories: string[] = [];
+  filteredBrands: string[] = [];
   private auth = inject(AuthService)
   private toastr = inject(ToastrService)
   private router = inject(Router)
@@ -65,7 +71,8 @@ export class ProductComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-  this.getProduct();
+    this.getProduct();
+    this.getMetaData();
   }
 
   onSubmit(indicator = false): void {
@@ -97,12 +104,29 @@ export class ProductComponent implements OnInit, OnDestroy {
     // Get product data for editing
     this.subscriptions.add(
       this.dataStore.selectedProduct$.subscribe((product: any) => {
-        console.log('selectedProduct$: ', product);
         if (product) {
           this.indicator = true;
           this.productForm.patchValue(product.data);
         }
       }));
+  }
+
+  getMetaData() {
+    this.subscriptions.add(
+      this.apiService.getCompanyMetaData({companyId: this.auth.info.companyId}).pipe(
+        catchError((error) => {
+          this.toastr.showError('Error fetching metadata', 'Error');
+          return of(null); // Return an observable, like `null`, to complete the stream gracefully
+        })
+      ).subscribe((value: any) => {
+        if (value && value.success) {
+          this.categories = value.data.categories || [];
+          this.brands = value.data.brands || [];
+        } else {
+          this.toastr.showError(value.message, 'Error');
+        }
+      })
+    );
   }
 
   ngOnDestroy(): void {
@@ -112,5 +136,18 @@ export class ProductComponent implements OnInit, OnDestroy {
   onCancel() {
     this.dataStore.setSelectedProduct(null);
     this.router.navigate(['/app/product/list']);
+  }
+
+
+// Filter categories
+  filterCategories(event: any) {
+    let query = event.query.toLowerCase();
+    this.filteredCategories = this.categories.filter(c => c.toLowerCase().includes(query));
+  }
+
+// Filter brands
+  filterBrands(event: any) {
+    let query = event.query.toLowerCase();
+    this.filteredBrands = this.brands.filter(b => b.toLowerCase().includes(query));
   }
 }

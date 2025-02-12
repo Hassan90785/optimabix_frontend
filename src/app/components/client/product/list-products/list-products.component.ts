@@ -48,7 +48,6 @@ export class ListProductsComponent implements OnInit, OnDestroy {
         next: (response: any) => {
           this.products = response.data.products;
           this.totalRecords = response.data.totalRecords;
-          console.log('response: ', response);
           AdminStore.setLoader(false);
         },
         error: () => {
@@ -74,7 +73,6 @@ export class ListProductsComponent implements OnInit, OnDestroy {
   }
 
   onEdit(product: any): void {
-    console.log('setting product: ', product);
     this.dataStore.setSelectedProduct({type: 'E', data: product});
     this.router.navigate(['/app/product/update']);
   }
