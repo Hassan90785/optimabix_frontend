@@ -89,19 +89,25 @@
 
       <!-- Summary Section -->
       <div class="formgrid grid p-mt-3">
-        <div class="field col-12 md:col-4">
+        <div class="field col-12 md:col-3">
           <p-floatLabel variant="on">
             <input id="subtotal" type="text" pInputText formControlName="subtotal" readonly class="w-full"/>
             <label for="subtotal">Subtotal</label>
           </p-floatLabel>
         </div>
-        <div class="field col-12 md:col-4">
+        <div class="field col-12 md:col-3">
           <p-floatLabel variant="on">
             <input id="tax" type="text" pInputText formControlName="tax" readonly class="w-full"/>
             <label for="tax">Tax</label>
           </p-floatLabel>
         </div>
-        <div class="field col-12 md:col-4">
+        <div class="field col-12 md:col-3">
+          <p-floatLabel variant="on">
+            <input id="discount" type="text" pInputText formControlName="discount"  class="w-full"/>
+            <label for="discount">Discount</label>
+          </p-floatLabel>
+        </div>
+        <div class="field col-12 md:col-3">
           <p-floatLabel variant="on">
             <input id="total" type="text" pInputText formControlName="total" readonly class="w-full"/>
             <label for="total">Total Payable</label>
@@ -112,7 +118,7 @@
       <!-- Payment Actions -->
       <div class="flex justify-content-end p-mt-3">
         <p-button label="Clear Cart" class="p-button-text p-button-danger" (click)="clearCart()"></p-button>
-        <p-button label="Checkout" class="p-button-primary p-ml-2" (click)="showCheckoutDialog()"></p-button>
+        <p-button label="Checkout" class="p-button-primary ml-2" (click)="showCheckoutDialog()"></p-button>
       </div>
     </div>
   </form>
@@ -125,16 +131,18 @@
       <!-- Payment Method -->
       <div class="field col-6">
         <p-floatLabel variant="on">
-          <p-dropdown
+          <p-select
             id="paymentMethod"
             class="w-full"
             [options]="paymentMethods"
+            optionValue="value"
+            optionLabel="label"
             formControlName="selectedPaymentMethod"
-
-          ></p-dropdown>
+          ></p-select>
           <label for="paymentMethod">Payment Method</label>
         </p-floatLabel>
       </div>
+
 
       <!-- Total Payable -->
       <div class="field col-6">
@@ -170,7 +178,7 @@
 
     <div class="flex justify-content-end p-mt-3">
       <p-button label="Cancel" class="p-button-text" (click)="checkoutDialogVisible = false"></p-button>
-      <p-button label="Confirm" class="p-button-primary p-ml-2"
+      <p-button label="Confirm" class="p-button-primary ml-2"
                 [disabled]="!posForm.get('paidAmount')?.value || posForm.get('balanceAmount')?.value < 0"
                 (click)="confirmCheckout()">
       </p-button>

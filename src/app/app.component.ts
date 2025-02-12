@@ -22,7 +22,9 @@ export class AppComponent implements OnInit {
   title = 'optimabix';
   auth = inject(AuthService);
   protected readonly AdminStore = AdminStore;
-
+  constructor() {
+    console.log('Build: 250212')
+  }
   ngOnInit() {
     const user = localStorage.getItem('user');
     if (user) {

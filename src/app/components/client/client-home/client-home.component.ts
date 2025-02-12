@@ -32,7 +32,7 @@ export class ClientHomeComponent {
     {label: 'Entity', icon: 'pi pi-id-card', routerLink: ['/app/entity']}, // Represents users or entities
     {label: 'Inventory', icon: 'pi pi-warehouse', routerLink: ['/app/inventory']}, // Represents a warehouse or inventory
     {label: 'POS', icon: 'pi pi-shopping-cart', routerLink: ['/app/pos']}, // Represents a shopping cart for POS
-    {label: 'Ledger', icon: 'pi pi-book', routerLink: ['/app/ledger']}, // Represents a ledger or accounting book
+    // {label: 'Ledger', icon: 'pi pi-book', routerLink: ['/app/ledger']}, // Represents a ledger or accounting book
     {label: 'Sales', icon: 'pi pi-book', routerLink: ['/app/sales']}, // Represents a ledger or accounting book
   ];
 

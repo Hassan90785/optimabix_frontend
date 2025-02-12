@@ -15,6 +15,7 @@ import {ToastrService} from '../../../core/services/toastr.service';
 import {catchError, of, Subscription} from 'rxjs';
 import {environment} from '../../../../environments/environment';
 import {AutoComplete} from 'primeng/autocomplete';
+import {Select} from 'primeng/select';
 
 @Component({
   selector: 'app-client-pos',
@@ -30,7 +31,8 @@ import {AutoComplete} from 'primeng/autocomplete';
     DropdownModule,
     Dialog,
     ReactiveFormsModule,
-    AutoComplete
+    AutoComplete,
+    Select
   ],
   templateUrl: './client-pos.component.html',
   standalone: true,
@@ -67,6 +69,7 @@ export class ClientPosComponent implements OnInit, OnDestroy {
       subtotal: [0],
       tax: [0],
       total: [0],
+      discount: [0,{updateOn: 'blur'}],
       paidAmount: [0, [Validators.min(0)]],
       balanceAmount: [0],
       selectedPaymentMethod: ['Cash', Validators.required]
@@ -78,7 +81,7 @@ export class ClientPosComponent implements OnInit, OnDestroy {
     this.cashierName = this.auth.info.name;
     this.loadProducts();
     setInterval(() => this.currentDateTime = new Date().toLocaleString(), 1000);
-
+    this.valueChanges();
   }
 
 
@@ -189,11 +192,16 @@ export class ClientPosComponent implements OnInit, OnDestroy {
       product.name = `${product.name.split('(')[0].trim()} (Qty: ${product.availableQuantity})`;
     }
   }
+  valueChanges(){
+    this.subscription.add(this.posForm.get('discount')?.valueChanges.subscribe((value) => {
+      this.calculateTotals()}));
+  }
 
   calculateTotals(): void {
     const subtotal = this.cartItems.reduce((sum, item) => sum + item.total, 0);
-    const tax = subtotal * 0 // Assuming 10% tax
-    const total = subtotal + tax;
+    const tax = subtotal * 0
+    const discount = this.posForm.get('discount')?.value;
+    const total = (subtotal + tax) - discount;
     this.posForm.patchValue({subtotal, tax, total});
   }
 
@@ -263,7 +271,7 @@ export class ClientPosComponent implements OnInit, OnDestroy {
         .subscribe(response => {
           if (response.data && response.success) {
             this.productOptions = response.data.flatMap(this.mapProductOption)
-              .sort((a:any, b:any) => a.name.localeCompare(b.name));
+              .sort((a: any, b: any) => a.name.localeCompare(b.name));
           } else {
             this.toastr.showWarn('No available inventory found.', 'Warning');
           }
@@ -296,6 +304,7 @@ export class ClientPosComponent implements OnInit, OnDestroy {
       })),
       subTotal: this.posForm.value.subtotal,
       taxAmount: this.posForm.value.tax,
+      discountAmount: this.posForm.value.discount,
       totalPayable: this.posForm.value.total,
       paidAmount: this.posForm.value.paidAmount,
       changeGiven: this.posForm.value.balanceAmount,
