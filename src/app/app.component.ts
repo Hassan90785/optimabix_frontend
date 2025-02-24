@@ -9,7 +9,7 @@ import {ScrollTop} from 'primeng/scrolltop';
 import {ProgressSpinner} from 'primeng/progressspinner';
 import {AdminStore} from './core/stores/admin.store';
 import {CommonModule} from '@angular/common';
-
+import {environment} from '../environments/environment';
 @Component({
   selector: 'app-root',
   imports: [CommonModule, RouterOutlet, Toast, ConfirmDialog, ScrollTop, ProgressSpinner],
@@ -23,7 +23,7 @@ export class AppComponent implements OnInit {
   auth = inject(AuthService);
   protected readonly AdminStore = AdminStore;
   constructor() {
-    console.log('Build: 250212')
+    console.log(environment.appName + ', Build: 250212')
   }
   ngOnInit() {
     const user = localStorage.getItem('user');
