@@ -23,7 +23,7 @@ export class AppComponent implements OnInit {
   auth = inject(AuthService);
   protected readonly AdminStore = AdminStore;
   constructor() {
-    console.log('Build: 250212')
+    console.log('Build: 250227')
   }
   ngOnInit() {
     const user = localStorage.getItem('user');
